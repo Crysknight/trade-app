@@ -2,4 +2,34 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  color: #000;
+}
+
+#trade_table {
+	border-collapse: collapse;
+}
+
+#trade_table .table-header {
+	background-color: #ddd;
+	border-top: 1px solid #000;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+#trade_table .table-header td, #trade_table td.bordered {
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+#trade_table tr:last-child {
+	border-bottom: 1px solid #000;
+}
+
+#trade_table .order {
+	display: inline-block;
+	margin-right: 6px;
+}
+
+#trade_table td.cancel-row {
+	text-align: center;
 }
