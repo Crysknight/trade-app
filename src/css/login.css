@@ -1,0 +1,4 @@
+#auth input:focus::-webkit-input-placeholder { color:transparent; }
+#auth input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+#auth input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+#auth input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */

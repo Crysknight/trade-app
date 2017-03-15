@@ -40,10 +40,10 @@ class TradeTableRow extends Component {
   	});
   }
   getBids() {
-  	return this.props.orders.map((order, index) => {
+  	return this.props.orders.map((order) => {
 	  if (order.type === 'bid' && order.status === 'placed' && order.instrument === this.props.instrument.id) {
 	    return (
-	      <Order key={index} size={order.quantity} />
+	      <Order key={order.id} size={order.quantity} />
 	    );
 	  } else {
 	  	return false;
@@ -51,10 +51,10 @@ class TradeTableRow extends Component {
   	});
   }
   getOffers() {
-  	return this.props.orders.map((order, index) => {
+  	return this.props.orders.map((order) => {
 	  if (order.type === 'offer' && order.status === 'placed' && order.instrument === this.props.instrument.id) {
 	    return (
-	      <Order key={index} size={order.quantity} />
+	      <Order key={order.id} size={order.quantity} />
 	    );
 	  } else {
 	  	return false;
@@ -62,10 +62,10 @@ class TradeTableRow extends Component {
   	});
   }
   getClosedBids() {
-  	return this.props.orders.map((order, index) => {
+  	return this.props.orders.map((order) => {
 	  if (order.type === 'bid' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
 	    return (
-	      <Order key={index} size={order.quantity} />
+	      <Order key={order.id} size={order.quantity} />
 	    );
 	  } else {
 	  	return false;
@@ -73,10 +73,10 @@ class TradeTableRow extends Component {
   	});
   }
   getClosedOffers() {
-  	return this.props.orders.map((order, index) => {
+  	return this.props.orders.map((order) => {
 	  if (order.type === 'offer' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
 	    return (
-	      <Order key={index} size={order.quantity} />
+	      <Order key={order.id} size={order.quantity} />
 	    );
 	  } else {
 	  	return false;

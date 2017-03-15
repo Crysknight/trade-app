@@ -5,7 +5,7 @@ export default function(state = [{ id: 0 }], action) {
   	  return [
   	    ...state,
   	    {
-  	      id: state[state.length - 1].id++,
+  	      id: state[state.length - 1].id + 1,
   	      ...action.payload
   	    }
   	  ];

@@ -1,10 +1,15 @@
 import {combineReducers} from 'redux';
-import reducerInstruments from './reducer-instruments';
-import reducerOrders from './reducer-orders';
+import { routerReducer } from 'react-router-redux';
+
+import instruments from './reducer-instruments';
+import orders from './reducer-orders';
+import user from './reducer-user';
 
 const allReducers = combineReducers({
-	instruments: reducerInstruments,
-	orders: reducerOrders
+	routing: routerReducer,
+	instruments,
+	orders,
+	user
 });
 
 export default allReducers;
