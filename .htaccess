@@ -1,6 +1,0 @@
-ErrorDocument 404 http://praktik.fff/404.html
-RewriteEngine On
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /trade-app [L]

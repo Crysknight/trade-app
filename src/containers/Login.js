@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import { browserHistory } from 'react-router';
 
 import * as actions from '../actions';
 
@@ -17,6 +17,15 @@ class Login extends Component {
   	  password: undefined
   	};
   }
+  componentWillReceiveProps(nextProps) {
+    if (
+      JSON.stringify(nextProps.user) !== '{}' && 
+      !nextProps.user.error
+    ) {
+      debugger;
+      browserHistory.push('/trade-app');
+    }
+  }
   submitUser(event) {
   	event.preventDefault();
   	if (this.state.eMail !== undefined && this.state.password !== undefined) {
@@ -31,10 +40,23 @@ class Login extends Component {
   	}
   }
   render() {
-  	let enterButton;
-  	if (JSON.stringify(this.props.user) !== '{}') {
-  	  enterButton = <Link to="/trade-app">Войти</Link>;
-  	}
+    let resultBlock;
+    if (JSON.stringify(this.props.user) !== '{}') {
+      switch (this.props.user.error) {
+        case 'wrong user': {
+          console.log('You\'re liar!');
+          resultBlock = <div className="errorBlock">Ошибка</div>;
+          break;
+        }
+        case 'internal server error': {
+          resultBlock = <div className="errorBlock">Ошибка сервера</div>;
+          break;
+        }
+        default: {
+          resultBlock = <div className="successBlock"></div>;
+        }
+      }
+    }
     return (
       <div>
       	<form id="auth" onSubmit={this.submitUser}>
@@ -54,7 +76,7 @@ class Login extends Component {
       	  />
       	  <input type="submit" />
       	</form>
-      	{enterButton}
+        {resultBlock}
       </div>
     );
   }
@@ -73,5 +95,3 @@ function matchDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(Login);
-
-// console.log(JSON.stringify({ eMail: 'pavel@pln-b.ru', password: 'It8-7' }));
