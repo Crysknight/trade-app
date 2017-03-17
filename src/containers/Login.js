@@ -73,7 +73,7 @@ class Login extends Component {
       	    required
       	    onChange={this.handleInput}
       	  />
-      	  <input type="submit" />
+      	  <input type="submit" value="Войти"/>
       	</form>
         {resultBlock}
       </div>

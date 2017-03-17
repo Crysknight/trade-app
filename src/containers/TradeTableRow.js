@@ -90,7 +90,7 @@ class TradeTableRow extends Component {
   	    <td className="bordered">{this.props.instrument.name}</td>
   	    <td className="bordered">{this.props.instrument.price.toFixed(4)}</td>
   	    <td colSpan="3">
-  	      <form onSubmit={this.registerOrder}>
+  	      <form className="size-form" onSubmit={this.registerOrder}>
   	        <BidButton setOrderType={this.setOrderType} />
   	        <OrderSize quantity={this.state.quantity} setQuantity={this.setQuantity}/>
   	        <OfferButton setOrderType={this.setOrderType} />

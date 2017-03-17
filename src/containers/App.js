@@ -36,9 +36,9 @@ class App extends Component {
   	  		  <td>Инструмент</td>
   	  		  <td>Цена</td>
   	  		  <td colSpan="3">Объем заявки</td>
-  	  		  <td style={{borderRight: 'none', width: '18%'}}>Покупка</td>
+  	  		  <td style={{borderRight: 'none', width: '9%'}}>Покупка</td>
   	  		  <td style={{border: 'none'}}></td>
-  	  		  <td style={{borderLeft: 'none', width: '18%'}}>Продажа</td>
+  	  		  <td style={{borderLeft: 'none', width: '9%'}}>Продажа</td>
   	  		  <td>Куплено</td>
   	  		  <td>Продано</td>
       	  	</tr>

@@ -4,6 +4,7 @@ body {
   font-family: sans-serif;
   color: #000;
   text-align: center;
+  padding-top: 70px;
 }
 
 #trade_table {
@@ -13,6 +14,11 @@ body {
 	text-align: left;
 }
 
+#trade_table td {
+	padding: 10px 5px;
+	vertical-align: top;
+}
+
 #trade_table .table-header {
 	background-color: #ddd;
 	border-top: 1px solid #000;
@@ -20,13 +26,51 @@ body {
 	border-right: 1px solid #000;
 }
 
+#trade_table .table-prerow {
+	background-color: transparent;
+}
+
+#trade_table .table-prerow td {
+	background-color: transparent;
+	border-bottom: 1px solid #000;
+	border-top: none;
+}
+
 #trade_table .table-header td, #trade_table td.bordered {
 	border-left: 1px solid #000;
 	border-right: 1px solid #000;
 }
 
-#trade_table td {
-	vertical-align: top;
+/* #trade_table .size-form input {
+	width: 30%;
+	background-color: #55f;
+	color: #fff;
+	border: none;
+	outline: none;
+	height: 25px;
+	line-height: 20px;
+	padding: 0;
+	font-size: 14px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	text-align: center;
+} */
+
+#trade_table .size-form input[type="number"] {
+	width: 20%;
+}
+
+/* #trade_table .size-form input:first-of-type {
+	border-radius: 6px 0 0 6px;
+}
+
+#trade_table .size-form input:last-of-type {
+	border-radius: 0 6px 6px 0;
+} */
+
+#trade_table td[colspan="3"] {
+	width: 20%;
 }
 
 #trade_table tr:last-child {
@@ -46,6 +90,28 @@ body {
 	text-align: center;
 }
 
+input[type="email"], input[type="password"] {
+	display: block;
+	margin: 20px auto;
+}
+
+input {
+	padding-left: 5px;
+}
+
+input[value="Войти"] {
+	padding: 15px 20px;
+	background-color: #55e;
+	color: #fff;
+	border-radius: 5px;
+	cursor: pointer;
+	border: none;
+	outline: none;
+	text-transform: uppercase;
+	font-size: 15px;
+	font-weight: bold;
+}
+
 .signOut {
 	position: absolute;
 	top: 20px;
@@ -55,4 +121,7 @@ body {
 	color: #fff;
 	border-radius: 5px;
 	cursor: pointer;
+	font-weight: bold;
+	font-size: 15px;
+	text-transform: uppercase;
 }
