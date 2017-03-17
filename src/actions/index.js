@@ -13,7 +13,16 @@ export const cancelAll = () => {
   };
 };
 
-export const addOrder = (order) => {
+export const addOrder = (order) /*=> dispatch*/ => {
+
+  // axios.post('core/addorder', order)
+  //   .then(function (response) {
+  //     dispatch({ type: 'ADD_ORDER', payload: order });
+  //   })
+  //   .catch(function (error) {
+  //     console.dir(error.response.status);
+  //     dispatch({ type: 'ORDER_FAILURE', payload: error });
+  //   });
   return {
   	type: 'ADD_ORDER',
   	payload: order
@@ -37,9 +46,10 @@ export const logOut = (token) => dispatch => {
 /* Async block */
 
 export const checkUser = (user) => dispatch => {
+  
+  // //Mock response, because fuck cors!
   // setTimeout(() => {
   //   if (user.eMail === 'admin@mail.ru' && user.password === 'admin') {
-  //     //Mock response, because fuck cors!
   //     let response = {
   //       data: {
   //         role_name: 'isadmin',

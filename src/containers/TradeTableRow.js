@@ -36,7 +36,8 @@ class TradeTableRow extends Component {
   	  instrument: this.props.instrument.id,
   	  quantity: this.state.quantity,
   	  type: this.state.orderType,
-  	  status: 'placed'
+  	  status: 'placed',
+      token: this.props.user.token
   	});
   }
   getBids() {
@@ -107,7 +108,8 @@ class TradeTableRow extends Component {
 
 function mapStateToProps(state) {
   return {
-    orders: state.orders
+    orders: state.orders,
+    user: state.user
   };
 }
 

@@ -36,14 +36,9 @@ export default function(state = {}, action) {
   	  }
   	}
     case 'LOG_OUT': {
-      console.log('LOG_OUT');
       cookie.remove('eMail', { path: '/' });
       cookie.remove('roleName', { path: '/' });
       cookie.remove('token', { path: '/' });
-      let eMail = cookie.load('eMail');
-      let roleName = cookie.load('roleName');
-      let token = cookie.load('token');
-      console.log(eMail, roleName, token);
       return {};
     }
   	default: {
