@@ -28,9 +28,9 @@ function requireAuth(nextState, replace) {
 
 function getCookies() {
   if (JSON.stringify(store.getState().user) === '{}') {
-    let eMail = cookie.load('eMail');
-    let roleName = cookie.load('roleName');
-    let token = cookie.load('token');
+    let eMail = cookie.load('eMail') === 'undefined' ? false: cookie.load('eMail');
+    let roleName = cookie.load('roleName') === 'undefined' ? false: cookie.load('roleName');
+    let token = cookie.load('token') === 'undefined' ? false: cookie.load('token');
     if (eMail && roleName && token) {
       store.dispatch({type: 'CHECK_USER_SUCCESS', payload: {
         eMail,

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
+import cookie from 'react-cookie';
 
 import * as actions from '../actions';
 
@@ -11,6 +13,11 @@ import CancelAll from '../components/cancel-all';
 class App extends Component {
   createTradeTable() {
   	return this.props.instruments.map((instrument) => <TradeTableRow key={instrument.id} instrument={instrument}/>);
+  }
+  logOut() {
+    let token = cookie.load('token');
+    this.props.logOut(token);
+    browserHistory.push('/trade-app/login');
   }
   render() {
     return (
@@ -38,6 +45,7 @@ class App extends Component {
       		{this.createTradeTable()}
       	  </tbody>
       	</table>
+        <div className="signOut" onClick={this.logOut.bind(this)}>Разлогиниться</div>
       </div>
     );
   }
@@ -45,13 +53,15 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    instruments: state.instruments
+    instruments: state.instruments,
+    user: state.user
   };
 }
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
-  	cancelAll: actions.cancelAll
+  	cancelAll: actions.cancelAll,
+    logOut: actions.logOut
   }, dispatch);
 }
 

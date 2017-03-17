@@ -22,7 +22,6 @@ class Login extends Component {
       JSON.stringify(nextProps.user) !== '{}' && 
       !nextProps.user.error
     ) {
-      debugger;
       browserHistory.push('/trade-app');
     }
   }

@@ -3,6 +3,7 @@ import cookie from 'react-cookie';
 export default function(state = {}, action) {
   switch (action.type) {
   	case 'CHECK_USER_SUCCESS': {
+      console.log('CHECK_USER_SUCCESS');
   	  let payload = action.payload;
   	  let enterDate = new Date();
   	  let expireDate = enterDate.getTime() + 1800000;
@@ -11,7 +12,6 @@ export default function(state = {}, action) {
   	  cookie.save('eMail', payload.eMail, { path: '/', expires: expireDate });
   	  cookie.save('roleName', payload.roleName, { path: '/', expires: expireDate });
   	  cookie.save('token', payload.token, { path: '/', expires: expireDate });
-  	  debugger;
   	  return {
   	  	...action.payload,
   	  	error: false
@@ -35,6 +35,17 @@ export default function(state = {}, action) {
   	  	}
   	  }
   	}
+    case 'LOG_OUT': {
+      console.log('LOG_OUT');
+      cookie.remove('eMail', { path: '/' });
+      cookie.remove('roleName', { path: '/' });
+      cookie.remove('token', { path: '/' });
+      let eMail = cookie.load('eMail');
+      let roleName = cookie.load('roleName');
+      let token = cookie.load('token');
+      console.log(eMail, roleName, token);
+      return {};
+    }
   	default: {
   	  return state;
   	}
