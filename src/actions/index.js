@@ -13,23 +13,29 @@ export const cancelAll = () => {
   };
 };
 
-export const addOrder = (order) /*=> dispatch*/ => {
+export const addOrder = order => dispatch => {
 
-  // axios.post('core/addorder', order)
-  //   .then(function (response) {
-  //     dispatch({ type: 'ADD_ORDER', payload: order });
-  //   })
-  //   .catch(function (error) {
-  //     console.dir(error.response.status);
-  //     dispatch({ type: 'ORDER_FAILURE', payload: error });
-  //   });
-  return {
-  	type: 'ADD_ORDER',
-  	payload: order
-  }
+  axios.post('core/addorder', order)
+    .then(function (response) {
+      console.log('order successful');
+      dispatch({ type: 'ADD_ORDER', payload: { id: response.data.id, ...order }});
+    })
+    .catch(function (error) {
+      console.log('order failure', error.response.status);
+      dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+    });
+
+  // setTimeout(() => {
+  //   let response = {
+  //     data: {
+  //       id: 10
+  //     }
+  //   };
+  //   dispatch({ type: 'ADD_ORDER', payload: { id: response.data.id, ...order }});
+  // }, 800);
 };
 
-export const logOut = (token) => dispatch => {
+export const logOut = token => dispatch => {
   axios.post('core/logout', token)
     .then(function (response) {
       dispatch({ type: 'LOG_OUT' });
@@ -45,7 +51,7 @@ export const logOut = (token) => dispatch => {
 
 /* Async block */
 
-export const checkUser = (user) => dispatch => {
+export const checkUser = user => dispatch => {
   
   // //Mock response, because fuck cors!
   // setTimeout(() => {
@@ -91,4 +97,5 @@ export const checkUser = (user) => dispatch => {
         response: error.response.status
       }});
     });
+  
 };

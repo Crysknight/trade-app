@@ -27,6 +27,7 @@ function requireAuth(nextState, replace) {
 }
 
 function getCookies() {
+  console.log('I enter %)');
   if (JSON.stringify(store.getState().user) === '{}') {
     let eMail = cookie.load('eMail');
     let roleName = cookie.load('roleName');

@@ -3,7 +3,6 @@ import cookie from 'react-cookie';
 export default function(state = {}, action) {
   switch (action.type) {
   	case 'CHECK_USER_SUCCESS': {
-      console.log('CHECK_USER_SUCCESS');
   	  let payload = action.payload;
   	  let enterDate = new Date();
   	  let expireDate = enterDate.getTime() + 1800000;

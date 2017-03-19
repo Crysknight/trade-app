@@ -86,6 +86,13 @@ body {
 	margin-right: 6px;
 }
 
+#trade_table .order.order-error {
+	padding: 3px;
+	background-color: #e55;
+	font-size: 12px;
+	color: #fff;
+}
+
 #trade_table td.cancel-row {
 	text-align: center;
 }

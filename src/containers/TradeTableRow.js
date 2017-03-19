@@ -41,6 +41,11 @@ class TradeTableRow extends Component {
   	});
   }
   getBids() {
+    if (this.props.orders.filter(order => order._failure).length !== 0) {
+      return (
+        <Order error={true} size="Ошибка сервера. Перезагрузите страницу" />
+      );
+    }
   	return this.props.orders.map((order) => {
 	  if (order.type === 'bid' && order.status === 'placed' && order.instrument === this.props.instrument.id) {
 	    return (
@@ -63,26 +68,26 @@ class TradeTableRow extends Component {
   	});
   }
   getClosedBids() {
-  	return this.props.orders.map((order) => {
-	  if (order.type === 'bid' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
-	    return (
-	      <Order key={order.id} size={order.quantity} />
-	    );
-	  } else {
-	  	return false;
-	  }
-  	});
+  	// return this.props.orders.map((order) => {
+	  // if (order.type === 'bid' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
+	  //   return (
+	  //     <Order key={order.id} size={order.quantity} />
+	  //   );
+	  // } else {
+	  // 	return false;
+	  // }
+  	// });
   }
   getClosedOffers() {
-  	return this.props.orders.map((order) => {
-	  if (order.type === 'offer' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
-	    return (
-	      <Order key={order.id} size={order.quantity} />
-	    );
-	  } else {
-	  	return false;
-	  }
-  	});
+  	// return this.props.orders.map((order) => {
+	  // if (order.type === 'offer' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
+	  //   return (
+	  //     <Order key={order.id} size={order.quantity} />
+	  //   );
+	  // } else {
+	  // 	return false;
+	  // }
+  	// });
   }
   render() {
   	return (

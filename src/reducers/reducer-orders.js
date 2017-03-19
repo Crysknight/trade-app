@@ -1,11 +1,10 @@
-export default function(state = [{ id: 0 }], action) {
+export default function(state = [], action) {
 
   switch (action.type) {
   	case 'ADD_ORDER': {
   	  return [
   	    ...state,
   	    {
-  	      id: state[state.length - 1].id + 1,
   	      ...action.payload
   	    }
   	  ];
@@ -16,8 +15,16 @@ export default function(state = [{ id: 0 }], action) {
   	  });
   	}
   	case 'CANCEL_ALL': {
-  	  return [{ id: 0 }];
+  	  return [];
   	}
+    case 'ORDER_FAILURE': {
+      return [
+        ...state,
+        {
+          _failure: true
+        }
+      ];
+    }
   	default: {
   	  return state;
   	}
