@@ -36,7 +36,6 @@ class TradeTableRow extends Component {
   	  instrument: this.props.instrument.id,
   	  quantity: this.state.quantity,
   	  type: this.state.orderType,
-  	  status: 'placed',
       token: this.props.user.token
   	});
   }
@@ -47,7 +46,7 @@ class TradeTableRow extends Component {
       );
     }
   	return this.props.orders.map((order) => {
-	  if (order.type === 'bid' && order.status === 'placed' && order.instrument === this.props.instrument.id) {
+	  if (order.type === 'bid' && order.instrument === this.props.instrument.id) {
 	    return (
 	      <Order key={order.id} size={order.quantity} />
 	    );
@@ -58,7 +57,7 @@ class TradeTableRow extends Component {
   }
   getOffers() {
   	return this.props.orders.map((order) => {
-	  if (order.type === 'offer' && order.status === 'placed' && order.instrument === this.props.instrument.id) {
+	  if (order.type === 'offer' && order.instrument === this.props.instrument.id) {
 	    return (
 	      <Order key={order.id} size={order.quantity} />
 	    );
