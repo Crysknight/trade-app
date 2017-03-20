@@ -2,6 +2,7 @@ body {
 	background-color: #f9f9ff;
 	font-family: sans-serif;
 	padding: 0 20px;
+	min-height: 100%;
 }
 
 h1 {
@@ -10,12 +11,12 @@ h1 {
 	text-shadow: 2px 2px 1px #666, -1px -1px 0 #dde;
 	text-align: center;
 	margin-top: 30px;
-	color: #fff;
+	color: #eef;
 }
 
 #__wrapper {
 	background-color: #fff;
-	height: 600px;
+	min-height: 600px;
 	color: #200;
 	border-radius: 8px;
 	-webkit-box-shadow: 3px 3px 5px #666, -1px -1px 0 #dde;
@@ -23,19 +24,31 @@ h1 {
 	padding: 30px;
 }
 
-#__session_form input[type="time"] {
-    background-color: #f9f9ff;
-    border: 1px solid #dde;
-    padding: 5px 5px 6px 8px;
-    border-radius: 4px;
-    display: block;
-    margin-top: 10px;
+ul {
+	list-style-type: none;
 }
 
-#__session_form input[type="time"]:focus {
-	background-color: #f0f0f3;
-	-webkit-box-shadow: inset 2px 2px 2px #aab;
-	box-shadow: inset 2px 2px 2px #aab;
-	padding: 6px 4px 5px 9px;
+ul li {
+	margin: 10px 0;
+}
+
+ul li a {
+	text-decoration: none;
+	color: #55e;
+}
+
+.top-menu ul li {
+	text-align: right;
+}
+
+button, input[type="submit"] {
+	background-color: #55e;
+	border: 2px solid #55e;
+	color: #fff;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+button:focus, input:focus {
 	outline: none;
 }

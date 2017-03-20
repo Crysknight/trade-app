@@ -89,19 +89,34 @@ class TradeTableRow extends Component {
   	// });
   }
   render() {
+    let disabled = false;
+    for (let i = 0; i < this.props.addingOrders.length; i++) {
+      if (this.props.addingOrders[i] === this.props.instrument.id) {
+        disabled = true;
+      } 
+    }
+    let ordersForThisInstrument = this.props.orders.filter((order) => {
+      return order.instrument === this.props.instrument.id;
+    });
+    let cancelDisabled = !ordersForThisInstrument.length;
   	return (
   	  <tr>
   	    <td className="bordered">{this.props.instrument.name}</td>
   	    <td className="bordered">{this.props.instrument.price.toFixed(4)}</td>
   	    <td colSpan="3">
   	      <form className="size-form" onSubmit={this.registerOrder}>
-  	        <BidButton setOrderType={this.setOrderType} />
+  	        <BidButton disabled={disabled} setOrderType={this.setOrderType} />
   	        <OrderSize quantity={this.state.quantity} setQuantity={this.setQuantity}/>
-  	        <OfferButton setOrderType={this.setOrderType} />
+  	        <OfferButton disabled={disabled} setOrderType={this.setOrderType} />
   	      </form>
   	    </td>
   	    <td style={{borderLeft: '1px solid #000'}}>{this.getBids()}</td>
-  	    <td className="cancel-row"><CancelRow instrument={this.props.instrument.id} cancelRow={this.props.cancelRow} /></td>
+  	    <td className="cancel-row">
+          <CancelRow 
+            instrument={this.props.instrument.id} 
+            cancelRow={this.props.cancelRow} 
+            disabled={cancelDisabled} />
+        </td>
   	    <td>{this.getOffers()}</td>
   	    <td className="bordered">{this.getClosedBids()}</td>
   	    <td className="bordered">{this.getClosedOffers()}</td>
@@ -113,7 +128,8 @@ class TradeTableRow extends Component {
 function mapStateToProps(state) {
   return {
     orders: state.orders,
-    user: state.user
+    user: state.user,
+    addingOrders: state.addingOrders
   };
 }
 

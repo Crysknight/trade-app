@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Торговая Платформа - Панель администратора</title>
+	<link rel="stylesheet" href="./css/index.css">
+	<link rel="stylesheet" href="./css/add-session.css">
+</head>
+<body>
+	<h1>Добавить сессию</h1>
+	<div class="top-menu">
+		<ul>
+			<li><a href="sessions-list.html">Сессии</a></li>
+			<li><a href="users.html">Пользователи</a></li>
+		</ul>
+	</div>
+	<div id="__wrapper">
+		<div class="wrapper">
+			<form id="__session_form">
+				<label>Время начала:</label>
+				<input type="datetime-local" required />
+				<label>Время окончания:</label>
+				<input type="datetime-local" required />
+				<label class="add-instruments">Добавить инструменты:</label>
+				<div id="__instruments">
+					<div class="instrument">
+						<input type="text" name="instrument-name" placeholder="Инструмент">
+						<input type="number" name="instrument-price" step="0.0001" placeholder="Цена">
+					</div>
+					<input type="submit" id="__add_instrument" value="Добавить">
+				</div>
+			</form>
+		</div>
+		<div class="wrapper">
+			<h2>Список инструментов</h2>
+			<form method="GET" action="">
+				<table cellpadding="0" cellspacing="0">
+					<tbody>
+						<tr class="table-header">
+							<td style="width: 15%;">Инструмент</td>
+							<td>Цена</td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><input name="name_1" type="text" value="RUSS 3.25% /17" /></td>
+							<td><input name="price_1" type="number" step="0.0001" value="100.1700" /></td>
+							<td><button value="1" name="update" type="submit" class="update-instrument"></button></td>
+							<td><button value="1" name="delete" type="submit" class="remove-instrument"></button></td>
+						</tr>
+						<tr>
+							<td><input name="name_2" type="text" value="RUSS 11% /18" /></td>
+							<td><input name="price_2" type="number" step="0.0001" value="113.7500" /></td>
+							<td><button value="2" name="update" type="submit" class="update-instrument"></button></td>
+							<td><button value="2" name="delete" type="submit" class="remove-instrument"></button></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="./js/index.js"></script>
+
+</body>
+</html>

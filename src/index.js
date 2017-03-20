@@ -26,7 +26,7 @@ function requireAuth(nextState, replace) {
   } 
 }
 
-function getCookies() {
+function init() {
   console.log('I enter %)');
   if (JSON.stringify(store.getState().user) === '{}') {
     let eMail = cookie.load('eMail');
@@ -45,7 +45,7 @@ function getCookies() {
 ReactDOM.render(
 	<Provider store={store}>
 	  <Router history={history}>
-	    <Route path="/trade-app" onEnter={getCookies} component={MasterPage}>
+	    <Route path="/trade-app" onEnter={init} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="/trade-app/login" component={Login} />
 	    </Route>

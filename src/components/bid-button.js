@@ -10,7 +10,7 @@ export default class Bid extends Component {
   }
   render() {
     return (
-      <input type="submit" value="Покупка" onClick={this.setOrderType} />
+      <input disabled={this.props.disabled} type="submit" value="Покупка" onClick={this.setOrderType} />
     );
   }
 }

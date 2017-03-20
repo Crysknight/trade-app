@@ -24,7 +24,7 @@ export const addOrder = order => dispatch => {
   //     console.log('order failure', error.response.status);
   //     dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
   //   });
-
+  dispatch({ type: 'ADDING_ORDER', payload: order.instrument });
   setTimeout(() => {
     let response = {
       data: {
@@ -32,7 +32,7 @@ export const addOrder = order => dispatch => {
       }
     };
     dispatch({ type: 'ADD_ORDER', payload: { id: response.data.id, ...order }});
-  }, 1800);
+  }, 2000);
 };
 
 export const logOut = token => dispatch => {

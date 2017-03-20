@@ -20,6 +20,7 @@ class App extends Component {
     browserHistory.push('/trade-app/login');
   }
   render() {
+    let disabled = !this.props.orders.length;
     return (
       <div className="App">
       	<table id="trade_table">
@@ -28,7 +29,7 @@ class App extends Component {
       	      <td className="time">14:19</td>
       	      <td colSpan="5"></td>
       	      <td className="cancel-all-orders">
-      	        <CancelAll cancelAll={this.props.cancelAll}/>
+      	        <CancelAll disabled={disabled} cancelAll={this.props.cancelAll}/>
       	      </td>
       	      <td colSpan="3"></td>
       	    </tr>
@@ -54,7 +55,8 @@ class App extends Component {
 function mapStateToProps(state) {
   return {
     instruments: state.instruments,
-    user: state.user
+    user: state.user,
+    orders: state.orders
   };
 }
 

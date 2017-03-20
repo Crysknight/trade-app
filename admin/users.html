@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Торговая Платформа - Панель администратора</title>
+	<link rel="stylesheet" href="./css/index.css">
+	<link rel="stylesheet" href="./css/add-session.css">
+</head>
+<body>
+	<h1>Пользователи</h1>
+	<div class="top-menu">
+		<ul>
+			<li><a href="sessions-list.html">Сессии</a></li>
+			<li><a href="users.html">Пользователи</a></li>
+		</ul>
+	</div>
+	<div id="__wrapper">
+		<div class="wrapper">
+			<form id="__session_form">
+				<label class="add-instruments">Добавить пользователя:</label>
+				<div id="__instruments">
+					<div class="instrument">
+						<input type="email" name="user-mail" placeholder="E-mail">
+						<input type="text" name="user-password" step="0.0001" placeholder="Пароль">
+					</div>
+					<input type="submit" id="__add_user" value="Добавить">
+				</div>
+			</form>
+		</div>
+		<div class="wrapper">
+			<h2>Список инструментов</h2>
+			<form class="users-form" method="GET" action="">
+				<table cellpadding="0" cellspacing="0">
+					<tbody>
+						<tr class="table-header">
+							<td style="width: 15%;">Пользователь</td>
+							<td>Пароль</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><input name="mail_1" type="email" value="ivan@mail.ru" /></td>
+							<td><input name="password_1" type="text" value="7pass_word" /></td>
+							<td><label>Учетная запись блокирована: </label><input type="checkbox" /></td>
+							<td><button value="1" name="update" type="submit" class="update-instrument"></button></td>
+							<td><button value="1" name="delete" type="submit" class="remove-instrument"></button></td>
+						</tr>
+						<tr>
+							<td><input name="mail_2" type="email" value="vasily@mail.ru" /></td>
+							<td><input name="password_2" type="text" value="1pas_sword" /></td>
+							<td><label>Учетная запись блокирована: </label><input type="checkbox" /></td>
+							<td><button value="2" name="update" type="submit" class="update-instrument"></button></td>
+							<td><button value="2" name="delete" type="submit" class="remove-instrument"></button></td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="./js/index.js"></script>
+
+</body>
+</html>

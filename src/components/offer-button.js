@@ -10,7 +10,7 @@ export default class Offer extends Component {
   }
   render() {
     return (
-      <input type="submit" value="Продажа" onClick={this.setOrderType} />
+      <input disabled={this.props.disabled} type="submit" value="Продажа" onClick={this.setOrderType} />
     );
   }
 }

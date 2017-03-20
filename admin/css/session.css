@@ -1,0 +1,16 @@
+h2 {
+	margin-top: 50px;
+}
+
+table {
+	width: 90%;
+}
+
+table td {
+	padding: 4px;
+	border-bottom: 1px solid #eee;
+}
+
+table .table-header {
+	background-color: #eee;
+}
