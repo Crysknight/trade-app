@@ -6,7 +6,7 @@ export default class Bid extends Component {
   	this.setOrderType = this.setOrderType.bind(this);
   }
   setOrderType() {
-  	this.props.setOrderType('bid');
+  	this.props.setOrderType('buy');
   }
   render() {
     return (

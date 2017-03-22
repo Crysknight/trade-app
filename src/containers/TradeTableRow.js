@@ -33,10 +33,11 @@ class TradeTableRow extends Component {
   registerOrder(event) {
   	event.preventDefault();
   	this.props.addOrder({
-  	  instrument: this.props.instrument.id,
-  	  quantity: this.state.quantity,
-  	  type: this.state.orderType,
-      token: this.props.user.token
+      token: this.props.user.token,
+      type: this.state.orderType,
+      quantity: this.state.quantity,
+  	  instrument_id: this.props.instrument.id,
+      session_id: this.props.session.id
   	});
   }
   getBids() {
@@ -46,7 +47,7 @@ class TradeTableRow extends Component {
       );
     }
   	return this.props.orders.map((order) => {
-	  if (order.type === 'bid' && order.instrument === this.props.instrument.id) {
+	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
 	    return (
 	      <Order key={order.id} size={order.quantity} />
 	    );
@@ -57,7 +58,7 @@ class TradeTableRow extends Component {
   }
   getOffers() {
   	return this.props.orders.map((order) => {
-	  if (order.type === 'offer' && order.instrument === this.props.instrument.id) {
+	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
 	    return (
 	      <Order key={order.id} size={order.quantity} />
 	    );
@@ -129,7 +130,8 @@ function mapStateToProps(state) {
   return {
     orders: state.orders,
     user: state.user,
-    addingOrders: state.addingOrders
+    addingOrders: state.addingOrders,
+    session: state.session
   };
 }
 

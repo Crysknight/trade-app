@@ -6,7 +6,7 @@ export default class Offer extends Component {
   	this.setOrderType = this.setOrderType.bind(this);
   }
   setOrderType() {
-  	this.props.setOrderType('offer');
+  	this.props.setOrderType('sale');
   }
   render() {
     return (
