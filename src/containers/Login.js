@@ -18,11 +18,13 @@ class Login extends Component {
   	};
   }
   componentWillReceiveProps(nextProps) {
-    if (
+    if (nextProps.user.roleName === 'isadmin') {
+      document.location = '/trade-app/admin/';
+    } else if (
       JSON.stringify(nextProps.user) !== '{}' && 
       !nextProps.user.error
     ) {
-      browserHistory.push('/trade-app');
+      browserHistory.push('/trade-app/');
     }
   }
   submitUser(event) {
@@ -37,6 +39,9 @@ class Login extends Component {
   	} else if (event.target.id === 'auth__password') {
   	  this.setState({ password: event.target.value });
   	}
+    if (this.props.user.error) {
+      this.props.tryLoginAgain();
+    }
   }
   render() {
     let resultBlock;
@@ -44,7 +49,7 @@ class Login extends Component {
       switch (this.props.user.error) {
         case 'wrong user': {
           console.log('You\'re liar!');
-          resultBlock = <div className="errorBlock">Ошибка</div>;
+          resultBlock = <div className="errorBlock">Неверный логин и/или пароль</div>;
           break;
         }
         case 'internal server error': {
@@ -89,7 +94,8 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
-  	checkUser: actions.checkUser
+  	checkUser: actions.checkUser,
+    tryLoginAgain: actions.tryLoginAgain
   }, dispatch);
 }
 

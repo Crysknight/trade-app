@@ -40,6 +40,12 @@ export default function(state = {}, action) {
       cookie.remove('token', { path: '/' });
       return {};
     }
+    case 'TRY_LOGIN_AGAIN': {
+      return {
+        ...state,
+        error: 'trying again'
+      };
+    }
   	default: {
   	  return state;
   	}

@@ -45,7 +45,7 @@ function init() {
 ReactDOM.render(
 	<Provider store={store}>
 	  <Router history={history}>
-	    <Route path="/trade-app" onEnter={init} component={MasterPage}>
+	    <Route path="/trade-app/" onEnter={init} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="/trade-app/login" component={Login} />
 	    </Route>

@@ -11,6 +11,12 @@ import TradeTableRow from './TradeTableRow';
 import CancelAll from '../components/cancel-all';
 
 class App extends Component {
+  componentWillMount() {
+    // this.interval = setInterval(() => this.props.checkUpdate(1, 2), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
   createTradeTable() {
   	return this.props.instruments.map((instrument) => <TradeTableRow key={instrument.id} instrument={instrument}/>);
   }
@@ -46,7 +52,7 @@ class App extends Component {
       		{this.createTradeTable()}
       	  </tbody>
       	</table>
-        <div className="signOut" onClick={this.logOut.bind(this)}>Разлогиниться</div>
+        <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
       </div>
     );
   }
@@ -63,7 +69,8 @@ function mapStateToProps(state) {
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
   	cancelAll: actions.cancelAll,
-    logOut: actions.logOut
+    logOut: actions.logOut,
+    checkUpdate: actions.checkUpdate
   }, dispatch);
 }
 

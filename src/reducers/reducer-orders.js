@@ -29,13 +29,4 @@ export default function(state = [], action) {
   	  return state;
   	}
   }
-
-/*{
-	id: 1,
-	instrument: 1,
-	quantity: 25,
-	type: 'bid',
-    status: 'placed'
-  }*/
-
 }

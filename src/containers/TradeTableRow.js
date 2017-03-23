@@ -47,47 +47,53 @@ class TradeTableRow extends Component {
       );
     }
   	return this.props.orders.map((order) => {
-	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
-	    return (
-	      <Order key={order.id} size={order.quantity} />
-	    );
-	  } else {
-	  	return false;
-	  }
-  	});
+  	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
+  	    return (
+  	      <Order key={order.id} size={order.quantity} />
+  	    );
+  	  } else {
+  	  	return false;
+  	  }
+    });
   }
   getOffers() {
   	return this.props.orders.map((order) => {
-	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
-	    return (
-	      <Order key={order.id} size={order.quantity} />
-	    );
-	  } else {
-	  	return false;
-	  }
+  	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
+  	    return (
+  	      <Order key={order.id} size={order.quantity} />
+  	    );
+  	  } else {
+  	  	return false;
+  	  }
   	});
   }
   getClosedBids() {
-  	// return this.props.orders.map((order) => {
-	  // if (order.type === 'bid' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
-	  //   return (
-	  //     <Order key={order.id} size={order.quantity} />
-	  //   );
-	  // } else {
-	  // 	return false;
-	  // }
-  	// });
+    let deals = this.props.deals;
+    console.dir(this.props.deals);
+    let amount = 0;
+    for (let i = 0; i < deals.length; i++) {
+      if (deals[i].type === 'buy' && deals[i].instrument === this.props.instrument.id) {
+        amount += deals[i].volume;
+      }
+    }
+    console.log(amount);
+    if (amount) {
+      return amount;
+    }
   }
   getClosedOffers() {
-  	// return this.props.orders.map((order) => {
-	  // if (order.type === 'offer' && order.status === 'closed' && order.instrument === this.props.instrument.id) {
-	  //   return (
-	  //     <Order key={order.id} size={order.quantity} />
-	  //   );
-	  // } else {
-	  // 	return false;
-	  // }
-  	// });
+    let deals = this.props.deals;
+    console.dir(this.props.deals);
+    let amount = 0;
+    for (let i = 0; i < deals.length; i++) {
+      if (deals[i].type === 'sale' && deals[i].instrument === this.props.instrument.id) {
+        amount += deals[i].volume;
+      }
+    }
+    console.log(amount);
+    if (amount) {
+      return amount;
+    }
   }
   render() {
     let disabled = false;
@@ -131,7 +137,8 @@ function mapStateToProps(state) {
     orders: state.orders,
     user: state.user,
     addingOrders: state.addingOrders,
-    session: state.session
+    session: state.session,
+    deals: state.deals
   };
 }
 

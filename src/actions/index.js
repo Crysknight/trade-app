@@ -13,14 +13,59 @@ export const cancelAll = () => {
   };
 };
 
+export const tryLoginAgain = () => {
+  return {
+    type: 'TRY_LOGIN_AGAIN'
+  };
+}
+
+/* Async block */
+
+export const checkUpdate = (token, deals) => dispatch => {
+  console.log(token, deals);
+  axios.post('core/checkdeals', token)
+    .then(function(response) {
+      console.log(token, deals);
+    })
+    .catch(function(error) {
+      console.log('Some error occured');
+    });
+}
+
 export const addOrder = order => dispatch => {
   dispatch({ type: 'ADDING_ORDER', payload: order.instrument_id });
   axios.post('core/addorder', order)
-    .then(function (response) {
+    .then(function(response) {
       console.log('order successful');
       dispatch({ type: 'ADD_ORDER', payload: { id: response.data.id, instrument: order.instrument_id, ...order }});
+      axios.post('core/checkorder', {
+        ...order,
+        order_id: response.data.id
+      })
+        .then(function(response) {
+          if (response.data.buyer !== 0 && response.data.seller !== 0) {
+            if (order.type === 'buy') {
+              dispatch({ type: "NEW_DEAL", payload: {
+                type: 'buy',
+                instrument: response.data.instrument_id,
+                ownOrder: response.data.buyer,
+                contractorOrder: response.data.seller
+              }});
+            } else {
+              dispatch({ type: "NEW_DEAL", payload: {
+                type: 'sale',
+                instrument: response.data.instrument_id,
+                ownOrder: response.data.seller,
+                contractorOrder: response.data.buyer
+              }});
+            }
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     })
-    .catch(function (error) {
+    .catch(function(error) {
       console.log('order failure', error.response.status);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
     });
@@ -37,10 +82,10 @@ export const addOrder = order => dispatch => {
 
 export const logOut = token => dispatch => {
   axios.post('core/logout', token)
-    .then(function (response) {
+    .then(function(response) {
       dispatch({ type: 'LOG_OUT' });
     }) 
-    .catch(function (error) {
+    .catch(function(error) {
       console.log(error);
       dispatch({ type: 'LOG_OUT' });
     });
@@ -48,8 +93,6 @@ export const logOut = token => dispatch => {
   //   type: 'LOG_OUT'
   // }
 };
-
-/* Async block */
 
 export const checkUser = user => dispatch => {
   
@@ -85,14 +128,14 @@ export const checkUser = user => dispatch => {
   // }, 1500);
 
   axios.post('core/login', user)
-    .then(function (response) {
+    .then(function(response) {
       dispatch({ type: 'CHECK_USER_SUCCESS', payload: {
         eMail: user.eMail,
         roleName: response.data.role_name,
         token: response.data.token
       }});
     })
-    .catch(function (error) {
+    .catch(function(error) {
       dispatch({ type: 'CHECK_USER_FAILURE', payload: {
         response: error.response.status
       }});
