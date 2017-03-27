@@ -11,14 +11,26 @@ import TradeTableRow from './TradeTableRow';
 import CancelAll from '../components/cancel-all';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.cancelAll = this.cancelAll.bind(this);
+  }
   componentWillMount() {
-    // this.interval = setInterval(() => this.props.checkUpdate(1, 2), 1000);
+    this.interval = setInterval(() => this.props.checkUpdate(this.props.user.token, this.props.deals, this.props.orders), 5000);
+    window.stop = () => clearInterval(this.interval);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
   }
   createTradeTable() {
   	return this.props.instruments.map((instrument) => <TradeTableRow key={instrument.id} instrument={instrument}/>);
+  }
+  cancelAll() {
+    let orders = [];
+    for (let i = 0; i < this.props.orders.length; i++) {
+      orders.push(this.props.orders[i].id);
+    }
+    this.props.cancelOrders(this.props.user.token, orders);
   }
   logOut() {
     let token = cookie.load('token');
@@ -35,7 +47,7 @@ class App extends Component {
       	      <td className="time">14:19</td>
       	      <td colSpan="5"></td>
       	      <td className="cancel-all-orders">
-      	        <CancelAll disabled={disabled} cancelAll={this.props.cancelAll}/>
+      	        <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
       	      </td>
       	      <td colSpan="3"></td>
       	    </tr>
@@ -62,13 +74,14 @@ function mapStateToProps(state) {
   return {
     instruments: state.instruments,
     user: state.user,
-    orders: state.orders
+    orders: state.orders,
+    deals: state.deals
   };
 }
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
-  	cancelAll: actions.cancelAll,
+  	cancelOrders: actions.cancelOrders,
     logOut: actions.logOut,
     checkUpdate: actions.checkUpdate
   }, dispatch);

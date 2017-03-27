@@ -19,6 +19,7 @@ class TradeTableRow extends Component {
   	this.registerOrder = this.registerOrder.bind(this);
   	this.setQuantity = this.setQuantity.bind(this);
   	this.setOrderType = this.setOrderType.bind(this);
+    this.cancelRow = this.cancelRow.bind(this);
   }
   setQuantity(value) {
   	this.setState({
@@ -35,10 +36,21 @@ class TradeTableRow extends Component {
   	this.props.addOrder({
       token: this.props.user.token,
       type: this.state.orderType,
-      quantity: this.state.quantity,
+      quantity: +this.state.quantity,
   	  instrument_id: this.props.instrument.id,
       session_id: this.props.session.id
   	});
+  }
+  cancelRow(instrument) {
+    let orders = [];
+    for (let i = 0; i < this.props.orders.length; i++) {
+      if (this.props.orders[i].instrument === instrument) {
+        orders.push(this.props.orders[i].id);
+      }
+    }
+    if (orders.length !== 0) {
+      this.props.cancelOrders(this.props.user.token, orders);
+    }
   }
   getBids() {
     if (this.props.orders.filter(order => order._failure).length !== 0) {
@@ -69,28 +81,24 @@ class TradeTableRow extends Component {
   }
   getClosedBids() {
     let deals = this.props.deals;
-    console.dir(this.props.deals);
     let amount = 0;
     for (let i = 0; i < deals.length; i++) {
       if (deals[i].type === 'buy' && deals[i].instrument === this.props.instrument.id) {
         amount += deals[i].volume;
       }
     }
-    console.log(amount);
     if (amount) {
       return amount;
     }
   }
   getClosedOffers() {
     let deals = this.props.deals;
-    console.dir(this.props.deals);
     let amount = 0;
     for (let i = 0; i < deals.length; i++) {
       if (deals[i].type === 'sale' && deals[i].instrument === this.props.instrument.id) {
         amount += deals[i].volume;
       }
     }
-    console.log(amount);
     if (amount) {
       return amount;
     }
@@ -121,7 +129,7 @@ class TradeTableRow extends Component {
   	    <td className="cancel-row">
           <CancelRow 
             instrument={this.props.instrument.id} 
-            cancelRow={this.props.cancelRow} 
+            cancelRow={this.cancelRow} 
             disabled={cancelDisabled} />
         </td>
   	    <td>{this.getOffers()}</td>
@@ -144,7 +152,7 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
-  	cancelRow: actions.cancelRow,
+  	cancelOrders: actions.cancelOrders,
   	addOrder: actions.addOrder
   }, dispatch);
 }
