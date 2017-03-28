@@ -33,8 +33,8 @@ export default function(state = [], action) {
       let newState = state.map((order) => {
         if (order.id === payload.id) {
           order.quantity -= payload.volume;
-          return order;
         }
+        return order;
       });
       newState = newState.filter((order) => {
         return order.quantity !== 0;

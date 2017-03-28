@@ -32,11 +32,13 @@ function init() {
     let eMail = cookie.load('eMail');
     let roleName = cookie.load('roleName');
     let token = cookie.load('token');
+    let id = cookie.load('id');
     if (eMail && roleName && token) {
       store.dispatch({type: 'CHECK_USER_SUCCESS', payload: {
         eMail,
         roleName,
-        token
+        token,
+        id: +id
       }});
     }
   }

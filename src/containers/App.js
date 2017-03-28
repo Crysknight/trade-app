@@ -16,7 +16,7 @@ class App extends Component {
     this.cancelAll = this.cancelAll.bind(this);
   }
   componentWillMount() {
-    this.interval = setInterval(() => this.props.checkUpdate(this.props.user.token, this.props.deals, this.props.orders), 5000);
+    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 5000);
     window.stop = () => clearInterval(this.interval);
   }
   componentWillUnmount() {
@@ -36,6 +36,7 @@ class App extends Component {
     let token = cookie.load('token');
     this.props.logOut(token);
     browserHistory.push('/trade-app/login');
+    location.reload();
   }
   render() {
     let disabled = !this.props.orders.length;

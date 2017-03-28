@@ -19,43 +19,47 @@ export const cancelOrders = (token, orders) => dispatch => {
     });
 };
 
-export const checkUpdate = (token, deals, orders) => dispatch => {
-  axios.post('core/checkdeals', { token })
-    .then(function(response) {
+/* dece6de644a14c94272fb2375fb5a9c3 - admin, 52992dc20dfde8b062ba199212f055d8 - user */
+
+export const checkUpdate = (user, deals) => dispatch => {
+  axios.post('core/checkdeals', { token: user.token })
+    .then(response => {
       let newDeals = response.data.deals;
-      let orderIds = orders.map(order => order.id);
-      console.log('orderIds', orderIds);
-      for (let i = 0; i < newDeals.length; i++) {
-        let id;
-        let type;
-        for (let j = 0; j < orderIds.length; j++) {
-          if (newDeals[i].buyer_order_id === orderIds[j]) {
-            id = newDeals[i].buyer_order_id;
-            type = 'buy';
-            return;
-          } else if (newDeals[i].seller_order_id === orderIds[j]) {
-            id = newDeals[i].seller_order_id;
-            type = 'sale';
-            return;
+      if (newDeals.length !== 0) {
+        for (let i = 0; i < newDeals.length; i++) {
+          if (!deals[i]) {
+            let id = +newDeals[i].id;
+            let type;
+            let instrument = +newDeals[i].instrument_id;
+            let volume;
+            let orderId;
+            if (+newDeals[i].seller === user.id) {
+              type = 'sale';
+              volume = +newDeals[i].saled;
+              orderId = +newDeals[i].seller_order_id;
+            } else if (+newDeals[i].buyer === user.id) {
+              type = 'buy';
+              volume = +newDeals[i].buyed;
+              orderId = +newDeals[i].buyer_order_id;
+            }
+            if (id && type && instrument && volume) {
+              dispatch({ type: "NEW_DEAL", payload: {
+                id,
+                type,
+                instrument,
+                volume
+              }});
+              dispatch({ type: "UPDATE_ORDER", payload: { volume, orderId }});
+            }
           }
         }
-        let instrument = newDeals[i].instrument_id;
-        let volume = newDeals[i].buyed;
-        if (!deals[i]) {
-          dispatch({ type: "NEW_DEAL", payload: {
-            id,
-            type,
-            instrument,
-            volume
-          }});
-        }
       }
-      console.log(deals, newDeals);
     })
-    .catch(function(error) {
-      console.log('Some error occured');
+    .catch(error => {
+      console.log(error);
+      dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
     });
-}
+};
 
 export const addOrder = order => dispatch => {
   dispatch({ type: "ADDING_ORDER", payload: order.instrument_id });
@@ -169,7 +173,8 @@ export const checkUser = user => dispatch => {
       dispatch({ type: 'CHECK_USER_SUCCESS', payload: {
         eMail: user.eMail,
         roleName: response.data.role_name,
-        token: response.data.token
+        token: response.data.token,
+        id: +response.data.id
       }});
     })
     .catch(function(error) {

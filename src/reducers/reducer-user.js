@@ -11,6 +11,7 @@ export default function(state = {}, action) {
   	  cookie.save('eMail', payload.eMail, { path: '/', expires: expireDate });
   	  cookie.save('roleName', payload.roleName, { path: '/', expires: expireDate });
   	  cookie.save('token', payload.token, { path: '/', expires: expireDate });
+      cookie.save('id', payload.id, { path: '/', expires: expireDate });
   	  return {
   	  	...action.payload,
   	  	error: false
