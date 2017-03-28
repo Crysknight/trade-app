@@ -7,6 +7,7 @@ export const tryLoginAgain = () => {
 }
 
 /* Async block */
+/* Added another piece of code */
 
 export const cancelOrders = (token, orders) => dispatch => {
   axios.post('core/deleteordersarray', { token, ids: orders })
