@@ -1,4 +1,6 @@
 import axios from 'axios';
+import cookie from 'react-cookie';
+import { browserHistory } from 'react-router';
 
 export const tryLoginAgain = () => {
   return {
@@ -18,8 +20,6 @@ export const cancelOrders = (token, orders) => dispatch => {
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
     });
 };
-
-/* dece6de644a14c94272fb2375fb5a9c3 - admin, 52992dc20dfde8b062ba199212f055d8 - user */
 
 export const checkUpdate = (user, deals) => dispatch => {
   axios.post('core/checkdeals', { token: user.token })
@@ -49,7 +49,7 @@ export const checkUpdate = (user, deals) => dispatch => {
                 instrument,
                 volume
               }});
-              dispatch({ type: "UPDATE_ORDER", payload: { volume, orderId }});
+              dispatch({ type: "UPDATE_ORDER", payload: { volume, id: orderId }});
             }
           }
         }
@@ -66,73 +66,64 @@ export const addOrder = order => dispatch => {
   axios.post('core/addorder', order)
     .then(function(response) {
       dispatch({ type: "ADD_ORDER", payload: { id: +response.data.id, instrument: order.instrument_id, ...order }});
-      axios.post('core/checkorder', {
-        ...order,
-        order_id: response.data.id
-      })
-        .then(function(response) {
-          let deals = response.data.deals;
-          if (deals.length !== 0) {
-            if (order.type === 'buy') {
-              for (let i = 0; i < deals.length; i++) {
-                let volume = +deals[i].buyed;
-                let id = +deals[i].buyer_order_id;
-                let deal = {
-                  id,
-                  instrument: deals[i].instrument_id,
-                  type: 'buy',
-                  volume
-                }
-                dispatch({ type: "NEW_DEAL", payload: deal });
-                dispatch({ type: "UPDATE_ORDER", payload: { volume, id }});
-              }
-            } else {
-              for (let i = 0; i < deals.length; i++) {
-                let volume = +deals[i].saled;
-                let id = +deals[i].seller_order_id;
-                let deal = {
-                  id,
-                  instrument: deals[i].instrument_id,
-                  type: 'sale',
-                  volume
-                }
-                dispatch({ type: "NEW_DEAL", payload: deal });
-                dispatch({ type: "UPDATE_ORDER", payload: { volume, id }});
-              }
-            }
+      let deals = response.data.checkorder.deals;
+      if (deals.length !== 0) {
+        for (let i = 0; i < deals.length; i++) {
+          let id = Date.now();
+          let instrument = deals[i].instrument_id;
+          let type;
+          let volume;
+          let orderId;
+          if (order.type === 'buy') {
+            orderId = +deals[i].buyer_order_id;
+            type = "buy";
+            volume = +deals[i].buyed;
+
+          } else if (order.type === 'sale') {
+            orderId = +deals[i].seller_order_id;
+            type = "sale";
+            volume = +deals[i].saled;
+
+          } else {
+            dispatch({ type: 'ORDER_FAILURE', payload: 'order type invalid' });
+            throw new Error('order type invalid');
           }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+          dispatch({ type: "NEW_DEAL", payload: {
+            id,
+            instrument,
+            type,
+            volume
+          }});
+          dispatch({ type: "UPDATE_ORDER", payload: { volume, id: orderId }});
+        }
+      }
     })
     .catch(function(error) {
       console.log('order failure', error.response.status);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
     });
-  // dispatch({ type: 'ADDING_ORDER', payload: order.instrument });
-  // setTimeout(() => {
-  //   let response = {
-  //     data: {
-  //       id: Date.now()
-  //     }
-  //   };
-  //   dispatch({ type: 'ADD_ORDER', payload: { id: response.data.id, ...order }});
-  // }, 200);
 };
 
 export const logOut = token => dispatch => {
   axios.post('core/logout', token)
     .then(function(response) {
+      cookie.remove('eMail');
+      cookie.remove('roleName');
+      cookie.remove('token');
+      cookie.remove('orders');
       dispatch({ type: 'LOG_OUT' });
+      browserHistory.push('/trade-app/login');
     }) 
     .catch(function(error) {
       console.log(error);
+      cookie.remove('eMail');
+      cookie.remove('roleName');
+      cookie.remove('token');
+      cookie.remove('orders');
+      let hello = cookie.load('eMail');
       dispatch({ type: 'LOG_OUT' });
+      browserHistory.push('/trade-app/login');
     });
-  // return {
-  //   type: 'LOG_OUT'
-  // }
 };
 
 export const checkUser = user => dispatch => {
@@ -170,6 +161,10 @@ export const checkUser = user => dispatch => {
 
   axios.post('core/login', user)
     .then(function(response) {
+      cookie.save('eMail', user.eMail, { path: '/', maxAge: 1800 });
+      cookie.save('roleName', response.data.role_name, { path: '/', maxAge: 1800 });
+      cookie.save('token', response.data.token, { path: '/', maxAge: 1800 });
+      cookie.save('id', +response.data.id, { path: '/', maxAge: 1800 });
       dispatch({ type: 'CHECK_USER_SUCCESS', payload: {
         eMail: user.eMail,
         roleName: response.data.role_name,

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
 import cookie from 'react-cookie';
 
 import * as actions from '../actions';
@@ -16,7 +15,7 @@ class App extends Component {
     this.cancelAll = this.cancelAll.bind(this);
   }
   componentWillMount() {
-    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 5000);
+    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 1000);
     window.stop = () => clearInterval(this.interval);
   }
   componentWillUnmount() {
@@ -33,10 +32,7 @@ class App extends Component {
     this.props.cancelOrders(this.props.user.token, orders);
   }
   logOut() {
-    let token = cookie.load('token');
-    this.props.logOut(token);
-    browserHistory.push('/trade-app/login');
-    location.reload();
+    this.props.logOut(this.props.user.token);
   }
   render() {
     let disabled = !this.props.orders.length;
