@@ -69,7 +69,7 @@ export const addOrder = order => dispatch => {
       let deals = response.data.checkorder.deals;
       if (deals.length !== 0) {
         for (let i = 0; i < deals.length; i++) {
-          let id = Date.now();
+          let id = deals[i].id;
           let instrument = deals[i].instrument_id;
           let type;
           let volume;
@@ -112,7 +112,7 @@ export const logOut = token => dispatch => {
       cookie.remove('token');
       cookie.remove('orders');
       dispatch({ type: 'LOG_OUT' });
-      browserHistory.push('/trade-app/login');
+      setTimeout(() => browserHistory.push('/trade-app/login'), 2500);
     }) 
     .catch(function(error) {
       console.log(error);
@@ -122,7 +122,7 @@ export const logOut = token => dispatch => {
       cookie.remove('orders');
       let hello = cookie.load('eMail');
       dispatch({ type: 'LOG_OUT' });
-      browserHistory.push('/trade-app/login');
+      setTimeout(() => browserHistory.push('/trade-app/login'), 2500);
     });
 };
 

@@ -33,7 +33,6 @@ function init() {
     let roleName = cookie.load('roleName');
     let token = cookie.load('token');
     let id = cookie.load('id');
-    let orders = cookie.load('orders');
     if (eMail && roleName && token) {
       store.dispatch({type: 'CHECK_USER_SUCCESS', payload: {
         eMail,
@@ -41,11 +40,6 @@ function init() {
         token,
         id: +id
       }});
-    }
-    if (orders) {
-      for (let i = 0; i < orders.length; i++) {
-        store.dispatch({ type: "ADD_ORDER", payload: orders[i]});
-      }
     }
   }
 }
