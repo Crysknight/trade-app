@@ -1,13 +1,11 @@
-import cookie from 'react-cookie';
-
 export default function(state = [], action) {
 
   switch (action.type) {
   	case 'ADD_ORDER': {
-      let newState = state;
-      newState.push(action.payload);
-      cookie.save('orders', newState, { path: '/', maxAge: 3600 });
-  	  return newState;
+      return [
+        action.payload,
+        ...state
+      ];
   	}
   	case 'CANCEL_ORDERS': {
       return state.filter((order) => {

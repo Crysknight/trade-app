@@ -15,7 +15,8 @@ class App extends Component {
     this.cancelAll = this.cancelAll.bind(this);
   }
   componentWillMount() {
-    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 1000);
+    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals, this.interval), 1000);
+    this.props.checkOrders(this.props.user.token, this.props.session.id);
     window.stop = () => clearInterval(this.interval);
   }
   componentWillUnmount() {
@@ -71,6 +72,7 @@ function mapStateToProps(state) {
   return {
     instruments: state.instruments,
     user: state.user,
+    session: state.session,
     orders: state.orders,
     deals: state.deals
   };
@@ -80,7 +82,8 @@ function matchDispatchToProps(dispatch) {
   return bindActionCreators({
   	cancelOrders: actions.cancelOrders,
     logOut: actions.logOut,
-    checkUpdate: actions.checkUpdate
+    checkUpdate: actions.checkUpdate,
+    checkOrders: actions.checkOrders
   }, dispatch);
 }
 
