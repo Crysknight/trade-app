@@ -10,6 +10,63 @@ export const tryLoginAgain = () => {
 
 /* Async block */
 
+export const init = (user, sessionId) => dispatch => {
+  axios.post('core/checkdeals', { token: user.token })
+    .then(response => {
+      let deals = response.data.deals;
+      for (let i = 0; i < deals.length; i++) {
+        let id = +deals[i].id;
+        let type;
+        let instrument = +deals[i].instrument_id;
+        let volume;
+        let orderId;
+        if (+deals[i].seller === user.id) {
+          type = 'sale';
+          volume = +deals[i].saled;
+          orderId = +deals[i].seller_order_id;
+        } else if (+deals[i].buyer === user.id) {
+          type = 'buy';
+          volume = +deals[i].buyed;
+          orderId = +deals[i].buyer_order_id;
+        }
+        if (id && type && instrument && volume) {
+          dispatch({ type: "NEW_DEAL", payload: {
+            id,
+            type,
+            instrument,
+            volume
+          }});
+          dispatch({ type: "UPDATE_ORDER", payload: { volume, id: orderId }});
+        }
+      }
+      axios.post('core/checkorders', { session_id: sessionId, token: user.token })
+        .then(response => {
+          let orders = response.data.result;
+          if (orders.length !== 0) {
+            for (let i = 0; i < orders.length; i++) {
+              dispatch({ type: "ADD_ORDER", payload: {
+                id: +orders[i].id,
+                instrument: +orders[i].instrument_id,
+                token,
+                type: orders[i].type,
+                quantity: +orders[i].quantity,
+                session_id: sessionId
+              }});
+            }
+          }
+          
+        })
+        .catch(error => {
+          console.log(error);
+          dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+        });
+    })
+    .catch(error => {
+      console.log(error);
+      dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+    });
+}
+
 export const cancelOrders = (token, orders) => dispatch => {
   axios.post('core/deleteordersarray', { token, ids: orders })
     .then(response => {
@@ -101,29 +158,6 @@ export const addOrder = order => dispatch => {
     })
     .catch(error => {
       console.log('order failure', error.response.status);
-      dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
-    });
-};
-
-export const checkOrders = (token, sessionId) => dispatch => {
-  axios.post('core/checkorders', { session_id: sessionId, token })
-    .then(response => {
-      let orders = response.data.result;
-      if (orders.length !== 0) {
-        for (let i = 0; i < orders.length; i++) {
-          dispatch({ type: "ADD_ORDER", payload: {
-            id: +orders[i].id,
-            instrument: +orders[i].instrument_id,
-            token,
-            type: orders[i].type,
-            quantity: +orders[i].quantity,
-            session_id: sessionId
-          }});
-        }
-      }
-    })
-    .catch(error => {
-      console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
     });
 };
