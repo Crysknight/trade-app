@@ -15,12 +15,17 @@ class App extends Component {
     this.cancelAll = this.cancelAll.bind(this);
   }
   componentWillMount() {
-    this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals, this.interval), 1000);
-    this.props.checkOrders(this.props.user.token, this.props.session.id);
-    window.stop = () => clearInterval(this.interval);
+    this.props.init(this.props.user, this.props.session.id);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
+  }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.interval !== nextProps.interval && nextProps.interval) {
+      this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 1000);
+    } else if (this.props.interval !== nextProps.interval && !nextProps.interval) {
+      clearInterval(this.interval);
+    }
   }
   createTradeTable() {
   	return this.props.instruments.map((instrument) => <TradeTableRow key={instrument.id} instrument={instrument}/>);
@@ -37,6 +42,7 @@ class App extends Component {
   }
   render() {
     let disabled = !this.props.orders.length;
+    console.log('hello');
     return (
       <div className="App">
       	<table id="trade_table">
@@ -74,7 +80,8 @@ function mapStateToProps(state) {
     user: state.user,
     session: state.session,
     orders: state.orders,
-    deals: state.deals
+    deals: state.deals,
+    interval: state.interval
   };
 }
 
@@ -83,7 +90,7 @@ function matchDispatchToProps(dispatch) {
   	cancelOrders: actions.cancelOrders,
     logOut: actions.logOut,
     checkUpdate: actions.checkUpdate,
-    checkOrders: actions.checkOrders
+    init: actions.init
   }, dispatch);
 }
 

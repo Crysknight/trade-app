@@ -39,31 +39,28 @@ export const init = (user, sessionId) => dispatch => {
           dispatch({ type: "UPDATE_ORDER", payload: { volume, id: orderId }});
         }
       }
-      axios.post('core/checkorders', { session_id: sessionId, token: user.token })
-        .then(response => {
-          let orders = response.data.result;
-          if (orders.length !== 0) {
-            for (let i = 0; i < orders.length; i++) {
-              dispatch({ type: "ADD_ORDER", payload: {
-                id: +orders[i].id,
-                instrument: +orders[i].instrument_id,
-                token,
-                type: orders[i].type,
-                quantity: +orders[i].quantity,
-                session_id: sessionId
-              }});
-            }
-          }
-          
-        })
-        .catch(error => {
-          console.log(error);
-          dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
-        });
+      return axios.post('core/checkorders', { session_id: sessionId, token: user.token });
+    })
+    .then(response => {
+      let orders = response.data.result;
+      if (orders.length !== 0) {
+        for (let i = 0; i < orders.length; i++) {
+          dispatch({ type: "ADD_ORDER", payload: {
+            id: +orders[i].id,
+            instrument: +orders[i].instrument_id,
+            token: user.token,
+            type: orders[i].type,
+            quantity: +orders[i].quantity,
+            session_id: sessionId
+          }});
+        }
+      }
+      dispatch({ type: "INTERVAL_TURN_ON" });
     })
     .catch(error => {
       console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+      dispatch({ type: "INTERVAL_TURN_OFF" });
     });
 }
 
@@ -75,10 +72,11 @@ export const cancelOrders = (token, orders) => dispatch => {
     .catch(error => {
       console.log('order failure', error.response.status);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+      dispatch({ type: "INTERVAL_TURN_OFF" });
     });
 };
 
-export const checkUpdate = (user, deals, interval) => dispatch => {
+export const checkUpdate = (user, deals) => dispatch => {
   axios.post('core/checkdeals', { token: user.token })
     .then(response => {
       let newDeals = response.data.deals;
@@ -115,7 +113,7 @@ export const checkUpdate = (user, deals, interval) => dispatch => {
     .catch(error => {
       console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
-      clearInterval(interval);
+      dispatch({ type: "INTERVAL_TURN_OFF" });
     });
 };
 
@@ -159,6 +157,7 @@ export const addOrder = order => dispatch => {
     .catch(error => {
       console.log('order failure', error.response.status);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+      dispatch({ type: "INTERVAL_TURN_OFF" });
     });
 };
 

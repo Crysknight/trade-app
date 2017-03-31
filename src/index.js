@@ -12,6 +12,7 @@ import cookie from 'react-cookie';
 import App from './containers/App';
 import Login from './containers/Login';
 import MasterPage from './components/MasterPage';
+import AdminPanel from './components/AdminPanel';
 import './css/index.css';
 import allReducers from './reducers';
 
@@ -27,7 +28,7 @@ function requireAuth(nextState, replace) {
 }
 
 function init() {
-  console.log('I enter %)');
+  window.browserHistory = browserHistory;
   if (JSON.stringify(store.getState().user) === '{}') {
     let eMail = cookie.load('eMail');
     let roleName = cookie.load('roleName');
@@ -49,7 +50,8 @@ ReactDOM.render(
 	  <Router history={history}>
 	    <Route path="/trade-app/" onEnter={init} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
-	      <Route path="/trade-app/login" component={Login} />
+	      <Route path="login" component={Login} />
+        <Route path="admin" component={AdminPanel} />
 	    </Route>
   	  </Router>
   	</Provider>,
