@@ -11,8 +11,12 @@ import cookie from 'react-cookie';
 
 import App from './containers/App';
 import Login from './containers/Login';
+import AdminPanel from './containers/AdminPanel';
+import Sessions from './containers/Sessions';
+import Users from './containers/Users';
+
 import MasterPage from './components/MasterPage';
-import AdminPanel from './components/AdminPanel';
+import AdminMenu from './components/admin-menu';
 import './css/index.css';
 import allReducers from './reducers';
 
@@ -25,6 +29,14 @@ function requireAuth(nextState, replace) {
   	  pathname: '/trade-app/login'
   	});
   } 
+}
+
+function checkAdmin(nextState, replace) {
+  if (store.getState().user.roleName !== 'isadmin') {
+    replace({
+      pathname: '/trade-app/'
+    });
+  }
 }
 
 function init() {
@@ -51,9 +63,13 @@ ReactDOM.render(
 	    <Route path="/trade-app/" onEnter={init} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="login" component={Login} />
-        <Route path="admin" component={AdminPanel} />
+        <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>
+          <IndexRoute component={AdminMenu} />
+          <Route path="sessions" component={Sessions} />
+          <Route path="users" component={Users} />
+        </Route>
 	    </Route>
-  	  </Router>
-  	</Provider>,
+	  </Router>
+	</Provider>,
   document.getElementById('root')
 );
