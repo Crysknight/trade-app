@@ -13,6 +13,7 @@ import App from './containers/App';
 import Login from './containers/Login';
 import AdminPanel from './containers/AdminPanel';
 import Sessions from './containers/Sessions';
+import AddSession from './containers/AddSession';
 import Users from './containers/Users';
 
 import MasterPage from './components/MasterPage';
@@ -66,6 +67,7 @@ ReactDOM.render(
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>
           <IndexRoute component={AdminMenu} />
           <Route path="sessions" component={Sessions} />
+          <Route path="addsession" component={AddSession} />
           <Route path="users" component={Users} />
         </Route>
 	    </Route>

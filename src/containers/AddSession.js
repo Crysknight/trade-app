@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router';
+// import { Link } from 'react-router';
 
 import * as actions from '../actions';
 
-//here be components
+import TimeForm from '../components/time-form';
 
-//import '../css/sessions.css';
+//import '../css/addsession.css';
 
-class Sessions extends Component {
+class AddSession extends Component {
 
 	// constructor(props) {
 		// super(props);
@@ -18,9 +18,11 @@ class Sessions extends Component {
 
 	render() {
 		return (
-			<div className="sessions">
-				<h2>Сессии</h2>
-				<Link to='/trade-app/admin/addsession'>Добавить новую</Link>
+			<div className="add-session">
+				<h2>Добавить сессию</h2>
+				<div id="__session_form">
+					<TimeForm />
+				</div>
 			</div>
 		);
 	}
@@ -39,4 +41,4 @@ function matchDispatchToProps(dispatch) {
 	}, dispatch);
 }
 
-export default connect(mapStateToProps, matchDispatchToProps)(Sessions);
+export default connect(mapStateToProps, matchDispatchToProps)(AddSession);
