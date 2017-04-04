@@ -9,6 +9,16 @@ export default function(state = [], action) {
 				action.payload
 			];
 		}
+		case "INSTRUMENT_CHECKBOX": {
+			console.log('reducer: unchoose instrument');
+			let newState = [ ...state ];
+			for (let i = 0; i < newState.length; i++) {
+				if (newState[i].id === action.payload) {
+					newState[i].chosen = !newState[i].chosen;
+				}
+			}
+			return newState;
+		}
 		default: {
 			return state;
 		}

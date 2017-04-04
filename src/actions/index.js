@@ -8,6 +8,14 @@ export const tryLoginAgain = () => {
   };
 };
 
+export const instrumentCheckbox = (instrument_id) => {
+  console.log(instrument_id);
+  return {
+    type: "INSTRUMENT_CHECKBOX",
+    payload: instrument_id
+  }
+}
+
 /* Async block */
 
 export const init = (user) => dispatch => {
@@ -247,11 +255,11 @@ export const checkUser = user => dispatch => {
 export const uploadAdminInstruments = user => dispatch => {
   axios.post('../core/getinstruments', { token: user.token, session_id: 0 })
     .then(response => {
-      console.log(response);
       let instruments = response.data.rows;
       for (let i = 0; i < instruments.length; i++) {
         instruments[i].id = +instruments[i].id;
         instruments[i].price = +instruments[i].price;
+        instruments[i].chosen = true;
       }
       dispatch({ type: "UPLOAD_ADMIN_INSTRUMENTS", payload: instruments });
     })
@@ -267,10 +275,25 @@ export const addInstrument = (user, instrument_name, instrument_price) => dispat
         id: +response.data.id,
         name: instrument_name,
         price: +instrument_price,
-        interest: 0
+        interest: 0,
+        chosen: true
       }});
     })
     .catch(error => {
       console.log(error);
     });
 };
+
+export const addSession = (token, date_start, date_end, instrument_ids) => dispatch => {
+  // console.log(token);
+  // console.log(date_start);
+  // console.log(date_end);
+  // console.log(instrument_ids);
+  axios.post('../core/sessionadd', { token, date_start, date_end, instrument_ids })
+    .then(response => {
+      console.log('session successfully added');
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}

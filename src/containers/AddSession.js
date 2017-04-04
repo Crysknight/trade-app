@@ -7,6 +7,7 @@ import * as actions from '../actions';
 
 import TimeForm from '../components/time-form';
 import AddInstrumentForm from '../components/add-instrument-form';
+import CheckBox from '../components/checkbox';
 
 //import '../css/addsession.css';
 
@@ -17,10 +18,11 @@ class AddSession extends Component {
 		this.handleTimeForm = this.handleTimeForm.bind(this);
 		this.handleAddInstrumentForm = this.handleAddInstrumentForm.bind(this);
 		this.handleInstrumentForm = this.handleInstrumentForm.bind(this);
+		this.handleCheckbox = this.handleCheckbox.bind(this);
+		this.registerSession = this.registerSession.bind(this);
 		this.state = {
 			date_start: undefined,
-			date_end: undefined,
-			instrument_ids: []
+			date_end: undefined
 		}
 	}
 
@@ -30,15 +32,14 @@ class AddSession extends Component {
 
 	handleTimeForm(e) {
 		if (e.target.id === 'date_start') {
-			this.setState({ date_start: e.target.value });
+			this.setState({ date_start: e.target.value.replace(/T/, ' ') });
 		} else if (e.target.id === 'date_end') {
-			this.setState({ date_end: e.target.value });
+			this.setState({ date_end: e.target.value.replace(/T/, ' ') + ':00' });
 		}
 	}
 
 	handleAddInstrumentForm(e) {
 		e.preventDefault();
-		console.dir(e.target);
 		let instrument_name = e.target[0].value;
 		let instrument_price = e.target[1].value;
 		this.props.addInstrument(this.props.user, instrument_name, instrument_price);
@@ -46,6 +47,17 @@ class AddSession extends Component {
 
 	handleInstrumentForm(e) {
 		console.dir(e.target);
+	}
+
+	handleCheckbox(e) {
+		this.props.instrumentCheckbox(+e.target.id.slice(11));
+	}
+
+	registerSession() {
+		if (this.state.date_start && this.state.date_end && this.props.adminInstruments.filter(instrument => instrument.chosen).length) {
+			let chosenInstruments = this.props.adminInstruments.map(instrument => instrument.id);
+			this.props.addSession(this.props.user.token, this.state.date_start, this.state.date_end, chosenInstruments);
+		}
 	}
 
 	render() {
@@ -59,7 +71,7 @@ class AddSession extends Component {
 									<td>{instrument.id}</td>
 									<td><input type="text" value={instrument.name} /></td>
 									<td><input type="number" step="0.0001" value={instrument.price.toFixed(4)} /></td>
-									<td><input id={`instrument_${instrument.id}`} type="checkbox" checked /></td>
+									<td><CheckBox checkboxId={`instrument_${instrument.id}`} checkboxOnChange={this.handleCheckbox} checkboxChecked={instrument.chosen} /></td>
 									<td><button>Обновить</button></td>
 								</tbody>
 							</table>
@@ -76,6 +88,7 @@ class AddSession extends Component {
 					<div id="__session_form">
 						<TimeForm handleTimeForm={this.handleTimeForm} />
 					</div>
+					<button onClick={this.registerSession}>ЗАРЕГИСТРИРОВАТЬ СЕССИЮ</button>
 					<AddInstrumentForm handleAddInstrumentForm={this.handleAddInstrumentForm} />
 				</div>
 				<div className="wrapper">
@@ -109,7 +122,9 @@ function mapStateToProps(state) {
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
 		uploadAdminInstruments: actions.uploadAdminInstruments,
-		addInstrument: actions.addInstrument
+		addInstrument: actions.addInstrument,
+		instrumentCheckbox: actions.instrumentCheckbox,
+		addSession: actions.addSession
 	}, dispatch);
 }
 
