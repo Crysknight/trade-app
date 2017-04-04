@@ -38,7 +38,7 @@ class TradeTableRow extends Component {
       type: this.state.orderType,
       quantity: +this.state.quantity,
   	  instrument_id: this.props.instrument.id,
-      session_id: this.props.session.id
+      session_id: +this.props.session.session_id
   	});
   }
   cancelRow(instrument) {

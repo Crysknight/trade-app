@@ -7,6 +7,7 @@ import * as actions from '../actions';
 import TradeTableRow from './TradeTableRow';
 
 import CancelAll from '../components/cancel-all';
+import Timer from '../components/timer';
 
 class App extends Component {
   constructor(props) {
@@ -14,14 +15,16 @@ class App extends Component {
     this.cancelAll = this.cancelAll.bind(this);
   }
   componentWillMount() {
-    this.props.init(this.props.user, this.props.session.id);
+    this.props.init(this.props.user);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.interval !== nextProps.interval && nextProps.interval) {
-      this.interval = setInterval(() => this.props.checkUpdate(this.props.user, this.props.deals), 1000);
+      this.interval = setInterval(() => {
+        this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments);
+      }, 3000);
     } else if (this.props.interval !== nextProps.interval && !nextProps.interval) {
       clearInterval(this.interval);
     }
@@ -41,35 +44,48 @@ class App extends Component {
   }
   render() {
     let disabled = !this.props.orders.length;
-    console.log('hello');
-    return (
-      <div className="App">
-      	<table id="trade_table">
-      	  <tbody>
-      	    <tr className="table-prerow">
-      	      <td className="time">14:19</td>
-      	      <td colSpan="5"></td>
-      	      <td className="cancel-all-orders">
-      	        <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
-      	      </td>
-      	      <td colSpan="3"></td>
-      	    </tr>
-      	  	<tr className="table-header">
-  	  		  <td>Инструмент</td>
-  	  		  <td>Цена</td>
-  	  		  <td colSpan="3">Объем заявки</td>
-  	  		  <td style={{borderRight: 'none', width: '9%'}}>Покупка</td>
-  	  		  <td style={{border: 'none'}}></td>
-  	  		  <td style={{borderLeft: 'none', width: '9%'}}>Продажа</td>
-  	  		  <td>Куплено</td>
-  	  		  <td>Продано</td>
-      	  	</tr>
-      		{this.createTradeTable()}
-      	  </tbody>
-      	</table>
-        <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
-      </div>
-    );
+    if (this.props.session.session_id) {
+      return (
+        <div className="App">
+          <table id="trade_table">
+            <tbody>
+              <tr className="table-prerow">
+                <Timer endTime={this.props.session.date_end}/>
+                <td colSpan="5"></td>
+                <td className="cancel-all-orders">
+                  <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
+                </td>
+                <td colSpan="3"></td>
+              </tr>
+              <tr className="table-header">
+              <td>Инструмент</td>
+              <td>Цена</td>
+              <td colSpan="3">Объем заявки</td>
+              <td style={{borderRight: 'none', width: '9%'}}>Покупка</td>
+              <td style={{border: 'none'}}></td>
+              <td style={{borderLeft: 'none', width: '9%'}}>Продажа</td>
+              <td>Куплено</td>
+              <td>Продано</td>
+              </tr>
+            {this.createTradeTable()}
+            </tbody>
+          </table>
+          <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
+        </div>
+      );
+    } else {
+      let cup = require('../../public/images/tea-cup.png');
+      return (
+        <div className="App">
+          <div className="no-session">
+            <p>На данный момент активной сессии нет</p>
+            <img src={cup} />
+          </div>
+          <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
+        </div>
+      );
+    }
+    
   }
 }
 

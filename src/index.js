@@ -40,8 +40,7 @@ function checkAdmin(nextState, replace) {
   }
 }
 
-function init() {
-  window.browserHistory = browserHistory;
+function AuthInit() {
   if (JSON.stringify(store.getState().user) === '{}') {
     let eMail = cookie.load('eMail');
     let roleName = cookie.load('roleName');
@@ -61,7 +60,7 @@ function init() {
 ReactDOM.render(
 	<Provider store={store}>
 	  <Router history={history}>
-	    <Route path="/trade-app/" onEnter={init} component={MasterPage}>
+	    <Route path="/trade-app/" onEnter={AuthInit} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="login" component={Login} />
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>

@@ -109,6 +109,7 @@ body {
 	border: 2px solid #55e;
 	color: #fff;
 	cursor: pointer;
+	padding: 1px 6px 1px 5px;
 }
 
 #trade_table .size-form input[disabled] {
@@ -204,4 +205,21 @@ input[value="Войти"] {
 	height: 28px;
 	padding-top: 10px;
 	border-radius: 7px;
+}
+
+.no-session {
+	display: block;
+  margin: 70px auto;
+  width: 380px;
+  padding: 30px;
+  border: 2px solid #5555ee;
+  border-radius: 10px;
+}
+
+.no-session p {
+	margin-bottom: 40px;
+	color: #5555ee;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 14px;	
 }

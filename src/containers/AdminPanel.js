@@ -29,7 +29,7 @@ class AdminPanel extends Component {
 			</div>
 		) : null;
 		return (
-			<div className="main-menu">
+			<div className="admin-panel">
 				<h1>Панель администратора</h1>
 				{topMenu}
 				<div id="__wrapper">

@@ -31,14 +31,9 @@ export default function(state = [], action) {
     }
     case 'UPDATE_ORDER': {
       let payload = action.payload;
-      for (let i = 0; i < state.length; i++) {
-        if (payload.on_init) {
-          return state;
-        }
-      }
       let newState = state.map((order) => {
         if (order.id === payload.id) {
-          order.quantity -= payload.volume;
+          order.quantity = payload.orderRemain;
         }
         return order;
       });

@@ -1,4 +1,4 @@
-.main-menu {
+.admin-panel {
 	background-color: #f9f9ff;
 	font-family: sans-serif;
 	padding: 0 20px;
@@ -81,19 +81,19 @@ button:focus, input:focus {
 	outline: none;
 }
 
-#__session_form .add-instruments {
+.add-instruments {
 	font-size: 26px;
 	font-weight: bold;
 	margin-top: 30px;
 	display: block;
 }
 
-#__session_form input[name="instrument-name"] {
+#__session_form input[placeholder="Инструмент"] {
 	margin-top: 20px;
 	margin-right: 10px;
 }
 
-#__session_form #__add_instrument, #__session_form #__add_user {
+#__add_instrument, #__add_user {
 	background-color: #55e;
 	margin-top: 10px;
 	color: #fff;
@@ -119,20 +119,20 @@ button:focus, input:focus {
 	vertical-align: top;
 }
 
-table {
+.admin-panel table {
 	width: 90%;
 }
 
-table td {
+.admin-panel table td {
 	padding: 4px;
 	border-bottom: 1px solid #eee;
 }
 
-table td input {
+.admin-panel table td input {
 	border: none;
 }
 
-table .table-header {
+.admin-panel table .table-header {
 	background-color: #eee;
 }
 
@@ -154,19 +154,19 @@ table .table-header {
 	font-size: 12px;
 }
 
-h2 {
+.session h2 {
 	margin-top: 50px;
 }
 
-table {
+.session table {
 	width: 90%;
 }
 
-table td {
+.session table td {
 	padding: 4px;
 	border-bottom: 1px solid #eee;
 }
 
-table .table-header {
+.session table .table-header {
 	background-color: #eee;
 }
