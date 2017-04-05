@@ -88,9 +88,13 @@ button:focus, input:focus {
 	display: block;
 }
 
-#__session_form input[placeholder="Инструмент"] {
+.instrument input {
 	margin-top: 20px;
 	margin-right: 10px;
+	border-radius: 4px;
+	padding: 4px;
+	border: 1px solid #aaa;
+	height: 18px;
 }
 
 #__add_instrument, #__add_user {
@@ -108,14 +112,14 @@ button:focus, input:focus {
     border: 1px solid #aaa;
 }
 
-.instruments input:focus::-webkit-input-placeholder { color:transparent; }
-.instruments input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
-.instruments input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
-.instruments input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
-.instruments input::-webkit-input-placeholder { color:#000; }
-.instruments input:-moz-placeholder { color:#000; } /* FF 4-18 */
-.instruments input::-moz-placeholder { color:#000; } /* FF 19+ */
-.instruments input:-ms-input-placeholder { color:#000; } /* IE 10+ */
+.add-session input:focus::-webkit-input-placeholder { color:transparent; }
+.add-session input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+.add-session input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+.add-session input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+.add-session input::-webkit-input-placeholder { color:#000; }
+.add-session input:-moz-placeholder { color:#000; } /* FF 4-18 */
+.add-session input::-moz-placeholder { color:#000; } /* FF 19+ */
+.add-session input:-ms-input-placeholder { color:#000; } /* IE 10+ */
 
 .wrapper {
 	display: inline-block;
@@ -154,7 +158,7 @@ button:focus, input:focus {
 	width: 100px;
 }
 
-.instruments button.success {
+.instruments button.success, .instruments button.success:disabled {
 	background-color: #bfb;
 	border: 2px solid #bfb;
 }

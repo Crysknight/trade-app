@@ -14,6 +14,7 @@ export default function(state = [], action) {
 				lastIndex = index + 1;
 				return instrument;
 			})
+			lastIndex === null ? 0 : lastIndex;
 			newState = [
 				...newState,
 				{
