@@ -79,7 +79,7 @@ class App extends Component {
         <div className="App">
           <div className="no-session">
             <p>На данный момент активной сессии нет</p>
-            <img src={cup} />
+            <img alt="please-stand-by" src={cup} />
           </div>
           <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
         </div>

@@ -1,1 +1,2 @@
-copyfiles -u 1 ./build/* ./build/static/js/* ./build/static/css/* ../../OpenServer/domains/localhost/trade-app/
+Рабочий комп.: copyfiles -u 1 ./build/* ./build/static/js/* ./build/static/css/* ../../OpenServer/domains/localhost/trade-app/
+Ноутбук: copyfiles -u 1 ./build/* ./build/static/js/* ./build/static/css/* D:/OpenServer/domains/localhost/trade-app/

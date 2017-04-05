@@ -160,9 +160,13 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
 
 export const addOrder = order => dispatch => {
   dispatch({ type: "ADDING_ORDER", payload: order.instrument_id });
+  dispatch({ type: "CREATE_PROCESS", payload: {
+    name: `adding_order_${order.instrument_id}`
+  }});
   axios.post('core/addorder', order)
     .then(response => {
       dispatch({ type: "ADD_ORDER", payload: { id: +response.data.id, instrument: order.instrument_id, ...order }});
+      dispatch({ type: "DELETE_PROCESS", payload: `adding_order_${order.instrument_id}` });
       let deals = response.data.checkorder.deals;
       if (deals.length !== 0) {
         for (let i = 0; i < deals.length; i++) {
@@ -284,11 +288,33 @@ export const addInstrument = (user, instrument_name, instrument_price) => dispat
     });
 };
 
+export const updateInstrument = (token, instrument_index, instrument_id, instrument_name, instrument_price) => dispatch => {
+  dispatch({ type: "CREATE_PROCESS", payload: {
+    name: `updating_instrument_${instrument_id}`
+  }});
+  axios.post('../core/updateinstrumentstatus', { token, instrument_id, instrument_status: 0 })
+    .then(response => {
+      return axios.post('../core/addinstrument', { token, instrument_name, instrument_price });
+    })
+    .then(response => {
+      dispatch({ type: "UPDATE_ADMIN_INSTRUMENT", payload: {
+        index: instrument_index,
+        id: +response.data.id,
+        name: instrument_name,
+        price: instrument_price
+      }});
+      dispatch({ type: "DELETE_PROCESS", payload: `updating_instrument_${instrument_id}`});
+      dispatch({ type: "CREATE_PROCESS", payload: {
+        name: `successfully_updated_index_${instrument_index}`
+      }});
+      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${instrument_index}`}), 2000);
+    })
+    .catch(error => {
+
+    });
+}
+
 export const addSession = (token, date_start, date_end, instrument_ids) => dispatch => {
-  // console.log(token);
-  // console.log(date_start);
-  // console.log(date_end);
-  // console.log(instrument_ids);
   axios.post('../core/sessionadd', { token, date_start, date_end, instrument_ids })
     .then(response => {
       console.log('session successfully added');
@@ -296,4 +322,4 @@ export const addSession = (token, date_start, date_end, instrument_ids) => dispa
     .catch(error => {
       console.log(error);
     });
-}
+};

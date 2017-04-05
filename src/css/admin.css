@@ -101,17 +101,21 @@ button:focus, input:focus {
 	border-radius: 4px;
 }
 
-#__instruments input {
+.instruments input {
     height: 26px;
     padding: 0 8px;
     border-radius: 4px;
     border: 1px solid #aaa;
 }
 
-#__instruments input:focus::-webkit-input-placeholder { color:transparent; }
-#__instruments input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
-#__instruments input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
-#__instruments input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+.instruments input:focus::-webkit-input-placeholder { color:transparent; }
+.instruments input:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+.instruments input:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+.instruments input:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+.instruments input::-webkit-input-placeholder { color:#000; }
+.instruments input:-moz-placeholder { color:#000; } /* FF 4-18 */
+.instruments input::-moz-placeholder { color:#000; } /* FF 19+ */
+.instruments input:-ms-input-placeholder { color:#000; } /* IE 10+ */
 
 .wrapper {
 	display: inline-block;
@@ -146,8 +150,19 @@ button:focus, input:focus {
 	height: 12px;
 }
 
-.update-instrument {
-	/*background-image: url('../images/renew.png');*/
+.instruments button {
+	width: 100px;
+}
+
+.instruments button.success {
+	background-color: #bfb;
+	border: 2px solid #bfb;
+}
+
+.instruments button:disabled {
+	background-color: #ddf;
+	border: 2px solid #ddf;
+	cursor: default;
 }
 
 .users-form label {
@@ -169,4 +184,11 @@ button:focus, input:focus {
 
 .session table .table-header {
 	background-color: #eee;
+}
+
+button.register-session {
+	margin-top: 20px;
+  background-color: #e55;
+  font-weight: bold;
+  border: 2px solid #e55;
 }
