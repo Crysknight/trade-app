@@ -105,10 +105,11 @@ class TradeTableRow extends Component {
   }
   render() {
     let disabled = false;
-    for (let i = 0; i < this.props.addingOrders.length; i++) {
-      if (this.props.addingOrders[i] === this.props.instrument.id) {
+
+    if (this.props.processes[`adding_order_${this.props.instrument.id}`]) {
+      if (this.props.processes[`adding_order_${this.props.instrument.id}`].status) {
         disabled = true;
-      } 
+      }
     }
     let ordersForThisInstrument = this.props.orders.filter((order) => {
       return order.instrument === this.props.instrument.id;
@@ -144,9 +145,9 @@ function mapStateToProps(state) {
   return {
     orders: state.orders,
     user: state.user,
-    addingOrders: state.addingOrders,
     session: state.session,
-    deals: state.deals
+    deals: state.deals,
+    processes: state.processes
   };
 }
 

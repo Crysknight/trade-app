@@ -1,7 +1,6 @@
 export default function(state = {}, action) {
   switch (action.type) {
   	case 'CHECK_USER_SUCCESS': {
-  	  let payload = action.payload;
   	  return {
   	  	...action.payload,
   	  	error: false
