@@ -16,6 +16,7 @@ class App extends Component {
   }
   componentWillMount() {
     this.props.init(this.props.user);
+    window.stop = () => clearInterval(this.interval);
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -24,7 +25,7 @@ class App extends Component {
     if (this.props.interval !== nextProps.interval && nextProps.interval) {
       this.interval = setInterval(() => {
         this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments);
-      }, 3000);
+      }, 1000);
     } else if (this.props.interval !== nextProps.interval && !nextProps.interval) {
       clearInterval(this.interval);
     }

@@ -3,6 +3,7 @@ import { routerReducer } from 'react-router-redux';
 
 import errors from './reducer-errors';
 import processes from './reducer-processes';
+import popUp from './reducer-pop-up';
 import instruments from './reducer-instruments';
 import orders from './reducer-orders';
 import user from './reducer-user';
@@ -15,6 +16,7 @@ const allReducers = combineReducers({
 	routing: routerReducer,
 	errors,
 	processes,
+	popUp,
 	instruments,
 	orders,
 	user,

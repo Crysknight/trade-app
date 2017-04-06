@@ -181,7 +181,7 @@ class Session
                 {
                     $instruments = unserialize($session['instrument_ids']);
                     $in  = str_repeat('?,', count($instruments) - 1) . '?';
-                    $sth2 = $this->db->prepare("SELECT * FROM instruments WHERE id IN($in) AND status = 1;");
+                    $sth2 = $this->db->prepare("SELECT * FROM instruments WHERE id IN($in);");
                     $sth2->execute($instruments);
 
                     if($instruments = $sth2->fetchAll())

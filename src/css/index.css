@@ -1,3 +1,9 @@
+@keyframes animationRed {
+	from {background-color: #fff;}
+	50% {background-color: #f55;}
+	to {background-color: #f55;}
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -60,6 +66,22 @@ body {
 #trade_table td {
 	padding: 10px 5px;
 	vertical-align: top;
+}
+
+#trade_table tr.highlighted-green {
+	background-color: #6f6;
+}
+
+#trade_table tr.highlighted-yellow {
+	background-color: #ff6;
+}
+
+#trade_table td.highlighted-red {
+	background-color: #f55;
+}
+
+#trade_table td.animated-red {
+	animation: animationRed 0.6s infinite steps(1, end);
 }
 
 #trade_table .table-header {

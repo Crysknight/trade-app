@@ -9,6 +9,7 @@ import TimeForm from '../components/time-form';
 import AddInstrumentForm from '../components/add-instrument-form';
 import CheckBox from '../components/checkbox';
 import Input from '../components/input';
+import PopUp from '../components/pop-up';
 
 //import '../css/addsession.css';
 
@@ -22,6 +23,7 @@ class AddSession extends Component {
 		this.handleCheckbox = this.handleCheckbox.bind(this);
 		this.registerSession = this.registerSession.bind(this);
 		this.storeSubmitId = this.storeSubmitId.bind(this);
+		this.deleteInstrument = this.deleteInstrument.bind(this);
 		this.state = {
 			date_start: undefined,
 			date_end: undefined
@@ -84,9 +86,32 @@ class AddSession extends Component {
 		this.submitId = +e.target.id.slice(18);
 	}
 
+	deleteInstrument(e) {
+		this.props.showPopUp({
+			puFuncArgs: {
+				token: this.props.user.token,
+				instrument_id: +e.target.id.slice(24)
+			}, 
+			puMessage: 'Вы уверены, что хотите удалить инструмент?', 
+			puClassName: 'confirm-instrument-deletion',
+			puButton1Text: 'Да',
+			puButton2Text: 'Нет',
+			puButton1ClassName: 'yes-button',
+			puButton2ClassName: 'no-button',
+			puFadeTime: 105000
+		});
+	}
+
 	registerSession() {
 		if (this.state.date_start && this.state.date_end && this.props.adminInstruments.filter(instrument => instrument.chosen).length) {
-			let chosenInstruments = this.props.adminInstruments.map(instrument => instrument.id);
+			let chosenInstruments = this.props.adminInstruments.map(instrument => {
+				if (instrument.chosen) {
+					return instrument.id;
+				} else {
+					return false;
+				}
+			});
+			chosenInstruments = chosenInstruments.filter(instrument => instrument);
 			this.props.addSession(this.props.user.token, this.state.date_start, this.state.date_end, chosenInstruments);
 		}
 	}
@@ -117,17 +142,49 @@ class AddSession extends Component {
 						disabled={disabled}
 						onClick={this.storeSubmitId}
 						id={`instrument_button_${instrument.id}`}>{successfulUpdate ? 'Обновлено' : 'Обновить'}</button></td>
+					<td><button
+						className="delete-instrument"
+						onClick={this.deleteInstrument}
+						id={`delete_instrument_button${instrument.id}`}></button></td>
 				</tr>
 			);
 		});
+		let registeringSession;
+		if (this.props.processes['registering_session']) {
+			if (this.props.processes['registering_session'].status) {
+				registeringSession = true;
+			}
+		}
+		let PopUpDisplayed;
+		if (this.props.popUp) {
+			let options = this.props.popUp;
+			let deleteInstrument = () => {
+				this.props.hidePopUp;
+				this.props.deleteInstrument(options.puFuncArgs.token, options.puFuncArgs.instrument_id);
+			};
+			PopUpDisplayed = (
+				<PopUp 
+					puButton1Function={deleteInstrument}
+					puButton2Function={this.props.hidePopUp}
+					puMessage={options.puMessage}
+					puClassName={options.puClassName}
+					puButton1Text={options.puButton1Text}
+					puButton1ClassName={options.puButton1ClassName}
+					puButton2Text={options.puButton2Text}
+					puButton2ClassName={options.puButton2ClassName} />
+			);
+		}
 		return (
 			<div className="add-session">
 				<div className="wrapper">
 					<h2>Добавить сессию</h2>
+					{PopUpDisplayed}
 					<div id="__session_form">
 						<TimeForm handleTimeForm={this.handleTimeForm} />
 					</div>
-					<button className="register-session" onClick={this.registerSession}>ЗАРЕГИСТРИРОВАТЬ СЕССИЮ</button>
+					<button disabled={registeringSession}
+						className="register-session"
+						onClick={this.registerSession}>ЗАРЕГИСТРИРОВАТЬ СЕССИЮ</button>
 					<AddInstrumentForm handleAddInstrumentForm={this.handleAddInstrumentForm} />
 				</div>
 				<div className="wrapper">
@@ -140,6 +197,7 @@ class AddSession extends Component {
 									<td>Инструмент</td>
 									<td>Цена</td>
 									<td>Участвует в сессии</td>
+									<td></td>
 									<td></td>
 								</tr>
 								{Instruments}
@@ -157,7 +215,8 @@ function mapStateToProps(state) {
 	return {
 		user: state.user,
 		adminInstruments: state.adminInstruments,
-		processes: state.processes
+		processes: state.processes,
+		popUp: state.popUp
 	};
 }
 
@@ -167,7 +226,10 @@ function matchDispatchToProps(dispatch) {
 		addInstrument: actions.addInstrument,
 		instrumentCheckbox: actions.instrumentCheckbox,
 		addSession: actions.addSession,
-		updateInstrument: actions.updateInstrument
+		updateInstrument: actions.updateInstrument,
+		deleteInstrument: actions.deleteInstrument,
+		showPopUp: actions.showPopUp,
+		hidePopUp: actions.hidePopUp
 	}, dispatch);
 }
 

@@ -40,6 +40,7 @@ class TradeTableRow extends Component {
   	  instrument_id: this.props.instrument.id,
       session_id: +this.props.session.session_id
   	});
+    this.setState({ quantity: 0 });
   }
   cancelRow(instrument) {
     let orders = [];
@@ -106,6 +107,32 @@ class TradeTableRow extends Component {
   render() {
     let disabled = false;
 
+    /* Цветакадирофка! Ы! */
+    let animatedRed = '';
+    let highlightedYellow = '';
+    let highlightedGreen = '';
+    let highlightedRed = '';
+
+    if (this.props.instrument.interest > 0) {
+      highlightedGreen = 'highlighted-green ';
+    }
+
+    if (this.props.instrument.interest > 1) {
+      highlightedRed = ' highlighted-red';
+    }
+
+    if (this.props.processes[`price_changed_${this.props.instrument.id}`]) {
+      if (this.props.processes[`price_changed_${this.props.instrument.id}`].status) {
+        highlightedYellow = 'highlighted-yellow';
+      }
+    }
+
+    if (this.props.processes[`instrument_new_deal_${this.props.instrument.id}`]) {
+      if (this.props.processes[`instrument_new_deal_${this.props.instrument.id}`].status) {
+        animatedRed = ' animated-red';
+      }
+    }
+
     if (this.props.processes[`adding_order_${this.props.instrument.id}`]) {
       if (this.props.processes[`adding_order_${this.props.instrument.id}`].status) {
         disabled = true;
@@ -116,9 +143,9 @@ class TradeTableRow extends Component {
     });
     let cancelDisabled = !ordersForThisInstrument.length;
   	return (
-  	  <tr>
+  	  <tr className={`${highlightedGreen}${highlightedYellow}`}>
   	    <td className="bordered">{this.props.instrument.name}</td>
-  	    <td className="bordered">{this.props.instrument.price.toFixed(4)}</td>
+  	    <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
   	    <td colSpan="3">
   	      <form className="size-form" onSubmit={this.registerOrder}>
   	        <BidButton disabled={disabled} setOrderType={this.setOrderType} />

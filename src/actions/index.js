@@ -9,12 +9,23 @@ export const tryLoginAgain = () => {
 };
 
 export const instrumentCheckbox = (instrument_id) => {
-  console.log(instrument_id);
   return {
     type: "INSTRUMENT_CHECKBOX",
     payload: instrument_id
+  };
+};
+
+//puFuncArgs, puMessage, puButtonText, puClassName, puButtonClassName, puFadeTime - Options
+export const showPopUp = (options) => dispatch => {
+  dispatch({ type: "SHOW_POP_UP", payload: options});
+  setTimeout(() => dispatch({ type: "HIDE_POP_UP" }), (options.puFadeTime ? options.puFadeTime : 10000));
+};
+
+export const hidePopUp = () => {
+  return {
+    type: "HIDE_POP_UP"
   }
-}
+};
 
 /* Async block */
 
@@ -29,6 +40,8 @@ export const init = (user) => dispatch => {
       let reqSession = response.data.checksession;
       if (+reqSession.session_id) {
         dispatch({ type: "SESSION_TRUE", payload: reqSession })
+      } else {
+        return;
       }
       sessionId = reqSession.session_id;
 
@@ -39,6 +52,7 @@ export const init = (user) => dispatch => {
         reqInstruments[i].id = +reqInstruments[i].id;
         reqInstruments[i].price = +reqInstruments[i].price;
         reqInstruments[i].interest = +reqInstruments[i].interest;
+        reqInstruments[i].status = +reqInstruments[i].status;
       }
       dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
 
@@ -69,6 +83,9 @@ export const init = (user) => dispatch => {
       return axios.post('core/checkorders', { session_id: sessionId, token: user.token });
     })
     .then(response => {
+      if (!response) {
+        return;
+      }
       let orders = response.data.result;
       if (orders.length !== 0) {
         for (let i = 0; i < orders.length; i++) {
@@ -113,6 +130,8 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
       } else if (!+reqSession.session_id && +reqSession.session_id !== session.session_id) {
         dispatch({ type: "END_SESSION", payload: reqSession })
         return;
+      } else if (!+reqSession.session_id) {
+        return;
       }
 
       /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
@@ -150,6 +169,43 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
           }
         }
       }
+
+      /* Получаем инструменты и реагируем на их обновление */
+
+      let reqInstruments = response.data.getinstruments.instruments.map(instrument => {
+        instrument.id = +instrument.id;
+        instrument.interest = +instrument.interest;
+        instrument.price = +instrument.price;
+        instrument.status = +instrument.status;
+        return instrument;
+      });
+      if (instruments.length === 0) {
+        dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
+        return;
+      }
+      let priceChanged;
+      let interestChanged;
+      for (let i = 0; i < reqInstruments.length; i++) {
+        if (instruments[i].interest !== reqInstruments[i].interest) {
+          interestChanged = true;
+          if (reqInstruments[i].interest > 1) {
+            dispatch({ type: "CREATE_PROCESS", payload: {
+              name: `instrument_new_deal_${reqInstruments[i].id}`
+            }});
+            setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `instrument_new_deal_${reqInstruments[i].id}`}), 3000);
+          }
+        }
+        if (instruments[i].price !== reqInstruments[i].price) {
+          priceChanged = true;
+          dispatch({ type: "CREATE_PROCESS", payload: {
+            name: `price_changed_${reqInstruments[i].id}`
+          }});
+          setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `price_changed_${reqInstruments[i].id}`}), 5000);
+        }
+      }
+      if (priceChanged || interestChanged) {
+        dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
+      }
     })
     .catch(error => {
       console.log(error);
@@ -175,16 +231,17 @@ export const addOrder = order => dispatch => {
           let type;
           let volume;
           let orderId;
+          let orderRemain;
           if (order.type === 'buy') {
             orderId = +deals[i].buyer_order_id;
             type = "buy";
             volume = +deals[i].buyed;
-
+            orderRemain = +deals[i].buyer_remainder;
           } else if (order.type === 'sale') {
             orderId = +deals[i].seller_order_id;
             type = "sale";
-            volume = +deals[i].saled;
-
+            volume = +deals[i].buyed;
+            orderRemain = +deals[i].seller_remainder;
           } else {
             dispatch({ type: 'ORDER_FAILURE', payload: 'order type invalid' });
             throw new Error('order type invalid');
@@ -195,7 +252,7 @@ export const addOrder = order => dispatch => {
             type,
             volume
           }});
-          dispatch({ type: "UPDATE_ORDER", payload: { volume, id: orderId }});
+          dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
         }
       }
     })
@@ -310,14 +367,28 @@ export const updateInstrument = (token, instrument_index, instrument_id, instrum
       setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${instrument_index}`}), 2000);
     })
     .catch(error => {
-
+      console.log(error);
     });
-}
+};
+
+export const deleteInstrument = (token, instrument_id) => dispatch => {
+  axios.post('../core/updateinstrumentstatus', { token, instrument_id, instrument_state: 0 })
+    .then(response => {
+      dispatch({ type: "DELETE_ADMIN_INSTRUMENT", payload: instrument_id });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
 
 export const addSession = (token, date_start, date_end, instrument_ids) => dispatch => {
+  dispatch({ type: "CREATE_PROCESS", payload: {
+    name: 'registering_session'
+  }});
   axios.post('../core/sessionadd', { token, date_start, date_end, instrument_ids })
     .then(response => {
-      console.log('session successfully added');
+      dispatch({ type: "DELETE_PROCESS", payload: 'registering_session' });
+      browserHistory.push('/trade-app/');
     })
     .catch(error => {
       console.log(error);

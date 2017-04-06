@@ -14,7 +14,7 @@ export default function(state = [], action) {
 				lastIndex = index + 1;
 				return instrument;
 			})
-			lastIndex === null ? 0 : lastIndex;
+			if (!lastIndex) lastIndex = 0;
 			newState = [
 				...newState,
 				{
@@ -43,6 +43,9 @@ export default function(state = [], action) {
 				}
 			}
 			return newState;
+		}
+		case "DELETE_ADMIN_INSTRUMENT": {
+			return state.filter(instrument => instrument.id !== action.payload);
 		}
 		default: {
 			return state;

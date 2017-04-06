@@ -302,7 +302,7 @@ $app->post('/adduser',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $usera= @$user->getByToken($post->token);
-    if($usera && $user['role_id'] == 1)
+    if($usera && $usera['role_id'] == 1)
     {
         $result->adduser = $user->addUser($post->user_name,$post->user_pass,$post->role_id);
         $result->status = 200;
@@ -320,7 +320,7 @@ $app->post('/updateuser',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $usera= @$user->getByToken($post->token);
-    if($usera && $user['role_id'] == 1)
+    if($usera && $usera['role_id'] == 1)
     {
         $result->updateuser = $user->updateUser($post->user_id,$post->user_name,$post->user_pass,$post->role_id);
         $result->status = 200;
@@ -338,7 +338,7 @@ $app->post('/deleteuser',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $usera= @$user->getByToken($post->token);
-    if($usera && $user['role_id'] == 1 )
+    if($usera && $usera['role_id'] == 1 )
     {
         $result->deleteuser = $user->deleteUser($post->user_id);
         $result->status = 200;

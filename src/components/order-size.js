@@ -11,7 +11,7 @@ export default class OrderSize extends Component {
         type="number"
         step="25"
         min="25"
-        value={this.props.quantity}
+        value={this.props.quantity === 0 ? '' : this.props.quantity}
         max="100"
       />
     );

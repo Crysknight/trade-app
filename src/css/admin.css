@@ -136,10 +136,6 @@ button:focus, input:focus {
 	border-bottom: 1px solid #eee;
 }
 
-.admin-panel table td input {
-	border: none;
-}
-
 .admin-panel table .table-header {
 	background-color: #eee;
 }
@@ -159,8 +155,8 @@ button:focus, input:focus {
 }
 
 .instruments button.success, .instruments button.success:disabled {
-	background-color: #bfb;
-	border: 2px solid #bfb;
+	background-color: #6f8;
+	border: 2px solid #6f8;
 }
 
 .instruments button:disabled {
@@ -195,4 +191,22 @@ button.register-session {
   background-color: #e55;
   font-weight: bold;
   border: 2px solid #e55;
+}
+
+button.register-session:disabled {
+	cursor: default;
+	background-color: #fdd;
+	border: 2px solid #fdd;
+}
+
+button.delete-instrument {
+	width: 31px;
+	height: 31px;
+	background-color: #e55;
+	border: 2px solid #e55;
+	background-image: url('../../public/images/cross.png');
+	-webkit-background-size: 18px;
+	background-size: 18px;
+	background-repeat: no-repeat;
+	background-position: 4px 4px;
 }
