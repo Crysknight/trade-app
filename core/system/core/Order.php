@@ -31,7 +31,7 @@ class Order
             {
                 $result->id = $this->db->lastInsertId();
                 $result->interest = Instrument::setInterest($instrument_id,1,true,$this->db);
-                $result->checkorder = $this->checkOrder($instrument_id,$user_id,$type,$quantity,$result->id);
+                $result->checkorder = $this->checkOrder($instrument_id,$user_id,$type,$quantity,$result->id,$session_id);
                 $result->status = 200;
             }
             return $result;
@@ -43,12 +43,13 @@ class Order
             return $result;
         }
     }
-    function checkOrder($instrument_id,$user_id,$type,$quantity,$order_id)
+    function checkOrder($instrument_id,$user_id,$type,$quantity,$order_id,$session_id)
     {
+        date_default_timezone_set('Europe/Moscow');
         $result = new stdClass();
         $result->deals = [];
         $result->interests = [];
-        $sth = $this->db->prepare('SELECT * FROM orders WHERE instrument_id = :instrument_id AND user_id != :user_id AND type != :type ;');
+        $sth = $this->db->prepare('SELECT * FROM orders WHERE instrument_id = :instrument_id AND session_id = :session_id AND user_id != :user_id AND type != :type ;');
         try{
             if(!$instrument_id || !$user_id || !$type)
             {
@@ -58,7 +59,8 @@ class Order
                 array(
                     ':instrument_id'=>$instrument_id,
                     ':user_id'=>$user_id,
-                    ':type'=>$type
+                    ':type'=>$type,
+                    ':session_id'=>$session_id
                 )
             );
             while($order = $sth->fetch())
@@ -81,7 +83,8 @@ class Order
                         $buyer->bought = $seller->saled = $buyer->quantity;
                         if($seller->remainder == 0)
                         {
-                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                            $deal_date = date("Y-m-d H:i:s");
+                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                             $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                             $result->deals[] = $deal;
                             $this->deleteOrder($seller->order_id);
@@ -89,7 +92,8 @@ class Order
                         }
                         else
                         {
-                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                            $deal_date = date("Y-m-d H:i:s");
+                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                             $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                             $result->deals[] = $deal;
                             $this->updateOrder($seller->order_id,$seller->remainder);
@@ -99,11 +103,12 @@ class Order
                     }
                     else
                     {
+                        $deal_date = date("Y-m-d H:i:s");
                         $buyer->remainder = (int)$buyer->quantity - (int)$seller->quantity;
                         $this->deleteOrder($seller->order_id);
                         $seller->remainder = 0;
                         $buyer->bought = $seller->saled = $seller->quantity;
-                        $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                        $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                         $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                         $result->deals[] = $deal;
                         $this->updateOrder($buyer->order_id,$buyer->remainder);
@@ -125,14 +130,16 @@ class Order
                         $seller->remainder = 0;
                         $buyer->bought = $seller->saled = $seller->quantity;
                         if($buyer->remainder == 0){
-                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                            $deal_date = date("Y-m-d H:i:s");
+                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                             $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                             $result->deals[] = $deal;
                             $this->deleteOrder($buyer->order_id);
                             break;
                         }
                         else{
-                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                            $deal_date = date("Y-m-d H:i:s");
+                            $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                             $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                             $result->deals[] = $deal;
                             $this->updateOrder($buyer->order_id,$buyer->remainder);
@@ -141,11 +148,12 @@ class Order
 
                     }
                     else{
+                        $deal_date = date("Y-m-d H:i:s");
                         $seller->remainder = (int)$seller->quantity - (int)$buyer->quantity;
                         $this->deleteOrder($buyer->order_id);
                         $buyer->remainder = 0;
                         $buyer->bought = $seller->saled = $buyer->quantity;
-                        $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$order['session_id']);
+                        $deal = Deal::add($seller,$buyer,$this->db,$instrument_id,$deal_date,$order['session_id']);
                         $result->interests[] = Instrument::setInterest($instrument_id,2,false,$this->db);
                         $result->deals[] = $deal;
                         $this->updateOrder($seller->order_id,$seller->remainder);
@@ -220,7 +228,6 @@ class Order
         $result->status = 200;
         return $result;
     }
-
     function updateOrder($order_id,$remainder)
     {
         $sth = $this->db->prepare('UPDATE orders SET quantity = :remainder WHERE id=:order_id;');

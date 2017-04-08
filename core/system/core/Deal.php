@@ -29,9 +29,9 @@ class Deal
             return $result;
         }
     }
-    public static function add($seller,$buyer,$db,$instrument_id,$session_id)
+    public static function add($seller,$buyer,$db,$instrument_id,$deal_date,$session_id)
     {   $result = new stdClass();
-        $sth = $db->prepare('INSERT INTO deals(saled,buyed,seller,buyer,seller_remainder,buyer_remainder,instrument_id,session_id,seller_order_id,buyer_order_id) VALUES(:saled,:buyed,:seller,:buyer,:seller_remainder,:buyer_remainder,:instrument_id,:session_id,:seller_order_id,:buyer_order_id);');
+        $sth = $db->prepare('INSERT INTO deals(saled,deal_date,buyed,seller,buyer,seller_remainder,buyer_remainder,instrument_id,session_id,seller_order_id,buyer_order_id) VALUES(:saled,:deal_date,:buyed,:seller,:buyer,:seller_remainder,:buyer_remainder,:instrument_id,:session_id,:seller_order_id,:buyer_order_id);');
         $executeArray = array
         (
           ":saled"=>$seller->saled,
@@ -40,6 +40,7 @@ class Deal
           ":seller_order_id"=>$seller->order_id,
           ":buyer_order_id" => $buyer->order_id,
           ":buyer"=>$buyer->user_id,
+          ":deal_date"=>$deal_date,
           ":seller_remainder"=>$seller->remainder,
           ":buyer_remainder"=>$buyer->remainder,
           ":instrument_id"=>$instrument_id,
@@ -61,8 +62,32 @@ class Deal
                 $result->buyer_remainder = $buyer->remainder;
                 $result->instrument_id = $instrument_id;
                 $result->session_id = $session_id;
+                $result->deal_date = $deal_date;
                 return $result;
             }
+        }
+        catch (PDOException $e){
+            $result->status = 500;
+            $result->message = "Database Error: ".$e->getMessage();
+            return $result;
+        }
+    }
+    public function getDealsByDate($date_start,$date_end)
+    {
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT * FROM deals WHERE deal_date >= :date_start AND deal_date <= :date_end;');
+        $executeArray = array
+        (
+            ":date_start"=>$date_start,
+            ":date_end" => $date_end
+        );
+        try
+        {
+            $sth->execute($executeArray);
+            $deals = $sth->fetchAll();
+            $result->status=200;
+            $result->deals = $deals;
+            return $result;
         }
         catch (PDOException $e){
             $result->status = 500;

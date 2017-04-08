@@ -32,6 +32,50 @@ class Instrument
             return $result;
         }
     }
+    public static function getInterestedInstruments($db){
+        $sth = $db->prepare('SELECT * FROM instruments WHERE interest = 1 AND status = 1;');
+        try
+        {
+            $sth->execute();
+            $instruments = $sth->fetchAll();
+            return $instruments;
+        }
+        catch (PDOException $e)
+        {
+            $message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $message;
+        }
+    }
+    public static function getDealedInstruments($db){
+        $sth = $db->prepare('SELECT * FROM instruments WHERE interest > 1 AND status = 1;');
+        try
+        {
+            $sth->execute();
+            $instruments = $sth->fetchAll();
+            return $instruments;
+        }
+        catch (PDOException $e)
+        {
+            $message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $message;
+        }
+    }
+    public static function endInstruments($db){
+        $sth = $db->prepare('UPDATE instruments SET interest = 0 WHERE interest >= 1;');
+        try
+        {
+            $sth->execute();
+            return true;
+        }
+        catch (PDOException $e)
+        {
+            $message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $message;
+        }
+    }
     //public function addInstrument($instrument_name,$instrument_price){}
     //public static function updateInstrument($instrument_id,$name,$price){}
     public function addInstrument($instrument_name,$instrument_price)

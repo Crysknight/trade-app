@@ -2,6 +2,16 @@ import axios from 'axios';
 import cookie from 'react-cookie';
 import { browserHistory } from 'react-router';
 
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function fromEntityMap (s) {
+    return `\\${s}`;
+  });
+}
+
+function breachHtml(string) {
+  return String(string).replace(/\\/g, '');
+}
+
 export const tryLoginAgain = () => {
   return {
     type: 'TRY_LOGIN_AGAIN'
@@ -50,6 +60,7 @@ export const init = (user) => dispatch => {
       let reqInstruments = response.data.getinstruments.instruments;
       for (let i = 0; i < reqInstruments.length; i++) {
         reqInstruments[i].id = +reqInstruments[i].id;
+        reqInstruments[i].name = breachHtml(reqInstruments[i].name);
         reqInstruments[i].price = +reqInstruments[i].price;
         reqInstruments[i].interest = +reqInstruments[i].interest;
         reqInstruments[i].status = +reqInstruments[i].status;
@@ -174,6 +185,7 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
 
       let reqInstruments = response.data.getinstruments.instruments.map(instrument => {
         instrument.id = +instrument.id;
+        instrument.name = breachHtml(instrument.name);
         instrument.interest = +instrument.interest;
         instrument.price = +instrument.price;
         instrument.status = +instrument.status;
@@ -319,6 +331,7 @@ export const uploadAdminInstruments = user => dispatch => {
       let instruments = response.data.rows;
       for (let i = 0; i < instruments.length; i++) {
         instruments[i].id = +instruments[i].id;
+        instruments[i].name = breachHtml(instruments[i].name);
         instruments[i].price = +instruments[i].price;
         instruments[i].chosen = true;
       }
@@ -330,7 +343,8 @@ export const uploadAdminInstruments = user => dispatch => {
 };
 
 export const addInstrument = (user, instrument_name, instrument_price) => dispatch => {
-  axios.post('../core/addinstrument', { token: user.token, instrument_name, instrument_price })
+  console.log(escapeHtml(instrument_name));
+  axios.post('../core/addinstrument', { token: user.token, instrument_name: escapeHtml(instrument_name), instrument_price })
     .then(response => {
       dispatch({ type: "ADD_INSTRUMENT", payload: {
         id: +response.data.id,

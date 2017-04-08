@@ -35,10 +35,10 @@ class User {
             return false;
         }
 	}
-    function addUser($user_name,$user_pass,$role_id)
+    function addUser($user_name,$user_pass,$role_id,$fio,$organization,$phone,$comment)
     {
         $result = new stdClass();
-        $sth = $this->db->prepare('INSERT INTO users(user_name,user_pass,role_id) values(:user_name,MD5(:user_pass),:role_id);');
+        $sth = $this->db->prepare('INSERT INTO users(user_name,user_pass,role_id,fio,organization,phone,comment) values(:user_name,MD5(:user_pass),:role_id,:fio,:organization,:phone,:comment);');
         try
         {
             $sth->execute(
@@ -46,7 +46,11 @@ class User {
                 (
                     ":user_name" => $user_name,
                     ":user_pass" => $user_pass,
-                    ":role_id" => $role_id
+                    ":role_id" => $role_id,
+                    ":fio" => $fio,
+                    ":organization" => $organization,
+                    ":phone" => $phone,
+                    ":comment" => $comment
                 )
             );
             $result->id = $this->db->lastInsertId();
@@ -61,10 +65,28 @@ class User {
             return $result;
         }
     }
-    function updateUser($user_id,$user_name,$user_pass,$role_id)
+    function getUsers(){
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT * FROM users;');
+        try
+        {
+            $sth->execute();
+            $result->users = $sth->fetchAll();
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
+    function updateUser($user_id,$user_name,$user_pass,$role_id,$fio,$organization,$phone,$comment)
     {
         $result = new stdClass();
-        $sth = $this->db->prepare('UPDATE users SET user_name = :user_name,user_pass = MD5(:user_pass),role_id = :role_id WHERE id = :user_id;');
+        $sth = $this->db->prepare('UPDATE users SET user_name = :user_name,user_pass = MD5(:user_pass),role_id = :role_id,fio=:fio,organization = :organization,phone = :phone,comment = :comment WHERE id = :user_id;');
         try
         {
             $sth->execute(
@@ -73,7 +95,11 @@ class User {
                     ":user_id" => $user_id,
                     ":user_name" => $user_name,
                     ":user_pass" => $user_pass,
-                    ":role_id" => $role_id
+                    ":role_id" => $role_id,
+                    ":fio" => $fio,
+                    ":organization" => $organization,
+                    ":phone" => $phone,
+                    ":comment" => $comment
                 )
             );
             $result->status = 200;

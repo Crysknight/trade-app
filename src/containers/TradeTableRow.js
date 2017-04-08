@@ -138,6 +138,10 @@ class TradeTableRow extends Component {
         disabled = true;
       }
     }
+
+    if (this.state.quantity === 0) {
+      disabled = true;
+    }
     let ordersForThisInstrument = this.props.orders.filter((order) => {
       return order.instrument === this.props.instrument.id;
     });

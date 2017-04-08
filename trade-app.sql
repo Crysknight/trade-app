@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.10.10
+-- version 4.5.1
 -- http://www.phpmyadmin.net
 --
--- Хост: 127.0.0.1:3306
--- Время создания: Апр 06 2017 г., 18:09
--- Версия сервера: 5.5.45
--- Версия PHP: 5.6.12
+-- Хост: 127.0.0.1
+-- Время создания: Апр 08 2017 г., 22:34
+-- Версия сервера: 10.1.19-MariaDB
+-- Версия PHP: 5.6.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -14,7 +14,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- База данных: `trade-app`
@@ -26,8 +26,8 @@ SET time_zone = "+00:00";
 -- Структура таблицы `deals`
 --
 
-CREATE TABLE IF NOT EXISTS `deals` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `deals` (
+  `id` int(11) NOT NULL,
   `saled` int(11) DEFAULT NULL,
   `buyed` int(11) DEFAULT NULL,
   `seller` int(11) DEFAULT NULL,
@@ -38,25 +38,15 @@ CREATE TABLE IF NOT EXISTS `deals` (
   `session_id` int(11) NOT NULL,
   `seller_order_id` int(11) NOT NULL,
   `buyer_order_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `instrument_id` (`instrument_id`),
-  KEY `session_id` (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=40 ;
+  `deal_date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `deals`
 --
 
-INSERT INTO `deals` (`id`, `saled`, `buyed`, `seller`, `buyer`, `seller_remainder`, `buyer_remainder`, `instrument_id`, `session_id`, `seller_order_id`, `buyer_order_id`) VALUES
-(31, 25, 25, 4, 2, 0, 75, 8, 17, 58, 57),
-(32, 25, 25, 2, 4, 75, 0, 8, 17, 56, 59),
-(33, 25, 25, 4, 2, 0, 50, 8, 17, 60, 57),
-(34, 25, 25, 2, 4, 50, 0, 8, 17, 56, 61),
-(35, 25, 25, 4, 2, 0, 25, 8, 17, 62, 57),
-(36, 25, 25, 2, 4, 25, 0, 8, 17, 56, 63),
-(37, 25, 25, 4, 2, 0, 0, 8, 17, 64, 57),
-(38, 25, 25, 2, 4, 0, 0, 8, 17, 56, 65),
-(39, 25, 25, 2, 3, 25, 0, 13, 17, 70, 71);
+INSERT INTO `deals` (`id`, `saled`, `buyed`, `seller`, `buyer`, `seller_remainder`, `buyer_remainder`, `instrument_id`, `session_id`, `seller_order_id`, `buyer_order_id`, `deal_date`) VALUES
+(45, 20, 20, 3, 2, 20, 0, 4, 3, 22, 23, '2017-04-08 21:51:05');
 
 -- --------------------------------------------------------
 
@@ -64,30 +54,22 @@ INSERT INTO `deals` (`id`, `saled`, `buyed`, `seller`, `buyer`, `seller_remainde
 -- Структура таблицы `instruments`
 --
 
-CREATE TABLE IF NOT EXISTS `instruments` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `instruments` (
+  `id` int(11) NOT NULL,
   `name` varchar(10) NOT NULL,
   `price` int(11) NOT NULL,
   `interest` int(11) NOT NULL,
-  `status` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `instruments`
 --
 
 INSERT INTO `instruments` (`id`, `name`, `price`, `interest`, `status`) VALUES
-(6, 'RUSS 3.25%', 100, 1, 0),
-(7, 'RUSS 1.75%', 110, 0, 0),
-(8, 'CAD 0.03% ', 115, 9, 0),
-(9, 'Ruby 8 /20', 117, 0, 0),
-(10, 'RUSS 1.75%', 114, 0, 0),
-(11, 'dlfaksjd', 100, 0, 0),
-(12, 'RUSS 3.25%', 101, 0, 0),
-(13, 'Rubyd 8 /2', 117, 2, 1),
-(14, 'RUSST 1.75', 115, 0, 0),
-(15, 'RUSS 3.25%', 101, 0, 1);
+(4, 'RUB', 200, 2, 1),
+(5, 'EUR', 1000, 0, 1),
+(6, 'AZN', 1200, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -95,25 +77,21 @@ INSERT INTO `instruments` (`id`, `name`, `price`, `interest`, `status`) VALUES
 -- Структура таблицы `orders`
 --
 
-CREATE TABLE IF NOT EXISTS `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `orders` (
+  `id` int(11) NOT NULL,
   `type` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `instrument_id` int(11) NOT NULL,
-  `session_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=74 ;
+  `session_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `orders`
 --
 
 INSERT INTO `orders` (`id`, `type`, `user_id`, `quantity`, `instrument_id`, `session_id`) VALUES
-(70, 'sale', 2, 25, 13, 17),
-(72, 'sale', 2, 25, 8, 17),
-(73, 'sale', 3, 25, 13, 17);
+(22, 'sale', 3, 20, 4, 3);
 
 -- --------------------------------------------------------
 
@@ -121,11 +99,10 @@ INSERT INTO `orders` (`id`, `type`, `user_id`, `quantity`, `instrument_id`, `ses
 -- Структура таблицы `roles`
 --
 
-CREATE TABLE IF NOT EXISTS `roles` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `role_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `roles`
@@ -141,21 +118,22 @@ INSERT INTO `roles` (`id`, `role_name`) VALUES
 -- Структура таблицы `sessions`
 --
 
-CREATE TABLE IF NOT EXISTS `sessions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `sessions` (
+  `id` int(11) NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
   `status` int(5) NOT NULL,
   `instrument_ids` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+  `interested_instruments` text NOT NULL,
+  `dealed_instruments` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `sessions`
 --
 
-INSERT INTO `sessions` (`id`, `start`, `end`, `status`, `instrument_ids`) VALUES
-(17, '2017-04-06 10:00:00', '2017-04-06 21:00:00', 2, 'a:4:{i:0;i:8;i:1;i:13;i:2;i:14;i:3;i:15;}');
+INSERT INTO `sessions` (`id`, `start`, `end`, `status`, `instrument_ids`, `interested_instruments`, `dealed_instruments`) VALUES
+(3, '2017-04-08 21:20:00', '2017-04-08 21:50:00', 2, 'a:3:{i:0;i:4;i:1;i:5;i:2;i:6;}', 'a:0:{}', 'a:1:{i:0;a:5:{s:2:"id";s:1:"4";s:4:"name";s:3:"RUB";s:5:"price";s:3:"200";s:8:"interest";s:1:"2";s:6:"status";s:1:"1";}}');
 
 -- --------------------------------------------------------
 
@@ -163,24 +141,103 @@ INSERT INTO `sessions` (`id`, `start`, `end`, `status`, `instrument_ids`) VALUES
 -- Структура таблицы `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
   `user_name` varchar(255) NOT NULL,
   `user_pass` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `role_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+  `fio` varchar(20) NOT NULL,
+  `organization` varchar(30) NOT NULL,
+  `phone` varchar(12) NOT NULL,
+  `comment` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `user_name`, `user_pass`, `token`, `role_id`) VALUES
-(2, 'user@mail.ru', 'ee11cbb19052e40b07aac0ca060c23ee', '6a00c26506c8b10e993a01813728a1c4', 2),
-(3, 'admin@mail.ru', '21232f297a57a5a743894a0e4a801fc3', 'fce0c3c53e84ad15c6b6380c9642a47e', 1),
-(4, 'user2@mail.ru', '7e58d63b60197ceb55a1c487989a3720', '247750a20cdea7471aeb7b5d0ae48bf1', 2);
+INSERT INTO `users` (`id`, `user_name`, `user_pass`, `token`, `role_id`, `fio`, `organization`, `phone`, `comment`) VALUES
+(2, 'usr', '0a744893951e0d1706ff74a7afccf561', '79f34c16b69444ce4d3b06849961650b', 2, '', '', '', ''),
+(3, 'ilkin', 'fb99237edcaaac4f25de4d17493736d2', 'c26b9f0da30fb32a98c9ffe11c4c30dd', 1, '', '', '', '');
 
+--
+-- Индексы сохранённых таблиц
+--
+
+--
+-- Индексы таблицы `deals`
+--
+ALTER TABLE `deals`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `instrument_id` (`instrument_id`),
+  ADD KEY `session_id` (`session_id`);
+
+--
+-- Индексы таблицы `instruments`
+--
+ALTER TABLE `instruments`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Индексы таблицы `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT для сохранённых таблиц
+--
+
+--
+-- AUTO_INCREMENT для таблицы `deals`
+--
+ALTER TABLE `deals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+--
+-- AUTO_INCREMENT для таблицы `instruments`
+--
+ALTER TABLE `instruments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT для таблицы `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+--
+-- AUTO_INCREMENT для таблицы `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT для таблицы `sessions`
+--
+ALTER TABLE `sessions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT для таблицы `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- Ограничения внешнего ключа сохраненных таблиц
 --

@@ -56,7 +56,7 @@ $app->post('/sessionadd',function(Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] == 1)
     {
         $session = new Session(Database::getDbHandle());
         $result = @$session->add($post->date_start,$post->date_end,$post->instrument_ids);
@@ -304,7 +304,17 @@ $app->post('/adduser',function (Request $request) use ($user)
     $usera= @$user->getByToken($post->token);
     if($usera && $usera['role_id'] == 1)
     {
-        $result->adduser = $user->addUser($post->user_name,$post->user_pass,$post->role_id);
+        $result->adduser =
+        $user->addUser
+        (
+            $post->user_name,
+            $post->user_pass,
+            $post->role_id,
+            $post->fio,
+            $post->organization,
+            $post->phone,
+            $post->comment
+        );
         $result->status = 200;
         return new Response(json_encode($result),$result->status);
     }
@@ -322,7 +332,17 @@ $app->post('/updateuser',function (Request $request) use ($user)
     $usera= @$user->getByToken($post->token);
     if($usera && $usera['role_id'] == 1)
     {
-        $result->updateuser = $user->updateUser($post->user_id,$post->user_name,$post->user_pass,$post->role_id);
+        $result->updateuser = $user->updateUser
+        (
+            $post->user_id,
+            $post->user_name,
+            $post->user_pass,
+            $post->role_id,
+            $post->fio,
+            $post->organization,
+            $post->phone,
+            $post->comment
+        );
         $result->status = 200;
         return new Response(json_encode($result),$result->status);
     }
@@ -341,6 +361,44 @@ $app->post('/deleteuser',function (Request $request) use ($user)
     if($usera && $usera['role_id'] == 1 )
     {
         $result->deleteuser = $user->deleteUser($post->user_id);
+        $result->status = 200;
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+
+$app->post('/getdealsbydate',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1 )
+    {
+        $deal = new Deal(Database::getDbHandle());
+        $result = $deal->getDealsByDate($post->date_start,$post->date_end);
+        $result->status = 200;
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/getusers',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $usera= @$user->getByToken($post->token);
+    if($usera && $usera['role_id'] == 1 )
+    {
+        $result->getusers = $user->getUsers();
         $result->status = 200;
         return new Response(json_encode($result),$result->status);
     }

@@ -36,7 +36,7 @@ export default class Timer extends Component {
 			let minutes = Math.floor((timeLeft / 60000) % 60);
 			let seconds = Math.floor((timeLeft / 1000) % 60);
 			if (seconds < 0 || minutes < 0) {
-				this.setState({ time: '00:00:00 - осталось еще чуть-чуть' });
+				this.setState({ time: '-- 00:00:00' });
 			} else {
 				this.setState({
 					time: 
