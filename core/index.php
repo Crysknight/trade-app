@@ -409,5 +409,43 @@ $app->post('/getusers',function (Request $request) use ($user)
         return new Response(json_encode($result),$result->status);
     }
 });
+$app->post('/getlastsession',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user)
+    {
+        $session = new Session(Database::getDbHandle());
+        $result->lastsession = $session->getLastSession();
+        $result->status = 200;
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/getallorders',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1)
+    {
+        $order = new Order(Database::getDbHandle());
+        $result->orders = $order->getAllOrders($post->session_id);
+        $result->status = 200;
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
 $app->run();
 ?>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-// import { bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
-// import * as actions from '../actions';
+import * as actions from '../actions';
 
 //here be components
 
@@ -16,7 +16,9 @@ class AdminPanel extends Component {
 
 	// }
 
-
+	componentWillMount() {
+		this.props.init(this.props.user);
+	}
 
 	render() {
 		let pathname = this.props.routing.locationBeforeTransitions.pathname;
@@ -43,8 +45,15 @@ class AdminPanel extends Component {
 
 function mapStateToProps(state) {
 	return {
-		routing: state.routing
+		routing: state.routing,
+		user: state.user
 	};
 }
 
-export default connect(mapStateToProps)(AdminPanel);
+function matchDispatchToProps(dispatch) {
+	return bindActionCreators({
+		init: actions.init
+	}, dispatch);
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(AdminPanel);

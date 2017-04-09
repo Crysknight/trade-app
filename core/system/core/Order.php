@@ -240,4 +240,29 @@ class Order
             echo "Database error: "." ".$e;
         }
     }
+    function getAllOrders($session_id){
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT id,type,quantity,user_id FROM orders WHERE session_id = :session_id;');
+        try
+        {
+            $sth->execute
+            (
+                array
+                (
+                    ':session_id'=>$session_id
+                )
+            );
+
+            $orders = $sth->fetchAll();
+            $result->orders = $orders;
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: "." ".$e;
+            return $result;
+        }
+    }
 }

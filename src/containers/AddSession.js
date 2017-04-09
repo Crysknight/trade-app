@@ -5,11 +5,12 @@ import { connect } from 'react-redux';
 
 import * as actions from '../actions';
 
+import ConfirmationPopUp from '../containers/ConfirmationPopUp';
+
 import TimeForm from '../components/time-form';
 import AddInstrumentForm from '../components/add-instrument-form';
 import CheckBox from '../components/checkbox';
 import Input from '../components/input';
-import PopUp from '../components/pop-up';
 
 //import '../css/addsession.css';
 
@@ -87,18 +88,22 @@ class AddSession extends Component {
 	}
 
 	deleteInstrument(e) {
+		let instrumentId = +e.target.id.slice(24);
+		let instrumentName;
+		for (let i = 0; i < this.props.adminInstruments.length; i++) {
+			if (this.props.adminInstruments[i].id === instrumentId) {
+				instrumentName = this.props.adminInstruments[i].name;
+			}
+		}
 		this.props.showPopUp({
 			puFuncArgs: {
 				token: this.props.user.token,
-				instrument_id: +e.target.id.slice(24)
+				instrument_id: instrumentId
 			}, 
-			puMessage: 'Вы уверены, что хотите удалить инструмент?', 
+			puMessage: `Вы уверены, что хотите удалить инструмент "${instrumentName}"?`, 
 			puClassName: 'confirm-instrument-deletion',
-			puButton1Text: 'Да',
-			puButton2Text: 'Нет',
-			puButton1ClassName: 'yes-button',
-			puButton2ClassName: 'no-button',
-			puFadeTime: 105000
+			puButtonText: 'Да',
+			puFadeTime: 60000
 		});
 	}
 
@@ -111,8 +116,19 @@ class AddSession extends Component {
 					return false;
 				}
 			});
-			chosenInstruments = chosenInstruments.filter(instrument => instrument);
-			this.props.addSession(this.props.user.token, this.state.date_start, this.state.date_end, chosenInstruments);
+			chosenInstruments = chosenInstruments.filter(instrument => instrument);		
+			this.props.showPopUp({
+				puFuncArgs: {
+					token: this.props.user.token,
+					date_start: this.state.date_start,
+					date_end: this.state.date_end,
+					chosenInstruments: chosenInstruments
+				},
+				puMessage: 'Вы уверены?',
+				puClassName: 'start-session',
+				puButtonText: 'Да',
+				puFadeTime: 60000
+			});
 		}
 	}
 
@@ -155,30 +171,36 @@ class AddSession extends Component {
 				registeringSession = true;
 			}
 		}
-		let PopUpDisplayed;
+		let PopUp = null;
 		if (this.props.popUp) {
 			let options = this.props.popUp;
-			let deleteInstrument = () => {
-				this.props.hidePopUp;
-				this.props.deleteInstrument(options.puFuncArgs.token, options.puFuncArgs.instrument_id);
-			};
-			PopUpDisplayed = (
-				<PopUp 
-					puButton1Function={deleteInstrument}
-					puButton2Function={this.props.hidePopUp}
+			let puFunction;
+			switch (options.puClassName) {
+				case 'confirm-instrument-deletion': {
+					puFunction = () => this.props.deleteInstrument(options.puFuncArgs.token, options.puFuncArgs.instrument_id);
+					break;
+				}
+				case 'start-session': {
+					puFunction = () => this.props.addSession(options.puFuncArgs.token, options.puFuncArgs.date_start, options.puFuncArgs.date_end, options.puFuncArgs.chosenInstruments);
+					break;
+				}
+				default: {
+					puFunction = () => console.log('error with pop up type');
+				}
+			}
+			PopUp = (
+				<ConfirmationPopUp
+					puButtonFunction={puFunction}
 					puMessage={options.puMessage}
 					puClassName={options.puClassName}
-					puButton1Text={options.puButton1Text}
-					puButton1ClassName={options.puButton1ClassName}
-					puButton2Text={options.puButton2Text}
-					puButton2ClassName={options.puButton2ClassName} />
+					puButtonText={options.puButtonText} />
 			);
 		}
 		return (
 			<div className="add-session">
+				{PopUp}
 				<div className="wrapper">
 					<h2>Добавить сессию</h2>
-					{PopUpDisplayed}
 					<div id="__session_form">
 						<TimeForm handleTimeForm={this.handleTimeForm} />
 					</div>
@@ -216,6 +238,7 @@ function mapStateToProps(state) {
 		user: state.user,
 		adminInstruments: state.adminInstruments,
 		processes: state.processes,
+    session: state.session,
 		popUp: state.popUp
 	};
 }
@@ -228,8 +251,7 @@ function matchDispatchToProps(dispatch) {
 		addSession: actions.addSession,
 		updateInstrument: actions.updateInstrument,
 		deleteInstrument: actions.deleteInstrument,
-		showPopUp: actions.showPopUp,
-		hidePopUp: actions.hidePopUp
+		showPopUp: actions.showPopUp
 	}, dispatch);
 }
 

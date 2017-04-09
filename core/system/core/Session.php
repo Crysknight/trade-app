@@ -251,4 +251,32 @@ class Session
             return $result;
         }
     }
+    public function getLastSession(){
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT * FROM sessions WHERE status = 0 ORDER BY id DESC;');
+        try
+        {
+            $sth->execute();
+            if($session = $sth->fetch())
+            {
+                $instruments = unserialize($session['instrument_ids']);
+                $in  = str_repeat('?,', count($instruments) - 1) . '?';
+                $sth2 = $this->db->prepare("SELECT * FROM instruments WHERE id IN($in);");
+                $sth2->execute($instruments);
+                $session['instrument_ids'] = $sth2->fetchAll();
+                $session['interested_instruments'] = unserialize($session['interested_instruments']);
+                $session['dealed_instruments'] = unserialize($session['dealed_instruments']);
+                $result->session = $session;
+            }
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
 }

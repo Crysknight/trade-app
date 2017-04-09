@@ -40,6 +40,14 @@ function checkAdmin(nextState, replace) {
   }
 }
 
+function noMultipleSessions(nextState, replace) {
+  if (store.getState().session.session_id !== 0) {
+    replace({
+      pathname: '/trade-app/admin/sessions'
+    })
+  }
+}
+
 function AuthInit() {
   if (JSON.stringify(store.getState().user) === '{}') {
     let eMail = cookie.load('eMail');
@@ -66,7 +74,7 @@ ReactDOM.render(
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>
           <IndexRoute component={AdminMenu} />
           <Route path="sessions" component={Sessions} />
-          <Route path="addsession" component={AddSession} />
+          <Route path="addsession" onEnter={noMultipleSessions} component={AddSession} />
           <Route path="users" component={Users} />
         </Route>
 	    </Route>
