@@ -9,14 +9,16 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import cookie from 'react-cookie';
 
+import MasterPage from './containers/MasterPage';
 import App from './containers/App';
 import Login from './containers/Login';
 import AdminPanel from './containers/AdminPanel';
 import Sessions from './containers/Sessions';
 import AddSession from './containers/AddSession';
 import Users from './containers/Users';
+import LastSession from './containers/LastSession';
+import Tickets from './containers/tickets';
 
-import MasterPage from './components/MasterPage';
 import AdminMenu from './components/admin-menu';
 import './css/index.css';
 import allReducers from './reducers';
@@ -37,14 +39,6 @@ function checkAdmin(nextState, replace) {
     replace({
       pathname: '/trade-app/'
     });
-  }
-}
-
-function noMultipleSessions(nextState, replace) {
-  if (store.getState().session.session_id !== 0) {
-    replace({
-      pathname: '/trade-app/admin/sessions'
-    })
   }
 }
 
@@ -74,9 +68,11 @@ ReactDOM.render(
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>
           <IndexRoute component={AdminMenu} />
           <Route path="sessions" component={Sessions} />
-          <Route path="addsession" onEnter={noMultipleSessions} component={AddSession} />
+          <Route path="addsession" component={AddSession} />
           <Route path="users" component={Users} />
         </Route>
+        <Route path="last-session" onEnter={requireAuth} component={LastSession} />
+        <Route path="tickets" onEnter={requireAuth} component={Tickets} />
 	    </Route>
 	  </Router>
 	</Provider>,

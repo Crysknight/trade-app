@@ -11,7 +11,6 @@ class Instrument
     {
         $this->db = $db_handle;
     }
-
     public function getInstruments()
     {
         $result = new stdClass();
@@ -100,15 +99,16 @@ class Instrument
             return $result;
         }
     }
-    public function updateInstrument($instrument_id,$instrument_name,$instrument_price){
+    public function updateInstrument($instrument_id,$instrument_name,$instrument_price,$interest){
         $result = new stdClass();
-        $sth = $this->db->prepare('UPDATE instruments SET name = :instrument_name,price= :instrument_price WHERE id = :instrument_id;');
+        $sth = $this->db->prepare('UPDATE instruments SET name = :instrument_name,price= :instrument_price,interest= :interest WHERE id = :instrument_id;');
         try
         {
             $sth->execute(array(
                 ":instrument_name" => $instrument_name,
                 ":instrument_id" => $instrument_id,
-                ":instrument_price" => $instrument_price
+                ":instrument_price" => $instrument_price,
+                ":interest" => $interest
             ));
             $result->status = 200;
             return $result;

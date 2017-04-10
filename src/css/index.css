@@ -68,7 +68,7 @@ body {
 	vertical-align: top;
 }
 
-#trade_table tr.highlighted-green {
+#trade_table tr.highlighted-green, #last_session_table tr.highlighted-green {
 	background-color: #6f6;
 }
 
@@ -76,7 +76,7 @@ body {
 	background-color: #ff6;
 }
 
-#trade_table td.highlighted-red {
+#trade_table td.highlighted-red, #last_session_table td.highlighted-red {
 	background-color: #f55;
 }
 
@@ -183,7 +183,40 @@ body {
 	text-align: center;
 }
 
-input[type="email"], input[type="password"] {
+.last-session p {
+	text-align: left;
+	padding-left: 15%;
+}
+
+#last_session_table {
+	border: 1px ;
+	border-collapse: collapse;
+	width: 75%;
+	margin: 25px auto 0 auto;
+	text-align: left;
+	border: 1px solid #000;
+}
+
+#last_session_table td {
+	padding: 5px;
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+#last_session_table .table-header td {
+	padding-top: 15px;
+	border-bottom: 1px solid #000;
+}
+
+#last_session_table tr.table-header {
+	background-color: #ddd;
+}
+
+#last_session_table .instrument-name {
+	width: 25%;
+}
+
+#auth input[type="email"], #auth input[type="password"] {
 	display: block;
 	margin: 20px auto;
 }
@@ -284,4 +317,38 @@ input[value="Войти"] {
 .pop-up.confirm-instrument-deletion .confirm-button, .pop-up.start-session .confirm-button {
 	background-color: #e55;
 	border: 2px solid #e55;
+}
+
+#trade_app_header {
+	height: 44px;
+}
+
+.common-menu-link {
+  display: inline-block;
+  vertical-align: top;
+  width: 200px;
+  padding: 8px 0;
+  box-sizing: border-box;
+  background-color: #55e;
+  margin: 0 20px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  -webkit-transition: all 0.25s;
+  -o-transition: all 0.25s;
+  transition: all 0.25s;
+}
+
+.common-menu-link:hover {
+	padding-top: 14px;
+}
+
+.tickets {
+	text-align: left;
+	padding: 0 50px;
+}
+
+.tickets h1 {
+	text-align: center;
 }

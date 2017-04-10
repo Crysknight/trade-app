@@ -26,7 +26,8 @@ class User {
                 $array = array(
                     "role_name" => $user_info['role_name'],
                     "token" => $token,
-                    "id"=>$user_info["id"]
+                    "id"=>$user_info["id"],
+                    "role_id"=>$user_info['role_id']
                 );
                 return $array;
             }
@@ -83,12 +84,22 @@ class User {
             return $result;
         }
     }
-    function updateUser($user_id,$user_name,$user_pass,$role_id,$fio,$organization,$phone,$comment)
+    function updateUser($user_id,$user_name,$role_id,$fio,$organization,$phone,$comment,$user_pass=false)
     {
         $result = new stdClass();
-        $sth = $this->db->prepare('UPDATE users SET user_name = :user_name,user_pass = MD5(:user_pass),role_id = :role_id,fio=:fio,organization = :organization,phone = :phone,comment = :comment WHERE id = :user_id;');
+        $sth2 = $this->db->prepare('SELECT * FROM users WHERE id = :user_id;');
+        $sth = $this->db->prepare('UPDATE users SET user_name = :user_name,user_pass = :user_pass,role_id = :role_id,fio=:fio,organization = :organization,phone = :phone,comment = :comment WHERE id = :user_id;');
         try
         {
+            if(!$user_pass){
+                $sth2->execute(array(":user_id" => $user_id));
+                if($user = $sth2->fetch()){
+                    $user_pass = $user['user_pass'];
+                }
+            }
+            else{
+                $user_pass = md5($user_pass);
+            }
             $sth->execute(
                 array
                 (

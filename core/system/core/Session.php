@@ -279,4 +279,27 @@ class Session
             return $result;
         }
     }
+    public function hasPlannedSession(){
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT * FROM sessions WHERE status = 1;');
+        try
+        {
+            $sth->execute();
+            if($plannedSession = $sth->fetch()){
+                $result->hasplannedsession = true;
+            }
+            else{
+                $result->hasplannedsession = false;
+            }
+            $result->status = 500;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
 }

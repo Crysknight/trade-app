@@ -11,6 +11,9 @@ import session from './reducer-session';
 import deals from './reducer-deals';
 import interval from './reducer-interval';
 import adminInstruments from './reducer-admin-instruments';
+import adminUsers from './reducer-admin-users';
+import lastSession from './reducer-last-session';
+import tickets from './reducer-tickets';
 
 const allReducers = combineReducers({
 	routing: routerReducer,
@@ -23,7 +26,10 @@ const allReducers = combineReducers({
 	session,
 	deals,
 	interval,
-	adminInstruments
+	adminInstruments,
+	adminUsers,
+	lastSession,
+	tickets
 });
 
 export default allReducers;

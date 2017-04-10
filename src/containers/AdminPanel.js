@@ -17,7 +17,7 @@ class AdminPanel extends Component {
 	// }
 
 	componentWillMount() {
-		this.props.init(this.props.user);
+		this.props.init(this.props.user, this.props.routing);
 	}
 
 	render() {

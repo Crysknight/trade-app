@@ -17,10 +17,21 @@ class Sessions extends Component {
 	// }
 
 	render() {
+		let to = '/trade-app/admin/addsession';
+		let className = '';
+		if (this.props.session.session_id !== 0) {
+			to = '';
+			className = ' disabled';
+		}
 		return (
 			<div className="sessions">
 				<h2>Сессии</h2>
-				<Link to='/trade-app/admin/addsession'>Добавить новую</Link>
+				<p>
+					<Link to="/trade-app/last-session">Последняя сессия</Link>
+				</p>
+				<p>
+					<Link className={`button-link${className}`} to={to}>Добавить новую</Link>
+				</p>
 			</div>
 		);
 	}
@@ -29,7 +40,7 @@ class Sessions extends Component {
 
 function mapStateToProps(state) {
 	return {
-		
+		session: state.session
 	};
 }
 

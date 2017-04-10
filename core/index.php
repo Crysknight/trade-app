@@ -16,7 +16,7 @@ $app->post('/login', function (Request $request) use ($user) {
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $userInfo = @$user->login($post->eMail,$post->password);
-    if($userInfo)
+    if($userInfo && $userInfo['role_id'] != 0)
     {
         return new Response(json_encode($userInfo), 200);
     }
@@ -31,7 +31,7 @@ $app->post('/addorder',function(Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0 )
     {
         $order = new Order(Database::getDbHandle());
         $result= @$order->addOrder
@@ -76,7 +76,7 @@ $app->post('/sessionend',function(Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $session = new Session(Database::getDbHandle());
         $result = @$session->end($post->id);
@@ -94,7 +94,7 @@ $app->post('/sessioncheck',function(Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $session = new Session(Database::getDbHandle());
         $result = @$session->checkSession();
@@ -112,7 +112,7 @@ $app->post('/sessiongetinstruments',function(Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $session = new Session(Database::getDbHandle());
         $result = @$session->getInstruments($post->session_id);
@@ -130,7 +130,7 @@ $app->post('/deleteorder',function (Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $order = new Order(Database::getDbHandle());
         $result = @$order->deleteOrder($post->id);
@@ -148,7 +148,7 @@ $app->post('/deleteordersarray',function (Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $order = new Order(Database::getDbHandle());
         $result = @$order->deleteOrdersArray($post->ids);
@@ -166,7 +166,7 @@ $app->post('/checkorders',function (Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $order = new Order(Database::getDbHandle());
         $result = $order->checkOrders($user['id'],$post->session_id);
@@ -183,7 +183,7 @@ $app->post('/checkdeals',function (Request $request) use ($user){
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $order = new Deal(Database::getDbHandle());
         $result = $order->checkDeals($user['id']);
@@ -243,7 +243,7 @@ $app->post('/updateinstrument',function (Request $request) use ($user)
     if($user && $user['role_id'] == 1)
     {
         $instrument = new Instrument(Database::getDbHandle());
-        $result = @$instrument->updateInstrument($post->instrument_id,$post->instrument_name,$post->instrument_price);
+        $result = @$instrument->updateInstrument($post->instrument_id,$post->instrument_name,$post->instrument_price,$post->interest);
         return new Response(json_encode($result),$result->status);
     }
     else
@@ -259,7 +259,7 @@ $app->post('/updateinstrumentstatus',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $instrument = new Instrument(Database::getDbHandle());
         $result = @$instrument->setStatus($post->instrument_id,$post->instrument_status);
@@ -278,7 +278,7 @@ $app->post('/checkupdate',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
          $deal = new Deal(Database::getDbHandle());
          $session = new Session(Database::getDbHandle());
@@ -336,12 +336,12 @@ $app->post('/updateuser',function (Request $request) use ($user)
         (
             $post->user_id,
             $post->user_name,
-            $post->user_pass,
             $post->role_id,
             $post->fio,
             $post->organization,
             $post->phone,
-            $post->comment
+            $post->comment,
+            $post->user_pass
         );
         $result->status = 200;
         return new Response(json_encode($result),$result->status);
@@ -414,7 +414,7 @@ $app->post('/getlastsession',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user)
+    if($user && $user['role_id'] !=0)
     {
         $session = new Session(Database::getDbHandle());
         $result->lastsession = $session->getLastSession();
@@ -438,6 +438,24 @@ $app->post('/getallorders',function (Request $request) use ($user)
         $order = new Order(Database::getDbHandle());
         $result->orders = $order->getAllOrders($post->session_id);
         $result->status = 200;
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/hasplannedsession',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1)
+    {
+        $session = new Session(Database::getDbHandle());
+        $result = $session->hasPlannedSession();
         return new Response(json_encode($result),$result->status);
     }
     else

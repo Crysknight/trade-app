@@ -40,9 +40,6 @@ class App extends Component {
     }
     this.props.cancelOrders(this.props.user.token, orders);
   }
-  logOut() {
-    this.props.logOut(this.props.user.token);
-  }
   render() {
     let disabled = !this.props.orders.length;
     if (this.props.session.session_id) {
@@ -71,7 +68,6 @@ class App extends Component {
             {this.createTradeTable()}
             </tbody>
           </table>
-          <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
         </div>
       );
     } else {
@@ -82,7 +78,6 @@ class App extends Component {
             <p>На данный момент активной сессии нет</p>
             <img alt="please-stand-by" src={cup} />
           </div>
-          <div className="signOut" onClick={this.logOut.bind(this)}>Выйти</div>
         </div>
       );
     }
@@ -104,7 +99,6 @@ function mapStateToProps(state) {
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
   	cancelOrders: actions.cancelOrders,
-    logOut: actions.logOut,
     checkUpdate: actions.checkUpdate,
     init: actions.init
   }, dispatch);

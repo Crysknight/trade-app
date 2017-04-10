@@ -43,7 +43,7 @@ ul li a {
 	text-align: right;
 }
 
-button, input[type="submit"], .sessions a {
+button, input[type="submit"], .sessions  a.button-link {
 	background-color: #55e;
 	border: 2px solid #55e;
 	color: #fff;
@@ -51,6 +51,12 @@ button, input[type="submit"], .sessions a {
 	cursor: pointer;
 	text-decoration: none;
 	padding: 6px 10px;
+}
+
+.sessions  a.button-link.disabled {
+	background-color: #ddf;
+	border: 2px solid #ddf;
+	cursor: default;
 }
 
 button:focus, input:focus {
@@ -106,10 +112,18 @@ button:focus, input:focus {
 }
 
 .instruments input {
-    height: 26px;
-    padding: 0 8px;
-    border-radius: 4px;
-    border: 1px solid #aaa;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid #aaa;
+}
+
+.instruments.users input {
+	width: 100px;
+}
+
+.instruments.users input[type="checkbox"] {
+	width: 16px;
 }
 
 .add-session input:focus::-webkit-input-placeholder { color:transparent; }
@@ -209,4 +223,13 @@ button.delete-instrument {
 	background-size: 18px;
 	background-repeat: no-repeat;
 	background-position: 4px 4px;
+}
+
+.adduser {
+	margin-top: 50px;
+}
+
+.adduser input {
+	display: block;
+	margin: 10px;
 }
