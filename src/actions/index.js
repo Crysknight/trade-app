@@ -37,6 +37,29 @@ export const hidePopUp = () => {
   }
 };
 
+export const createError = (error) => {
+  return {
+    type: "CREATE_ERROR",
+    payload: {
+      name: error.name,
+      info: error.info
+    }
+  }
+};
+
+export const deleteError = (name) => {
+  return {
+    type: "DELETE_ERROR",
+    payload: name
+  }
+};
+
+export const turnOffInterval = () => {
+  return {
+    type: "INTERVAL_TURN_OFF"
+  }
+};
+
 /* Async block */
 
 export const init = (user, routing) => dispatch => {
@@ -496,6 +519,8 @@ export const loadLastSession = (token) => dispatch => {
       let session = {};
       let interestedInstruments = reqSession.interested_instruments.map(instrument => +instrument.id);
       let dealedInstruments = reqSession.dealed_instruments.map(instrument => +instrument.id);
+      console.log('interestedInstruments: ', interestedInstruments);
+      console.log('dealedInstruments: ', dealedInstruments)
       session.id = +reqSession.id;
       session.start = reqSession.start;
       session.end = reqSession.end;
@@ -505,18 +530,18 @@ export const loadLastSession = (token) => dispatch => {
         instrument.price = +instrument.price;
         instrument.interest = 0;
         instrument.status = +instrument.status;
+        for (let i = 0; i < interestedInstruments.length; i++) {
+          if (instrument.id === interestedInstruments[i]) {
+            instrument.interest = 1;
+          }
+        }
+        for (let i = 0; i < dealedInstruments.length; i++) {
+          if (instrument.id === dealedInstruments[i]) {
+            instrument.interest = 2;
+          }
+        }
         return instrument;
       });
-      for (let i = 0; i < interestedInstruments.length; i++) {
-        if (session.instruments[i].id === interestedInstruments[i]) {
-          session.instruments[i].interest = 1;
-        }
-      }
-      for (let i = 0; i < dealedInstruments.length; i++) {
-        if (session.instruments[i].id === dealedInstruments[i]) {
-          session.instruments[i].interest = 2;
-        }
-      }
       dispatch({ type: "LOAD_LAST_SESSION", payload: session });
     })
     .catch(error => {
@@ -529,20 +554,21 @@ export const getDealsByDate = (user, date_start, date_end) => dispatch => {
     .then(response => {
       let tickets = response.data.deals;
       tickets = tickets.map(ticket => {
-        ticket.id = +ticket.id;
-        ticket.instrument_id = +ticket.instrument_id; // Модернизировать до instrument_name и instrument_price
+        let processedTicket = {};
+        processedTicket.id = +ticket.id;
+        processedTicket.instrument_id = +ticket.instrument_id; // Модернизировать до instrument_name и instrument_price
         if (user.id === +ticket.seller) {
-          ticket.side = 'Продажа';
-          ticket.volume = +ticket.saled;
+          processedTicket.side = 'Продажа';
+          processedTicket.volume = +ticket.saled;
         } else if (user.id === +ticket.buyer) {
-          ticket.side = 'Покупка';
-          ticket.volume = +ticket.buyed;
+          processedTicket.side = 'Покупка';
+          processedTicket.volume = +ticket.buyed;
         }
-        return ticket;
+        return processedTicket;
       });
       dispatch({ type: "GET_TICKETS", payload: tickets });
     })
     .catch(error => {
       console.log('error from getDealsByDate: ', error);
     })
-}
+};

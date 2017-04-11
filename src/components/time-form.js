@@ -3,18 +3,35 @@ import React, { Component } from 'react';
 
 export default class TimeForm extends Component {
 
-	// constructor(props) {
-	// 	super(props);
-	// }
+	constructor(props) {
+		super(props);
+		this.handleTimeForm = this.handleTimeForm.bind(this);
+	}
+
+	handleTimeForm(e) {
+		e.preventDefault();
+		this.props.handleTimeForm(e);
+	}
 
 	render() {
 		return (
 			<div className="time-form">
-				<form>
-					<label>Время начала:</label>
-					<input onChange={this.props.handleTimeForm} id="date_start" type="datetime-local" required />
-					<label>Время окончания:</label>
-					<input onChange={this.props.handleTimeForm} id="date_end" max="2666-06-06T06:06:06" type="datetime-local" required />
+				<form className={this.props.className} onSubmit={this.handleTimeForm}>
+					<label>{this.props.from}</label>
+					<input
+						onChange={this.props.handleTimeFormInput}
+						onFocus={this.props.handleFocus}
+						id="date_start"
+						type={this.props.type === 'datetime-local' ? 'datetime-local' : 'date'}
+						required />
+					<label>{this.props.to}</label>
+					<input
+						onChange={this.props.handleTimeFormInput}
+						onFocus={this.props.handleFocus}
+						id="date_end"
+						type={this.props.type === 'datetime-local' ? 'datetime-local' : 'date'}
+						required />
+					{!this.props.withoutSubmit &&	<input type="submit" value={this.props.submitText}/>}
 				</form>
 			</div>
 		);

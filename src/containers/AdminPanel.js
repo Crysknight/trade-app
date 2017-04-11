@@ -20,6 +20,10 @@ class AdminPanel extends Component {
 		this.props.init(this.props.user, this.props.routing);
 	}
 
+	componentWillUnmount() {
+		this.props.turnOffInterval();
+	}
+
 	render() {
 		let pathname = this.props.routing.locationBeforeTransitions.pathname;
 		let topMenu = (pathname !== '/trade-app/admin' && pathname !== '/trade-app/admin/') ? (
@@ -52,7 +56,8 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
-		init: actions.init
+		init: actions.init,
+		turnOffInterval: actions.turnOffInterval
 	}, dispatch);
 }
 

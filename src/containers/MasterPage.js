@@ -17,7 +17,7 @@ class MasterPage extends Component {
 	}
 
   logOut() {
-    this.props.logOut(this.props.user.token);
+    this.props.logOut();
   }
 
 	render() {

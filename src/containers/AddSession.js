@@ -202,7 +202,12 @@ class AddSession extends Component {
 				<div className="wrapper">
 					<h2>Добавить сессию</h2>
 					<div id="__session_form">
-						<TimeForm handleTimeForm={this.handleTimeForm} />
+						<TimeForm 
+							from={'Время начала:'} 
+							to={'Время окончания:'} 
+							type={'datetime-local'}
+							handleTimeFormInput={this.handleTimeForm} 
+							withoutSubmit={true}/>
 					</div>
 					<button disabled={registeringSession}
 						className="register-session"

@@ -20,7 +20,6 @@ export default class Input extends Component {
 		return (
 			<input id={this.props.inputId}
 				type={this.props.inputType}
-				name={this.props.inputName}
 				step={this.props.inputStep}
 				className={this.props.inputClassName}
 				value={this.state.value}

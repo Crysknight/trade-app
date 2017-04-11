@@ -105,6 +105,7 @@ class TradeTableRow extends Component {
     }
   }
   render() {
+    let Row;
     let disabled = false;
 
     /* Цветакадирофка! Ы! */
@@ -146,29 +147,41 @@ class TradeTableRow extends Component {
       return order.instrument === this.props.instrument.id;
     });
     let cancelDisabled = !ordersForThisInstrument.length;
-  	return (
-  	  <tr className={`${highlightedGreen}${highlightedYellow}`}>
-  	    <td className="bordered">{this.props.instrument.name}</td>
-  	    <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
-  	    <td colSpan="3">
-  	      <form className="size-form" onSubmit={this.registerOrder}>
-  	        <BidButton disabled={disabled} setOrderType={this.setOrderType} />
-  	        <OrderSize quantity={this.state.quantity} setQuantity={this.setQuantity}/>
-  	        <OfferButton disabled={disabled} setOrderType={this.setOrderType} />
-  	      </form>
-  	    </td>
-  	    <td style={{borderLeft: '1px solid #000'}}>{this.getBids()}</td>
-  	    <td className="cancel-row">
-          <CancelRow 
-            instrument={this.props.instrument.id} 
-            cancelRow={this.cancelRow} 
-            disabled={cancelDisabled} />
-        </td>
-  	    <td>{this.getOffers()}</td>
-  	    <td className="bordered">{this.getClosedBids()}</td>
-  	    <td className="bordered">{this.getClosedOffers()}</td>
-  	  </tr>
-  	);
+    if (this.props.user.roleName === 'isadmin') {
+      Row = (
+        <tr className={`${highlightedGreen}${highlightedYellow}`}>
+          <td className="bordered">{this.props.instrument.name}</td>
+          <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
+          <td style={{borderLeft: '1px solid #000', borderRight: '1px solid #000'}}>{this.getBids()}</td>
+          <td style={{borderRight: '1px solid #000'}}>{this.getOffers()}</td>
+        </tr>
+      );
+    } else if (this.props.user.roleName === 'isuser') {
+      Row = (
+        <tr className={`${highlightedGreen}${highlightedYellow}`}>
+          <td className="bordered">{this.props.instrument.name}</td>
+          <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
+          <td colSpan="3">
+            <form className="size-form" onSubmit={this.registerOrder}>
+              <BidButton disabled={disabled} setOrderType={this.setOrderType} />
+              <OrderSize quantity={this.state.quantity} setQuantity={this.setQuantity}/>
+              <OfferButton disabled={disabled} setOrderType={this.setOrderType} />
+            </form>
+          </td>
+          <td style={{borderLeft: '1px solid #000'}}>{this.getBids()}</td>
+          <td className="cancel-row">
+            <CancelRow 
+              instrument={this.props.instrument.id} 
+              cancelRow={this.cancelRow} 
+              disabled={cancelDisabled} />
+          </td>
+          <td>{this.getOffers()}</td>
+          <td className="bordered">{this.getClosedBids()}</td>
+          <td className="bordered">{this.getClosedOffers()}</td>
+        </tr>
+      );
+    }
+    return Row;
   }
 }
 
