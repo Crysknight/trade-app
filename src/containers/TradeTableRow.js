@@ -9,6 +9,7 @@ import OfferButton from '../components/offer-button';
 import OrderSize from '../components/order-size';
 import Order from '../components/order';
 import CancelRow from '../components/cancel-row';
+import Input from '../components/input';
 
 class TradeTableRow extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class TradeTableRow extends Component {
   	this.setQuantity = this.setQuantity.bind(this);
   	this.setOrderType = this.setOrderType.bind(this);
     this.cancelRow = this.cancelRow.bind(this);
+    this.handlePriceChange = this.handlePriceChange.bind(this);
   }
   setQuantity(value) {
   	this.setState({
@@ -42,6 +44,9 @@ class TradeTableRow extends Component {
   	});
     this.setState({ quantity: 0 });
   }
+  handlePriceChange(e) {
+    console.log(e.target.value);
+  }
   cancelRow(instrument) {
     let orders = [];
     for (let i = 0; i < this.props.orders.length; i++) {
@@ -62,7 +67,10 @@ class TradeTableRow extends Component {
   	return this.props.orders.map((order) => {
   	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
   	    return (
-  	      <Order key={order.id} size={order.quantity} />
+  	      <Order className={this.props.user.roleName === 'isadmin' ? 'admin-order' : ''}
+            key={order.id}
+            size={order.quantity}
+            user={this.props.user.roleName === 'isadmin' ? order.user : null} />
   	    );
   	  } else {
   	  	return false;
@@ -73,7 +81,10 @@ class TradeTableRow extends Component {
   	return this.props.orders.map((order) => {
   	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
   	    return (
-  	      <Order key={order.id} size={order.quantity} />
+  	      <Order className={this.props.user.roleName === 'isadmin' ? 'admin-order' : ''}
+            key={order.id}
+            size={order.quantity}
+            user={this.props.user.roleName === 'isadmin' ? order.user : null} />
   	    );
   	  } else {
   	  	return false;
@@ -151,7 +162,12 @@ class TradeTableRow extends Component {
       Row = (
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">{this.props.instrument.name}</td>
-          <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
+          <td className={`bordered${highlightedRed}${animatedRed}`}>
+            <Input inputType="number"
+              inputStep={0.0001}
+              inputValue={this.props.instrument.price.toFixed(4)}
+              onChange={this.handlePriceChange} />
+          </td>
           <td style={{borderLeft: '1px solid #000', borderRight: '1px solid #000'}}>{this.getBids()}</td>
           <td style={{borderRight: '1px solid #000'}}>{this.getOffers()}</td>
         </tr>

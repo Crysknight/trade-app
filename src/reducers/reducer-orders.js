@@ -7,6 +7,9 @@ export default function(state = [], action) {
         ...state
       ];
   	}
+    case 'UPLOAD_ORDERS': {
+      return action.payload;
+    }
   	case 'CANCEL_ORDERS': {
       return state.filter((order) => {
         let orderStays = true;

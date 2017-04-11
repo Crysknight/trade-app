@@ -17,6 +17,10 @@ class App extends Component {
     this.getTheApp = this.getTheApp.bind(this);
   }
   componentWillMount() {
+    if (this.props.user.roleName === 'isadmin') {
+      console.log('hello');
+      this.props.getUsers(this.props.user.token);
+    }
     this.props.init(this.props.user);
     window.stop = () => clearInterval(this.interval);
   }
@@ -26,9 +30,15 @@ class App extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.interval !== nextProps.interval && nextProps.interval) {
-      this.interval = setInterval(() => {
-        this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments);
-      }, 1000);
+      if (this.props.user.roleName === 'isuser') {
+        this.interval = setInterval(() => {
+          this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments);
+        }, 1000);
+      } else if (this.props.user.roleName === 'isadmin') {
+        this.interval = setInterval(() => {
+          this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments, this.props.adminUsers, this.props.orders);
+        }, 1000);
+      }
     } else if (this.props.interval !== nextProps.interval && !nextProps.interval) {
       clearInterval(this.interval);
     }
@@ -84,7 +94,7 @@ class App extends Component {
               <tr className="table-header">
                 <td>Инструмент</td>
                 <td>Цена</td>
-                <td style={{borderRight: 'none', width: '30%'}}>Покупка</td>
+                <td style={{borderRight: '1px solid #000', width: '30%'}}>Покупка</td>
                 <td style={{borderLeft: 'none', width: '30%'}}>Продажа</td>
               </tr>
               {this.createTradeTable()}
@@ -124,7 +134,8 @@ function mapStateToProps(state) {
     session: state.session,
     orders: state.orders,
     deals: state.deals,
-    interval: state.interval
+    interval: state.interval,
+    adminUsers: state.adminUsers
   };
 }
 
@@ -133,7 +144,8 @@ function matchDispatchToProps(dispatch) {
   	cancelOrders: actions.cancelOrders,
     checkUpdate: actions.checkUpdate,
     init: actions.init,
-    turnOffInterval: actions.turnOffInterval
+    turnOffInterval: actions.turnOffInterval,
+    getUsers: actions.getUsers
   }, dispatch);
 }
 

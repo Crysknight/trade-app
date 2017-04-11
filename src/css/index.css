@@ -181,6 +181,14 @@ body {
 	margin-right: 6px;
 }
 
+#trade_table .order.admin-order {
+	display: block;
+	margin: 3px 2px;
+	padding: 3px;
+	border: 1px solid #000;
+	border-radius: 3px;
+}
+
 #trade_table .order.order-error {
 	padding: 3px;
 	background-color: #e55;
@@ -275,6 +283,7 @@ input[value="Войти"] {
   margin: 70px auto;
   width: 380px;
   padding: 30px;
+  text-align: center;
   border: 2px solid #5555ee;
   border-radius: 10px;
 }

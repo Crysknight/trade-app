@@ -161,7 +161,7 @@ export const cancelOrders = (token, orders) => dispatch => {
     });
 };
 
-export const checkUpdate = (user, deals, session, instruments) => dispatch => {
+export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOrders) => dispatch => {
   axios.post('/trade-app/core/checkupdate', { token: user.token })
     .then(response => {
 
@@ -175,42 +175,6 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
         return;
       } else if (!+reqSession.session_id) {
         return;
-      }
-
-      /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
-
-      let newDeals = response.data.checkdeals.deals;
-      if (newDeals.length !== 0) {
-        for (let i = 0; i < newDeals.length; i++) {
-          if (!deals[i]) {
-            let id = +newDeals[i].id;
-            let type;
-            let instrument = +newDeals[i].instrument_id;
-            let volume;
-            let orderId;
-            let orderRemain;
-            if (+newDeals[i].seller === user.id) {
-              type = 'sale';
-              volume = +newDeals[i].saled;
-              orderId = +newDeals[i].seller_order_id;
-              orderRemain = +newDeals[i].seller_remainder;
-            } else if (+newDeals[i].buyer === user.id) {
-              type = 'buy';
-              volume = +newDeals[i].buyed;
-              orderId = +newDeals[i].buyer_order_id;
-              orderRemain = +newDeals[i].buyer_remainder;
-            }
-            if (id && type && instrument && volume) {
-              dispatch({ type: "NEW_DEAL", payload: {
-                id,
-                type,
-                instrument,
-                volume
-              }});
-              dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
-            }
-          }
-        }
       }
 
       /* Получаем инструменты и реагируем на их обновление */
@@ -249,6 +213,68 @@ export const checkUpdate = (user, deals, session, instruments) => dispatch => {
       }
       if (priceChanged || interestChanged) {
         dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
+      }
+
+      /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
+      /* Или подгружаем заказы для админа */
+
+      if (user.roleName === 'isuser') {
+        let newDeals = response.data.checkdeals.deals;
+        if (newDeals.length !== 0) {
+          for (let i = 0; i < newDeals.length; i++) {
+            if (!deals[i]) {
+              let id = +newDeals[i].id;
+              let type;
+              let instrument = +newDeals[i].instrument_id;
+              let volume;
+              let orderId;
+              let orderRemain;
+              if (+newDeals[i].seller === user.id) {
+                type = 'sale';
+                volume = +newDeals[i].saled;
+                orderId = +newDeals[i].seller_order_id;
+                orderRemain = +newDeals[i].seller_remainder;
+              } else if (+newDeals[i].buyer === user.id) {
+                type = 'buy';
+                volume = +newDeals[i].buyed;
+                orderId = +newDeals[i].buyer_order_id;
+                orderRemain = +newDeals[i].buyer_remainder;
+              }
+              if (id && type && instrument && volume) {
+                dispatch({ type: "NEW_DEAL", payload: {
+                  id,
+                  type,
+                  instrument,
+                  volume
+                }});
+                dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
+              }
+            }
+          }
+        }
+      } else if (user.roleName === 'isadmin') {
+        axios.post('/trade-app/core/getallorders', { token: user.token, session_id: session.session_id })
+          .then(response => {
+            let orders = response.data.orders.orders;
+            orders = orders.map(order => {
+              order.id = +order.id;
+              order.quantity = +order.quantity;
+              order.user_id = +order.user_id;
+              order.instrument = 26; // Сюда добавить реальный инструмент
+              for (let i = 0; i < adminUsers.length; i++) {
+                if (adminUsers[i].id === order.user_id) {
+                  order.user = adminUsers[i];
+                }
+              }
+              return order;
+            });
+            if (orders && JSON.stringify(orders) !== JSON.stringify(oldOrders)) {
+              dispatch({ type: "UPLOAD_ORDERS", payload: orders });
+            }
+          })
+          .catch(error => {
+            console.log('error from getallorders: ', error);
+          });
       }
     })
     .catch(error => {
@@ -315,7 +341,7 @@ export const logOut = token => dispatch => {
     cookie.remove('id', { path: "/" });
     dispatch({ type: 'LOG_OUT' });
     browserHistory.push('/trade-app/login');
-  }, 700);
+  }, 350);
   // axios.post('/trade-app/core/logout', token)
   //   .then(response => {
   //     cookie.remove('eMail', { path: "/" });
@@ -443,7 +469,7 @@ export const addSession = (token, date_start, date_end, instrument_ids) => dispa
 export const getUsers = (token) => dispatch => {
   axios.post('/trade-app/core/getusers', { token })
     .then(response => {
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users });
+      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users.map(user => { user.id = +user.id; return user; }) });
     })
     .catch(error => {
       console.log('error from getUsers: ', error);
@@ -519,8 +545,6 @@ export const loadLastSession = (token) => dispatch => {
       let session = {};
       let interestedInstruments = reqSession.interested_instruments.map(instrument => +instrument.id);
       let dealedInstruments = reqSession.dealed_instruments.map(instrument => +instrument.id);
-      console.log('interestedInstruments: ', interestedInstruments);
-      console.log('dealedInstruments: ', dealedInstruments)
       session.id = +reqSession.id;
       session.start = reqSession.start;
       session.end = reqSession.end;
