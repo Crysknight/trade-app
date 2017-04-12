@@ -291,7 +291,46 @@ class Session
             else{
                 $result->hasplannedsession = false;
             }
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
             $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
+    public function deletePlannedSession(){
+        $result = new stdClass();
+        $sth = $this->db->prepare('DELETE FROM sessions WHERE status = 1;');
+        try
+        {
+            $sth->execute();
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
+    public function updateSession($session_id,$date_end){
+        $result = new stdClass();
+        $sth = $this->db->prepare('UPDATE sessions SET end = :date_end WHERE id = :session_id;');
+        try
+        {
+            $sth->execute(
+                array(
+                    ":date_end" => $date_end,
+                    ":session_id" => $session_id
+                )
+            );
+            $result->status = 200;
             return $result;
         }
         catch (PDOException $e)

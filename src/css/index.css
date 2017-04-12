@@ -1,7 +1,7 @@
 @keyframes animationRed {
 	from {background-color: #fff;}
-	50% {background-color: #f55;}
-	to {background-color: #f55;}
+	50% {background-color: #e78;}
+	to {background-color: #e78;}
 }
 
 body {
@@ -75,6 +75,7 @@ body {
 #trade_table td {
 	padding: 10px 5px;
 	vertical-align: top;
+	border-top: 1px solid #000;
 }
 
 #trade_table.admin input[type="number"] {
@@ -86,10 +87,15 @@ body {
 }
 
 #trade_table button.admin-submit {
+	margin-top: 5px;
 	width: 100px;
 }
 
-#trade_table button.admin-submit.error {
+#trade_table td[colspan="4"] button {
+	margin: 0 8px;
+}
+
+#trade_table button.admin-submit.error, .cancel-planned-session, .end-session {
 	background-color: #e78;
 	border: 2px solid #e78;
 }
@@ -151,10 +157,12 @@ body {
 
 #trade_table .interest-button.interest.interested {
 	background-color: #8f9;
+	cursor: default;
 }
 
 #trade_table .interest-button.deal.dealed {
 	background-color: #e78;
+	cursor: default;
 }
 
 #trade_table .table-prerow {

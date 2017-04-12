@@ -65,7 +65,7 @@ class TradeTableRow extends Component {
         instrument_price: this.state.priceChange,
         interest: this.props.instrument.interest
       };
-      this.props.liveUpdateInstrument(this.props.user, instrument);
+      this.props.liveUpdateInstrument(this.props.user, instrument, 'updating price');
     } else {
       this.props.createError({
         name: `same_price_${this.props.instrument.id}`

@@ -36,6 +36,9 @@ class Tickets extends Component {
 
 	componentWillMount() {
 		this.getTodaysTickets();
+		if (this.props.user.roleName === 'isadmin') {
+			this.props.getUsers(this.props.user.token);
+		}
 	}
 
 	handleRadio(e) {
@@ -73,12 +76,6 @@ class Tickets extends Component {
 			});
 			return;
 		}
-		if (date_start === date_end) {
-			this.props.createError({
-				name: 'equalDates'
-			});
-			return;
-		}
 		date_start += ' 00:00:00';
 		date_end += ' 23:59:59';
 		this.props.getDealsByDate(this.props.user, date_start, date_end);
@@ -95,7 +92,26 @@ class Tickets extends Component {
 	}
 
 	getTickets() {
-		let Tickets = this.props.tickets.map((ticket, index) => <Ticket key={index} index={index} ticket={ticket} />);
+		let Tickets = this.props.tickets.map((ticket, index) => {
+			if (this.props.user.roleName === 'isuser') {
+				return (
+					<Ticket
+						user={this.props.user}
+						key={index}
+						index={index}
+						ticket={ticket} />
+				);
+			} else if (this.props.user.roleName === 'isadmin') {
+				return (
+					<Ticket
+						user={this.props.user}
+						key={index}
+						index={index}
+						ticket={ticket}
+						adminUsers={this.props.adminUsers} />
+				);
+			}
+		});
 		return Tickets;
 	}
 
@@ -108,11 +124,6 @@ class Tickets extends Component {
 		if (this.props.errors.startBiggerThanEnd) {
 			if (this.props.errors.startBiggerThanEnd.status) {
 				return 'Даты перепутаны';
-			}
-		}
-		if (this.props.errors.equalDates) {
-			if (this.props.errors.equalDates.status) {
-				return 'Даты одинаковы';
 			}
 		}
 		return '';
@@ -155,12 +166,23 @@ class Tickets extends Component {
 					</p>
 					<table id="last_session_table">
 						<tbody>
-							<tr className="table-header">
-								<td>№</td>
-								<td>instrument_id</td>
-								<td>Сторона сделки</td>
-								<td>Объем</td>
-							</tr>
+							{this.props.user.roleName === 'isuser' && (
+								<tr className="table-header">
+									<td>№</td>
+									<td>Сторона сделки</td>
+									<td>Инструмент</td>
+									<td>Цена</td>
+									<td>Объем</td>
+								</tr>)}
+							{this.props.user.roleName === 'isadmin' && (
+									<tr className="table-header">
+										<td>№</td>
+										<td>Покупатель</td>
+										<td>Продавец</td>
+										<td>Инструмент</td>
+										<td>Цена</td>
+										<td>Объем</td>
+									</tr>)}
 							{this.getTickets()}
 						</tbody>
 					</table>
@@ -175,7 +197,8 @@ function mapStateToProps(state) {
 	return {
 		user: state.user,
 		errors: state.errors,
-		tickets: state.tickets
+		tickets: state.tickets,
+		adminUsers: state.adminUsers
 	};
 }
 
@@ -183,7 +206,8 @@ function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
 		getDealsByDate: actions.getDealsByDate,
 		createError: actions.createError,
-		deleteError: actions.deleteError
+		deleteError: actions.deleteError,
+		getUsers: actions.getUsers
 	}, dispatch);
 }
 

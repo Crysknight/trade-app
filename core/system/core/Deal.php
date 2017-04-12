@@ -1,5 +1,5 @@
 <?php
-
+require_once ("Instrument.php");
 class Deal
 {
     private $db = null;
@@ -83,8 +83,12 @@ class Deal
         );
         try
         {
+            $instrument = new Instrument($this->db);
             $sth->execute($executeArray);
             $deals = $sth->fetchAll();
+            foreach ($deals as $key=>$deal){
+                $deals[$key]['instrument_id'] = $instrument->getInstrumentById($deals[$key]['instrument_id']) ;
+            }
             $result->status=200;
             $result->deals = $deals;
             return $result;

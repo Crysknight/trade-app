@@ -6,6 +6,17 @@ export default function(state = { session_id: 0 }, action) {
   	case "END_SESSION": {
   		return action.payload;
   	}
+  	case "PLANNED_SESSION_TRUE": {
+  		return {
+  			session_id: 0,
+  			planned_session: true
+  		};
+  	}
+  	case "PLANNED_SESSION_FALSE": {
+  		return {
+  			session_id: 0
+  		};
+  	}
   	default: {
   		return state;
   	}

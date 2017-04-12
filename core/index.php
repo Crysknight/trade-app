@@ -377,7 +377,7 @@ $app->post('/getdealsbydate',function (Request $request) use ($user)
     $result = new stdClass();
     $post = json_decode($request->getContent());
     $user= @$user->getByToken($post->token);
-    if($user && $user['role_id'] == 1 )
+    if($user && $user['role_id'] != 0 )
     {
         $deal = new Deal(Database::getDbHandle());
         $result = $deal->getDealsByDate($post->date_start,$post->date_end);
@@ -456,6 +456,60 @@ $app->post('/hasplannedsession',function (Request $request) use ($user)
     {
         $session = new Session(Database::getDbHandle());
         $result = $session->hasPlannedSession();
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/cancelordersbyinstrument',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1)
+    {
+        $order = new Order(Database::getDbHandle());
+        $result = $order->cancelOrdersByInstrument($post->instrument_id);
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/deleteplannedsession',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1)
+    {
+        $session = new Session(Database::getDbHandle());
+        $result = $session->deletePlannedSession();
+        return new Response(json_encode($result),$result->status);
+    }
+    else
+    {
+        $result->status = 401;
+        $result->message = "User not authorized";
+        return new Response(json_encode($result),$result->status);
+    }
+});
+$app->post('/updatesession',function (Request $request) use ($user)
+{
+    $result = new stdClass();
+    $post = json_decode($request->getContent());
+    $user= @$user->getByToken($post->token);
+    if($user && $user['role_id'] == 1)
+    {
+        $session = new Session(Database::getDbHandle());
+        $result = $session->updateSession($post->session_id,$post->date_end);
         return new Response(json_encode($result),$result->status);
     }
     else

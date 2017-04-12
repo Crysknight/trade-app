@@ -31,6 +31,26 @@ class Instrument
             return $result;
         }
     }
+    public function getInstrumentById($instrument_id){
+        $result = new stdClass();
+        $sth = $this->db->prepare('SELECT * FROM instruments WHERE id = :instrument_id;');
+        try
+        {
+            $sth->execute
+            (
+                array(":instrument_id" => $instrument_id)
+            );
+            $dbresult = $sth->fetch();
+            return $dbresult;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: ".$e->getMessage();
+            //если не смогли чего то сделать с бд показываем ошибку
+            return $result;
+        }
+    }
     public static function getInterestedInstruments($db){
         $sth = $db->prepare('SELECT * FROM instruments WHERE interest = 1 AND status = 1;');
         try

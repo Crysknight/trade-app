@@ -45,6 +45,9 @@ export default function(state = [], action) {
       });
       return newState;
     }
+    case 'INSTRUMENT_PRICE_CHANGED': {
+      return state.filter(order => order.instrument !== action.payload);
+    }
   	default: {
   	  return state;
   	}

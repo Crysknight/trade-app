@@ -11,17 +11,30 @@ import * as actions from '../actions';
 
 class Sessions extends Component {
 
-	// constructor(props) {
-		// super(props);
+	constructor(props) {
+		super(props);
+		this.cancelPlannedSession = this.cancelPlannedSession.bind(this);
+	}
 
-	// }
+	cancelPlannedSession() {
+		this.props.cancelPlannedSession(this.props.user);
+	}
 
 	render() {
 		let to = '/trade-app/admin/addsession';
 		let className = '';
-		if (this.props.session.session_id !== 0) {
+		if (this.props.session.session_id !== 0 || this.props.session.planned_session) {
 			to = '';
 			className = ' disabled';
+		}
+		let PlannedSessionBlock;
+		if (this.props.session.planned_session) {
+			PlannedSessionBlock = (
+				<div style={{marginTop: '40px'}}>
+					<p>У Вас есть запланированная сессия</p>
+					<button className="cancel-planned-session" onClick={this.cancelPlannedSession}>Отменить</button>
+				</div>
+			);
 		}
 		return (
 			<div className="sessions">
@@ -32,6 +45,7 @@ class Sessions extends Component {
 				<p>
 					<Link className={`button-link${className}`} to={to}>Добавить новую</Link>
 				</p>
+				{PlannedSessionBlock}
 			</div>
 		);
 	}
@@ -40,13 +54,14 @@ class Sessions extends Component {
 
 function mapStateToProps(state) {
 	return {
+		user: state.user,
 		session: state.session
 	};
 }
 
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
-		
+		cancelPlannedSession: actions.cancelPlannedSession
 	}, dispatch);
 }
 

@@ -242,7 +242,7 @@ class Order
     }
     function getAllOrders($session_id){
         $result = new stdClass();
-        $sth = $this->db->prepare('SELECT id,type,quantity,user_id FROM orders WHERE session_id = :session_id;');
+        $sth = $this->db->prepare('SELECT id,type,quantity,user_id,instrument_id FROM orders WHERE session_id = :session_id;');
         try
         {
             $sth->execute
@@ -255,6 +255,22 @@ class Order
 
             $orders = $sth->fetchAll();
             $result->orders = $orders;
+            $result->status = 200;
+            return $result;
+        }
+        catch (PDOException $e)
+        {
+            $result->status = 500;
+            $result->message = "Database error: "." ".$e;
+            return $result;
+        }
+    }
+    function cancelOrdersByInstrument($instrument_id){
+        $result = new stdClass();
+        $sth = $this->db->prepare('DELETE FROM orders WHERE instrument_id=:instrument_id;');
+        try
+        {
+            $sth->execute(array(':instrument_id'=>$instrument_id));
             $result->status = 200;
             return $result;
         }

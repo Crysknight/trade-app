@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Апр 10 2017 г., 17:27
+-- Время создания: Апр 12 2017 г., 17:33
 -- Версия сервера: 5.5.45
 -- Версия PHP: 5.6.12
 
@@ -42,14 +42,7 @@ CREATE TABLE IF NOT EXISTS `deals` (
   PRIMARY KEY (`id`),
   KEY `instrument_id` (`instrument_id`),
   KEY `session_id` (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=48 ;
-
---
--- Дамп данных таблицы `deals`
---
-
-INSERT INTO `deals` (`id`, `saled`, `buyed`, `seller`, `buyer`, `seller_remainder`, `buyer_remainder`, `instrument_id`, `session_id`, `seller_order_id`, `buyer_order_id`, `deal_date`) VALUES
-(47, 25, 25, 3, 4, 25, 0, 24, 11, 31, 32, '2017-04-10 12:07:10');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -64,18 +57,19 @@ CREATE TABLE IF NOT EXISTS `instruments` (
   `interest` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=29 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=32 ;
 
 --
 -- Дамп данных таблицы `instruments`
 --
 
 INSERT INTO `instruments` (`id`, `name`, `price`, `interest`, `status`) VALUES
-(24, 'RUSS 17% /17', 103.4, 0, 0),
-(25, 'CAD 19 /70', 103.55, 0, 1),
-(26, 'G 300.30', 112.3, 2, 1),
+(26, 'G 300.30', 112.3, 0, 1),
 (27, 'Digger', 10.21, 0, 1),
-(28, 'RUSS 14% /17', 103.4, 0, 1);
+(28, 'RUSS 14% /17', 103.2, 0, 1),
+(29, 'CAD 17 /68', 115.407, 0, 0),
+(30, 'BY 1.2% /14', 102.34, 0, 1),
+(31, 'CAD 19 /68', 115.407, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -92,15 +86,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `session_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=34 ;
-
---
--- Дамп данных таблицы `orders`
---
-
-INSERT INTO `orders` (`id`, `type`, `user_id`, `quantity`, `instrument_id`, `session_id`) VALUES
-(31, 'sale', 3, 25, 24, 11),
-(33, 'buy', 4, 25, 25, 11);
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -137,15 +123,7 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `interested_instruments` text NOT NULL,
   `dealed_instruments` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
-
---
--- Дамп данных таблицы `sessions`
---
-
-INSERT INTO `sessions` (`id`, `start`, `end`, `status`, `instrument_ids`, `interested_instruments`, `dealed_instruments`) VALUES
-(11, '2017-04-10 12:00:00', '2017-04-10 12:07:00', 0, 'a:2:{i:0;i:24;i:1;i:25;}', 'a:1:{i:0;a:5:{s:2:"id";s:2:"25";s:4:"name";s:10:"CAD 19 /70";s:5:"price";s:6:"103.55";s:8:"interest";s:1:"1";s:6:"status";s:1:"1";}}', 'a:1:{i:0;a:5:{s:2:"id";s:2:"24";s:4:"name";s:12:"RUSS 17% /17";s:5:"price";s:5:"103.4";s:8:"interest";s:1:"2";s:6:"status";s:1:"1";}}'),
-(12, '2017-04-10 10:00:00', '2017-04-10 12:00:00', 0, 'a:4:{i:0;i:24;i:1;i:25;i:2;i:26;i:3;i:27;}', 'a:0:{}', 'a:0:{}');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 -- --------------------------------------------------------
 
@@ -164,16 +142,19 @@ CREATE TABLE IF NOT EXISTS `users` (
   `phone` varchar(12) NOT NULL,
   `comment` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 --
 -- Дамп данных таблицы `users`
 --
 
 INSERT INTO `users` (`id`, `user_name`, `user_pass`, `token`, `role_id`, `fio`, `organization`, `phone`, `comment`) VALUES
-(3, 'admin@mail.ru', '21232f297a57a5a743894a0e4a801fc3', '26b2601b4e7afb10fc1b17b19a11e1ec', 1, 'Павел Рукавишников', 'planb', '8939393', 'hello'),
-(4, 'user@mail.ru', '7e58d63b60197ceb55a1c487989a3720', '4b1bd56beef5c196a33cfc7a8c217396', 2, 'Павел Рукавишников', 'planb', '8939393', 'asdfasdf'),
-(5, 'monomach@mail.ru', 'e1a6be06be3ac48affe3af2198bc86a4', '', 2, 'Владимир Мономах', 'Русь', '304857034', 'Царь');
+(3, 'admin@mail.ru', '21232f297a57a5a743894a0e4a801fc3', '46211f021cf625e272c8f2d18499df43', 1, 'Павел Рукавишников', 'planb', '8939393', 'hello'),
+(4, 'user@mail.ru', 'ee11cbb19052e40b07aac0ca060c23ee', 'db5aea44e557ca7ec5626d0ced7d2f7c', 2, 'Павел Рукавишников', 'planb', '8939393', 'asdfasdf'),
+(5, 'monomach@mail.ru', 'e1a6be06be3ac48affe3af2198bc86a4', '868ec1d1df975f8f9082c0670ac62eb5', 2, 'Владимир Мономах', 'Русь', '304857034', 'Царь'),
+(6, 'user2@mail.ru', '7e58d63b60197ceb55a1c487989a3720', '5d4c4272c2c408f6d36ee15e55ee0ce9', 2, 'Артем', '', '', ''),
+(7, 'user3@mail.ru', '92877af70a45fd6a2ed7fe81e1236b78', 'f64c43d7d2eea0c4abf10fa936676072', 2, 'Илья', '', '', ''),
+(8, 'user4@mail.ru', '3f02ebe3d7929b091e3d8ccfde2f3bc6', '80a23be68ccbd6b04e0cc10438bcbb1b', 2, 'Хафиз', '', '', '');
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

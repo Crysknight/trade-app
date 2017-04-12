@@ -147,6 +147,17 @@ export const init = (user, routing) => dispatch => {
       console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: 'error' });
     });
+    if (user.roleName === 'isadmin') {
+      axios.post('/trade-app/core/hasplannedsession', { token: user.token })
+        .then(response => {
+          if (response.data.hasplannedsession) {
+            dispatch({ type: "PLANNED_SESSION_TRUE" });
+          }
+        })
+        .catch(error => {
+          console.log('error from hasplannedsession: ', error);
+        });
+    }
 }
 
 export const cancelOrders = (token, orders) => dispatch => {
@@ -192,6 +203,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
         return;
       }
       let priceChanged;
+      let changedInstrument;
       let interestChanged;
       for (let i = 0; i < reqInstruments.length; i++) {
         if (instruments[i].interest !== reqInstruments[i].interest) {
@@ -205,6 +217,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
         }
         if (instruments[i].price !== reqInstruments[i].price) {
           priceChanged = true;
+          changedInstrument = +reqInstruments[i].id;
           dispatch({ type: "CREATE_PROCESS", payload: {
             name: `price_changed_${reqInstruments[i].id}`
           }});
@@ -213,6 +226,9 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       }
       if (priceChanged || interestChanged) {
         dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
+      }
+      if (priceChanged) {
+        dispatch({ type: "INSTRUMENT_PRICE_CHANGED", payload: changedInstrument });
       }
 
       /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
@@ -260,7 +276,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
               order.id = +order.id;
               order.quantity = +order.quantity;
               order.user_id = +order.user_id;
-              order.instrument = 26; // Сюда добавить реальный инструмент
+              order.instrument = +order.instrument_id; // Сюда добавить реальный инструмент
               for (let i = 0; i < adminUsers.length; i++) {
                 if (adminUsers[i].id === order.user_id) {
                   order.user = adminUsers[i];
@@ -478,7 +494,7 @@ export const getUsers = (token) => dispatch => {
     })
     .catch(error => {
       console.log('error from getUsers: ', error);
-    })
+    });
 };
 
 export const updateUser = (token, userToUpdate) => dispatch => {
@@ -591,26 +607,41 @@ export const getDealsByDate = (user, date_start, date_end) => dispatch => {
     .then(response => {
       let tickets = response.data.deals;
       tickets = tickets.map(ticket => {
-        let processedTicket = {};
-        processedTicket.id = +ticket.id;
-        processedTicket.instrument_id = +ticket.instrument_id; // Модернизировать до instrument_name и instrument_price
-        if (user.id === +ticket.seller) {
-          processedTicket.side = 'Продажа';
-          processedTicket.volume = +ticket.saled;
-        } else if (user.id === +ticket.buyer) {
-          processedTicket.side = 'Покупка';
+        if (user.roleName === 'isuser') {
+          let processedTicket = {};
+          processedTicket.id = +ticket.id;
+          processedTicket.instrument_name = ticket.instrument_id.name;
+          processedTicket.instrument_price = +ticket.instrument_id.price;
+          if (user.id === +ticket.seller) {
+            processedTicket.side = 'Продажа';
+            processedTicket.volume = +ticket.saled;
+          } else if (user.id === +ticket.buyer) {
+            processedTicket.side = 'Покупка';
+            processedTicket.volume = +ticket.buyed;
+          } else {
+            return false;
+          }
+          return processedTicket;
+        } else if (user.roleName === 'isadmin') {
+          let processedTicket = {};
+          processedTicket.id = +ticket.id;
+          processedTicket.instrument_name = ticket.instrument_id.name;
+          processedTicket.instrument_price = +ticket.instrument_id.price;
+          processedTicket.buyer = +ticket.buyer;
+          processedTicket.seller = +ticket.seller;
           processedTicket.volume = +ticket.buyed;
+          return processedTicket;
         }
-        return processedTicket;
       });
+      tickets = tickets.filter(ticket => ticket);
       dispatch({ type: "GET_TICKETS", payload: tickets });
     })
     .catch(error => {
       console.log('error from getDealsByDate: ', error);
-    })
+    });
 };
 
-export const liveUpdateInstrument = (user, instrument) => dispatch => {
+export const liveUpdateInstrument = (user, instrument, message) => dispatch => {
   axios.post('/trade-app/core/updateinstrument', {
     token: user.token,
     instrument_id: instrument.instrument_id,
@@ -619,9 +650,37 @@ export const liveUpdateInstrument = (user, instrument) => dispatch => {
     interest: instrument.interest
   })
     .then(response => {
+      if (message === 'updating price') {
+        axios.post('/trade-app/core/cancelordersbyinstrument', { token: user.token, instrument_id: instrument.instrument_id })
+          .then(response => {
 
+          })
+          .catch(error => {
+            console.log('error from cancelordersbyinstrument: ', error);
+          });
+      }
     })
     .catch(error => {
       console.log('error from liveUpdateInstrument: ', error);
+    });
+};
+
+export const cancelPlannedSession = user => dispatch => {
+  axios.post('/trade-app/core/deleteplannedsession', { token: user.token })
+    .then(response => {
+      dispatch({ type: "PLANNED_SESSION_FALSE" });
+    })
+    .catch(error => {
+      console.log('error from cancelPlannedSession: ', error);
+    });
+};
+
+export const updateSession = (user, session_id, date_end) => dispatch => {
+  axios.post('/trade-app/core/updatesession', { token: user.token, session_id, date_end })
+    .then(response => {
+
+    })
+    .catch(error => {
+      console.log('error from updateSession: ', error);
     });
 };
