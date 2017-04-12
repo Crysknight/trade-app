@@ -24,10 +24,14 @@ body {
 	text-align: left;
 }
 
+#trade_table.admin {
+	width: 99%;
+}
+
 #trade_table .cancel-all {
-    background-color: #e55;
+    background-color: #e78;
     color: #fff;
-    border: 2px solid #e55;
+    border: 2px solid #e78;
     border-radius: 4px;
     height: 30px;
     font-weight: bold;
@@ -50,8 +54,8 @@ body {
 }
 
 #trade_table button.cancel-row {
-	background-color: #55e;
-	border: 2px solid #55e;
+	background-color: #78e;
+	border: 2px solid #78e;
 	color: #fff;
 	border-radius: 4px;
 	cursor: pointer;
@@ -73,16 +77,33 @@ body {
 	vertical-align: top;
 }
 
+#trade_table.admin input[type="number"] {
+  background-color: rgba(255,255,255,0.4);
+  border: 1px solid #000;
+  border-radius: 4px;
+  padding: 4px;
+  margin-right: 5px;
+}
+
+#trade_table button.admin-submit {
+	width: 100px;
+}
+
+#trade_table button.admin-submit.error {
+	background-color: #e78;
+	border: 2px solid #e78;
+}
+
 .tickets #last_session_table tr:nth-child(2n + 1) {
 	background-color: #eee;
 }
 
 #trade_table tr.highlighted-green, #last_session_table tr.highlighted-green {
-	background-color: #6f6;
+	background-color: #8f9;
 }
 
-#trade_table tr.highlighted-yellow {
-	background-color: #ff6;
+#trade_table tr.highlighted-yellow, #trade_table tr.highlighted-yellow td.highlighted-red {
+	background-color: #fe8;
 }
 
 #trade_table td.highlighted-red, #last_session_table td.highlighted-red {
@@ -98,6 +119,42 @@ body {
 	border-top: 1px solid #000;
 	border-left: 1px solid #000;
 	border-right: 1px solid #000;
+}
+
+#trade_table .set-interest {
+	background-color: #fff;
+	border-left: 1px solid #000;
+	border-top: 1px solid #fff;
+	border-right: 1px solid #000;
+}
+
+#trade_table .table-header .set-interest {
+	background-color: #ddd;
+}
+
+#trade_table .interest-button {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	border-radius: 5px;
+	margin-right: 5px;
+	background-color: transparent;
+}
+
+#trade_table .interest-button.interest {
+	border: 4px solid #8f9;
+}
+
+#trade_table .interest-button.deal {
+	border: 4px solid #e78;
+}
+
+#trade_table .interest-button.interest.interested {
+	background-color: #8f9;
+}
+
+#trade_table .interest-button.deal.dealed {
+	background-color: #e78;
 }
 
 #trade_table .table-prerow {
@@ -136,8 +193,8 @@ body {
 }
 
 #trade_table .size-form input[type="submit"] {
-	background-color: #55e;
-	border: 2px solid #55e;
+	background-color: #78e;
+	border: 2px solid #78e;
 	color: #fff;
 	cursor: pointer;
 	padding: 1px 6px 1px 5px;
@@ -191,7 +248,7 @@ body {
 
 #trade_table .order.order-error {
 	padding: 3px;
-	background-color: #e55;
+	background-color: #e78;
 	font-size: 12px;
 	color: #fff;
 }
@@ -243,7 +300,7 @@ input {
 
 input[value="Войти"] {
 	padding: 15px 20px;
-	background-color: #55e;
+	background-color: #78e;
 	color: #fff;
 	border-radius: 5px;
 	cursor: pointer;
@@ -259,7 +316,7 @@ input[value="Войти"] {
 	top: 20px;
 	right: 20px;
 	padding: 15px 20px;
-	background-color: #55e;
+	background-color: #78e;
 	color: #fff;
 	border-radius: 5px;
 	cursor: pointer;
@@ -332,8 +389,8 @@ input[value="Войти"] {
 }
 
 .pop-up.confirm-instrument-deletion .confirm-button, .pop-up.start-session .confirm-button {
-	background-color: #e55;
-	border: 2px solid #e55;
+	background-color: #e78;
+	border: 2px solid #e78;
 }
 
 #trade_app_header {
@@ -346,7 +403,7 @@ input[value="Войти"] {
   width: 200px;
   padding: 8px 0;
   box-sizing: border-box;
-  background-color: #55e;
+  background-color: #78e;
   margin: 0 20px;
   color: #fff;
   text-decoration: none;
@@ -381,8 +438,8 @@ input[value="Войти"] {
 }
 
 .tickets .time-form .error input[type="submit"] {
-	background-color: #e55;
-	border: 2px solid #e55;
+	background-color: #e78;
+	border: 2px solid #e78;
 }
 
 .tickets td.buy {

@@ -36,7 +36,7 @@ ul li {
 
 ul li a {
 	text-decoration: none;
-	color: #55e;
+	color: #78e;
 }
 
 .top-menu ul li {
@@ -44,8 +44,8 @@ ul li a {
 }
 
 button, input[type="submit"], .sessions  a.button-link {
-	background-color: #55e;
-	border: 2px solid #55e;
+	background-color: #78e;
+	border: 2px solid #78e;
 	color: #fff;
 	border-radius: 4px;
 	cursor: pointer;
@@ -64,7 +64,7 @@ button:focus, input:focus {
 }
 
 #__session_form input[type="time"] {
-    background-color: #55e;
+    background-color: #78e;
     border: none;
     padding: 5px 5px 6px 8px;
     border-radius: 4px;
@@ -104,10 +104,10 @@ button:focus, input:focus {
 }
 
 #__add_instrument, #__add_user {
-	background-color: #55e;
+	background-color: #78e;
 	margin-top: 10px;
 	color: #fff;
-	border: 2px solid #55e;
+	border: 2px solid #78e;
 	border-radius: 4px;
 }
 
@@ -202,9 +202,9 @@ button:focus, input:focus {
 
 button.register-session {
 	margin-top: 20px;
-  background-color: #e55;
+  background-color: #e78;
   font-weight: bold;
-  border: 2px solid #e55;
+  border: 2px solid #e78;
 }
 
 button.register-session:disabled {
@@ -216,8 +216,8 @@ button.register-session:disabled {
 button.delete-instrument {
 	width: 31px;
 	height: 31px;
-	background-color: #e55;
-	border: 2px solid #e55;
+	background-color: #e78;
+	border: 2px solid #e78;
 	background-image: url('../../public/images/cross.png');
 	-webkit-background-size: 18px;
 	background-size: 18px;
@@ -229,7 +229,20 @@ button.delete-instrument {
 	margin-top: 50px;
 }
 
+.adduser > div {
+	display: inline-block;
+	width: 40%;
+	vertical-align: top;
+}
+
 .adduser input {
 	display: block;
 	margin: 10px;
+	width: 70%;
+	padding: 4px;
+}
+
+.adduser input[type="submit"] {
+	width: auto;
+	padding: 6px 10px;
 }

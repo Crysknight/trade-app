@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import * as actions from '../actions';
 
+import ConfirmationPopUp from './ConfirmationPopUp';
+
 import User from '../components/user';
 import Input from '../components/input';
 
@@ -18,14 +20,24 @@ class Users extends Component {
 		this.updateUser = this.updateUser.bind(this);
 		this.handleUsersChange = this.handleUsersChange.bind(this);
 		this.handleAddUserForm = this.handleAddUserForm.bind(this);
+		this.showPopUp = this.showPopUp.bind(this);
 	}
 
 	componentWillMount() {
 		this.props.getUsers(this.props.user.token);
 	}
 
-	deleteUser(id) {
-		this.props.deleteUser(this.props.user.token, id);
+	deleteUser(id) {		
+		this.props.showPopUp({
+			puFuncArgs: {
+				token: this.props.user.token,
+				id
+			},
+			puMessage: 'Вы уверены, что хотите удалить этого пользователя?',
+			puClassName: 'delete-user',
+			puButtonText: 'Да',
+			puFadeTime: 60000
+		});
 	}
 
 	updateUser(id) {
@@ -33,17 +45,7 @@ class Users extends Component {
 	}
 
 	handleUsersChange(e) {
-
-		/*    user_id: userToUpdate.user_id,
-    user_name: userToUpdate.user_name,
-    role_id: userToUpdate.role_id,
-    fio: userToUpdate.fio,
-    phone: userToUpdate.phone,
-    organization: userToUpdate.organization,
-    comment: userToUpdate.comment*/
-
 		e.preventDefault();
-		console.log(this.submitId);
 		let id = this.submitId;
 		let idLength = (id + '').length;
 		let userToUpdate = {
@@ -51,10 +53,8 @@ class Users extends Component {
 		};
 		for (let key in e.target) {
 			if (!isNaN(key)) {
-				console.log('id from e.target: ', +e.target[key].id.slice(-idLength));
 				let target = e.target[key];
 				if (+target.id.slice(-idLength) === id) {
-					console.dir(target);
 					switch (target.id.slice(0, -(idLength + 1))) {
 						case 'user_name': {
 							userToUpdate.fio = target.value;
@@ -100,11 +100,8 @@ class Users extends Component {
 		if (
 			userToUpdate.user_id &&
 			userToUpdate.fio &&
-			userToUpdate.user_name &&
-			userToUpdate.organization &&
-			userToUpdate.phone
+			userToUpdate.user_name
 		) {
-			console.log(userToUpdate.user_id);
 			this.props.updateUser(this.props.user.token, userToUpdate);
 		}
 	}
@@ -148,23 +145,50 @@ class Users extends Component {
 		if (
 			userToAdd.fio &&
 			userToAdd.user_name &&
-			userToAdd.user_pass &&
-			userToAdd.organization &&
-			userToAdd.phone &&
-			userToAdd.comment
+			userToAdd.user_pass
 		) {
 			this.props.addUser(this.props.user.token, userToAdd);
 		}
+	}
+
+	showPopUp() {
+		let PopUp = null;
+		if (this.props.popUp) {
+			let options = this.props.popUp;
+			let puFunction = () => this.props.deleteUser(options.puFuncArgs.token, options.puFuncArgs.id);
+			PopUp = (
+				<ConfirmationPopUp
+					puButtonFunction={puFunction}
+					puMessage={options.puMessage}
+					puClassName={options.puClassName}
+					puButtonText={options.puButtonText} />
+			);
+		}
+		return PopUp;
 	}
 
 	render() {
 		let Users;
 		if (this.props.adminUsers.length !== 0) {
 			Users = this.props.adminUsers.map((user, index) => {
+				let updating = false,
+						updated = false;
+				if (this.props.processes[`updating_user_${user.id}`]) {
+					if (this.props.processes[`updating_user_${user.id}`].status) {
+						updating = true;
+					}
+				}
+				if (this.props.processes[`updated_user_${user.id}`]) {
+					if (this.props.processes[`updated_user_${user.id}`].status) {
+						updated = true;
+					}
+				}
 				return (
 					<User 
 						key={index}
 						index={index}
+						updating={updating}
+						updated={updated}
 						user={user}
 						deleteUser={this.deleteUser}
 						updateUser={this.updateUser} />
@@ -173,6 +197,7 @@ class Users extends Component {
 		}
 		return (
 			<div>
+				{this.showPopUp()}
 				<h2>Пользователи</h2>
 				<form onSubmit={this.handleUsersChange}>
 					<table className="instruments users">
@@ -194,19 +219,23 @@ class Users extends Component {
 					</table>
 				</form>
 				<form onSubmit={this.handleAddUserForm} className="adduser">
-					<label>ФИО:</label>
-					<Input inputId="add_user_name" inputType="text" />
-					<label>E-Mail:</label>
-					<Input inputId="add_user_email" inputType="email" />
-					<label>Пароль:</label>
-					<Input inputId="add_user_password" inputType="password" />
-					<label>Организация:</label>
-					<Input inputId="add_user_organization" inputType="text" />
-					<label>Телефон:</label>
-					<Input inputId="add_user_phone" inputType="text" />
-					<label>Комментарий:</label>
-					<Input inputId="add_user_comment" inputType="text" />
-					<input type="submit" value="Добавить"/>
+					<div>
+						<label>ФИО:</label>
+						<Input inputId="add_user_name" inputType="text" required={true} />
+						<label>E-Mail:</label>
+						<Input inputId="add_user_email" inputType="email" required={true} />
+						<label>Пароль:</label>
+						<Input inputId="add_user_password" inputType="password" required={true} />
+					</div>
+					<div>
+						<label>Организация:</label>
+						<Input inputId="add_user_organization" inputType="text" />
+						<label>Телефон:</label>
+						<Input inputId="add_user_phone" inputType="text" />
+						<label>Комментарий:</label>
+						<Input inputId="add_user_comment" inputType="text" />
+					</div>
+						<input type="submit" value="Добавить"/>
 				</form>
 			</div>
 		);
@@ -217,7 +246,9 @@ class Users extends Component {
 function mapStateToProps(state) {
 	return {
 		user: state.user,
-		adminUsers: state.adminUsers
+		adminUsers: state.adminUsers,
+		processes: state.processes,
+		popUp: state.popUp
 	};
 }
 
@@ -226,7 +257,8 @@ function matchDispatchToProps(dispatch) {
 		getUsers: actions.getUsers,
 		deleteUser: actions.deleteUser,
 		updateUser: actions.updateUser,
-		addUser: actions.addUser
+		addUser: actions.addUser,
+		showPopUp: actions.showPopUp
 	}, dispatch);
 }
 

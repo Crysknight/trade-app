@@ -15,13 +15,16 @@ class TradeTableRow extends Component {
   constructor(props) {
   	super(props);
   	this.state = {
-  	  quantity: 0
+  	  quantity: 0,
+      priceChange: 0
   	};
   	this.registerOrder = this.registerOrder.bind(this);
   	this.setQuantity = this.setQuantity.bind(this);
   	this.setOrderType = this.setOrderType.bind(this);
     this.cancelRow = this.cancelRow.bind(this);
     this.handlePriceChange = this.handlePriceChange.bind(this);
+    this.submitPriceChange = this.submitPriceChange.bind(this);
+    this.handleInterest = this.handleInterest.bind(this);
   }
   setQuantity(value) {
   	this.setState({
@@ -45,7 +48,52 @@ class TradeTableRow extends Component {
     this.setState({ quantity: 0 });
   }
   handlePriceChange(e) {
-    console.log(e.target.value);
+    this.setState({
+      priceChange: e.target.value
+    });
+    if (this.props.errors[`same_price_${this.props.instrument.id}`]) {
+      if (this.props.errors[`same_price_${this.props.instrument.id}`].status) {
+        this.props.deleteError(`same_price_${this.props.instrument.id}`);
+      }
+    }
+  }
+  submitPriceChange(e) {
+    if (this.state.priceChange && this.state.priceChange !== this.props.instrument.price) {
+      let instrument = {
+        instrument_id: this.props.instrument.id,
+        instrument_name: this.props.instrument.name,
+        instrument_price: this.state.priceChange,
+        interest: this.props.instrument.interest
+      };
+      this.props.liveUpdateInstrument(this.props.user, instrument);
+    } else {
+      this.props.createError({
+        name: `same_price_${this.props.instrument.id}`
+      });
+    }
+  }
+  handleInterest(type) {
+    if (type === 'interest') {
+      if (this.props.instrument.interest === 0) {
+        let instrument = {
+          instrument_id: this.props.instrument.id,
+          instrument_name: this.props.instrument.name,
+          instrument_price: this.props.instrument.price,
+          interest: 1
+        };
+        this.props.liveUpdateInstrument(this.props.user, instrument);
+      }
+    } else if (type === 'deal') {
+      if (this.props.instrument.interest < 2) {
+        let instrument = {
+          instrument_id: this.props.instrument.id,
+          instrument_name: this.props.instrument.name,
+          instrument_price: this.props.instrument.price,
+          interest: 2
+        };
+        this.props.liveUpdateInstrument(this.props.user, instrument);
+      }
+    }
   }
   cancelRow(instrument) {
     let orders = [];
@@ -159,6 +207,12 @@ class TradeTableRow extends Component {
     });
     let cancelDisabled = !ordersForThisInstrument.length;
     if (this.props.user.roleName === 'isadmin') {
+      let error = '';
+      if (this.props.errors[`same_price_${this.props.instrument.id}`]) {
+        if (this.props.errors[`same_price_${this.props.instrument.id}`].status) {
+          error = 'error';
+        }
+      }
       Row = (
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">{this.props.instrument.name}</td>
@@ -167,9 +221,18 @@ class TradeTableRow extends Component {
               inputStep={0.0001}
               inputValue={this.props.instrument.price.toFixed(4)}
               onChange={this.handlePriceChange} />
+            <button className={`admin-submit ${error}`} onClick={this.submitPriceChange}>{error !== '' ? 'Та же цена' : 'Обновить'}</button>
           </td>
           <td style={{borderLeft: '1px solid #000', borderRight: '1px solid #000'}}>{this.getBids()}</td>
           <td style={{borderRight: '1px solid #000'}}>{this.getOffers()}</td>
+          <td className="set-interest">
+            <button 
+              className={this.props.instrument.interest > 0 ? 'interest-button interest interested' : 'interest-button interest'}
+              onClick={() => this.handleInterest('interest')} />
+            <button
+              className={this.props.instrument.interest > 1 ? 'interest-button deal dealed' : 'interest-button deal'}
+              onClick={() => this.handleInterest('deal')} />
+          </td>
         </tr>
       );
     } else if (this.props.user.roleName === 'isuser') {
@@ -207,14 +270,18 @@ function mapStateToProps(state) {
     user: state.user,
     session: state.session,
     deals: state.deals,
-    processes: state.processes
+    processes: state.processes,
+    errors: state.errors
   };
 }
 
 function matchDispatchToProps(dispatch) {
   return bindActionCreators({
   	cancelOrders: actions.cancelOrders,
-  	addOrder: actions.addOrder
+  	addOrder: actions.addOrder,
+    liveUpdateInstrument: actions.liveUpdateInstrument,
+    createError: actions.createError,
+    deleteError: actions.deleteError
   }, dispatch);
 }
 

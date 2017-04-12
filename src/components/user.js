@@ -20,6 +20,7 @@ export default class User extends Component {
 // Комментарий
 
 	deleteUser(e) {
+		e.preventDefault();
 		let id = +e.target.id.slice(12);
 		this.props.deleteUser(id);
 	}
@@ -42,7 +43,11 @@ export default class User extends Component {
 				<td><Input inputId={`user_phone_${user.id}`} inputType="text" inputValue={user.phone} /></td>
 				<td><Input inputId={`user_comment_${user.id}`} inputType="text" inputValue={user.comment} /></td>
 				<td><Checkbox checkboxId={`user_blocked_${user.id}`} checkboxChecked={userBlocked} /></td>
-				<td><button id={`user_button_${user.id}`} onClick={this.updateUser}>Обновить</button></td>
+				<td><button
+					id={`user_button_${user.id}`}
+					disabled={this.props.updating}
+					onClick={this.updateUser}
+					className={this.props.updated ? 'success' : ''}>{this.props.updated ? 'Обновлено' : 'Обновить'}</button></td>
 				<td><button className="delete-instrument" id={`delete_user_${user.id}`} onClick={this.deleteUser}></button></td>
 			</tr>
 		);

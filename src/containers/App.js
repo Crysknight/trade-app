@@ -85,17 +85,18 @@ class App extends Component {
       );
     } else if (this.props.user.roleName === 'isadmin') {
       App = (
-          <table id="trade_table">
+          <table id="trade_table" className="admin">
             <tbody>
               <tr className="table-prerow">
                 <Timer endTime={this.props.session.date_end}/>
-                <td colSpan="3"></td>
+                <td colSpan="4"></td>
               </tr>
               <tr className="table-header">
                 <td>Инструмент</td>
                 <td>Цена</td>
                 <td style={{borderRight: '1px solid #000', width: '30%'}}>Покупка</td>
                 <td style={{borderLeft: 'none', width: '30%'}}>Продажа</td>
+                <td className="set-interest">Установить интерес</td>
               </tr>
               {this.createTradeTable()}
             </tbody>

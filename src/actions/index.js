@@ -435,7 +435,7 @@ export const updateInstrument = (token, instrument_index, instrument_id, instrum
       dispatch({ type: "CREATE_PROCESS", payload: {
         name: `successfully_updated_index_${instrument_index}`
       }});
-      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${instrument_index}`}), 2000);
+      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${instrument_index}`}), 1000);
     })
     .catch(error => {
       console.log(error);
@@ -469,7 +469,12 @@ export const addSession = (token, date_start, date_end, instrument_ids) => dispa
 export const getUsers = (token) => dispatch => {
   axios.post('/trade-app/core/getusers', { token })
     .then(response => {
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users.map(user => { user.id = +user.id; return user; }) });
+      let users = response.data.getusers.users.map(user => {
+        user.id = +user.id;
+        user.role_id = +user.role_id;
+        return user;
+      });
+      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
     })
     .catch(error => {
       console.log('error from getUsers: ', error);
@@ -490,12 +495,20 @@ export const updateUser = (token, userToUpdate) => dispatch => {
   if (userToUpdate.user_pass) {
     request.user_pass = userToUpdate.user_pass;
   }
+  dispatch({ type: "CREATE_PROCESS", payload: {
+    name: `updating_user_${request.user_id}`
+  }});
   axios.post('/trade-app/core/updateuser', request)
     .then(response => {
       return axios.post('/trade-app/core/getusers', { token });
     })
     .then(response => {
       dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users });
+      dispatch({ type: "DELETE_PROCESS", payload: `updating_user_${request.user_id}`});
+      dispatch({ type: "CREATE_PROCESS", payload: {
+        name: `updated_user_${request.user_id}`
+      }});
+      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `updated_user_${request.user_id}`}), 1000);
     })
     .catch(error => {
       console.log('error from updateUser: ', error);
@@ -595,4 +608,20 @@ export const getDealsByDate = (user, date_start, date_end) => dispatch => {
     .catch(error => {
       console.log('error from getDealsByDate: ', error);
     })
+};
+
+export const liveUpdateInstrument = (user, instrument) => dispatch => {
+  axios.post('/trade-app/core/updateinstrument', {
+    token: user.token,
+    instrument_id: instrument.instrument_id,
+    instrument_name: instrument.instrument_name,
+    instrument_price: instrument.instrument_price,
+    interest: instrument.interest
+  })
+    .then(response => {
+
+    })
+    .catch(error => {
+      console.log('error from liveUpdateInstrument: ', error);
+    });
 };
