@@ -143,6 +143,7 @@ button:focus, input:focus {
 
 .admin-panel table {
 	width: 90%;
+	border-collapse: collapse;
 }
 
 .admin-panel table td {

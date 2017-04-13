@@ -33,8 +33,14 @@ export default class User extends Component {
 	render() {
 		let user = this.props.user;
 		let userBlocked = this.props.user.role_id === 0 ? true : false;
+		let checkbox;
+		if (this.props.user.role_id === 2 || this.props.user.role_id === 0) {
+			checkbox = <Checkbox checkboxId={`user_blocked_${user.id}`} checkboxChecked={userBlocked} />;
+		} else if (this.props.user.role_id === 1) {
+			checkbox = <div className="star" />;
+		}
 		return (
-			<tr>
+			<tr className={this.props.user.role_id === 1 ? 'admin-row' : ''}>
 				<td>{this.props.index + 1}</td>
 				<td><Input inputId={`user_name_${user.id}`} inputType="text" inputValue={user.fio}/></td>
 				<td><Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.user_name}/></td>
@@ -42,7 +48,9 @@ export default class User extends Component {
 				<td><Input inputId={`user_organization_${user.id}`} inputType="text" inputValue={user.organization} /></td>
 				<td><Input inputId={`user_phone_${user.id}`} inputType="text" inputValue={user.phone} /></td>
 				<td><Input inputId={`user_comment_${user.id}`} inputType="text" inputValue={user.comment} /></td>
-				<td><Checkbox checkboxId={`user_blocked_${user.id}`} checkboxChecked={userBlocked} /></td>
+				<td>
+					{checkbox}
+				</td>
 				<td><button
 					id={`user_button_${user.id}`}
 					disabled={this.props.updating}

@@ -36,6 +36,21 @@ class AddSession extends Component {
 	}
 
 	handleTimeForm(e) {
+		if (this.props.errors['session_dates_invalid']) {
+			if (this.props.errors['session_dates_invalid'].status) {
+				this.props.deleteError('session_dates_invalid');
+			}
+		}
+		if (this.props.errors['create_session_in_the_past']) {
+			if (this.props.errors['create_session_in_the_past'].status) {
+				this.props.deleteError('create_session_in_the_past');
+			}
+		}
+		if (this.props.errors['empty_field']) {
+			if (this.props.errors['empty_field'].status) {
+				this.props.deleteError('empty_field');
+			}
+		}
 		if (e.target.id === 'date_start') {
 			this.setState({ date_start: e.target.value.replace(/T/, ' ') });
 		} else if (e.target.id === 'date_end') {
@@ -116,18 +131,35 @@ class AddSession extends Component {
 					return false;
 				}
 			});
-			chosenInstruments = chosenInstruments.filter(instrument => instrument);		
-			this.props.showPopUp({
-				puFuncArgs: {
-					token: this.props.user.token,
-					date_start: this.state.date_start,
-					date_end: this.state.date_end,
-					chosenInstruments: chosenInstruments
-				},
-				puMessage: 'Вы уверены?',
-				puClassName: 'start-session',
-				puButtonText: 'Да',
-				puFadeTime: 60000
+			chosenInstruments = chosenInstruments.filter(instrument => instrument);
+			let sDate = new Date(this.state.date_start);
+			let eDate = new Date(this.state.date_end);
+			let dateNow = new Date();
+			if (eDate <= sDate) {
+				this.props.createError({
+					name: 'session_dates_invalid'
+				});
+			} else if (eDate < dateNow) {
+				this.props.createError({
+					name: 'create_session_in_the_past'
+				});
+			} else {
+				this.props.showPopUp({
+					puFuncArgs: {
+						token: this.props.user.token,
+						date_start: this.state.date_start,
+						date_end: this.state.date_end,
+						chosenInstruments: chosenInstruments
+					},
+					puMessage: 'Вы уверены?',
+					puClassName: 'start-session',
+					puButtonText: 'Да',
+					puFadeTime: 60000
+				});
+			}
+		} else {
+			this.props.createError({
+				name: 'empty_field'
 			});
 		}
 	}
@@ -196,6 +228,22 @@ class AddSession extends Component {
 					puButtonText={options.puButtonText} />
 			);
 		}
+		let errorText = '';
+		if (this.props.errors['session_dates_invalid']) {
+			if (this.props.errors['session_dates_invalid'].status) {
+				errorText = 'Неверные даты';
+			}
+		}
+		if (this.props.errors['create_session_in_the_past']) {
+			if (this.props.errors['create_session_in_the_past'].status) {
+				errorText = 'Сессия не может заканчиваться в прошлом';
+			}
+		}
+		if (this.props.errors['empty_field']) {
+			if (this.props.errors['empty_field'].status) {
+				errorText = 'Пустое поле';
+			}
+		}
 		return (
 			<div className="add-session">
 				{PopUp}
@@ -211,7 +259,7 @@ class AddSession extends Component {
 					</div>
 					<button disabled={registeringSession}
 						className="register-session"
-						onClick={this.registerSession}>ЗАРЕГИСТРИРОВАТЬ СЕССИЮ</button>
+						onClick={this.registerSession}>{errorText === '' ? 'ЗАРЕГИСТРИРОВАТЬ СЕССИЮ' : errorText}</button>
 					<AddInstrumentForm handleAddInstrumentForm={this.handleAddInstrumentForm} />
 				</div>
 				<div className="wrapper">
@@ -243,6 +291,7 @@ function mapStateToProps(state) {
 		user: state.user,
 		adminInstruments: state.adminInstruments,
 		processes: state.processes,
+		errors: state.errors,
     session: state.session,
 		popUp: state.popUp
 	};
@@ -256,7 +305,9 @@ function matchDispatchToProps(dispatch) {
 		addSession: actions.addSession,
 		updateInstrument: actions.updateInstrument,
 		deleteInstrument: actions.deleteInstrument,
-		showPopUp: actions.showPopUp
+		showPopUp: actions.showPopUp,
+		createError: actions.createError,
+		deleteError: actions.deleteError
 	}, dispatch);
 }
 

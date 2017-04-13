@@ -76,7 +76,17 @@ class Users extends Component {
 							} else {
 								userToUpdate.role_id = 2;
 							}
-							break;
+							// console.log(id);
+							// console.log(target.checked);
+							// for (let i = 0; i < this.props.adminUsers.length; i++) {
+							// 	if (+this.props.adminUsers[i].id === id) {
+							// 		userToUpdate.role_id = this.props.adminUsers[i].role_id === 1 ? 1 : 2;
+							// 	}
+							// }
+							// if (target.checked) {
+							// 	userToUpdate.role_id = 0;
+							// }
+							// break;
 						}
 						case 'user_organization': {
 							userToUpdate.organization = target.value;
@@ -91,7 +101,9 @@ class Users extends Component {
 							break;
 						}
 						default: {
-
+							if (!userToUpdate.role_id && userToUpdate.role_id !== 0) {
+								userToUpdate.role_id = 1;
+							}
 						}
 					}
 				}

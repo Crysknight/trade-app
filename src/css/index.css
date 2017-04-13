@@ -457,3 +457,17 @@ input[value="Войти"] {
 .tickets td.sale {
 	color: #009;
 }
+
+.star {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	margin: 3.5px 0 0 3.5px;
+	background-image: url('../../public/images/star.png');
+	-webkit-background-size: 16px;
+	background-size: 16px;
+}
+
+.admin-row {
+	background-color: #eef;
+}

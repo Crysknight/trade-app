@@ -518,8 +518,13 @@ export const updateUser = (token, userToUpdate) => dispatch => {
     .then(response => {
       return axios.post('/trade-app/core/getusers', { token });
     })
-    .then(response => {
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users });
+    .then(response => {      
+      let users = response.data.getusers.users.map(user => {
+        user.id = +user.id;
+        user.role_id = +user.role_id;
+        return user;
+      });
+      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
       dispatch({ type: "DELETE_PROCESS", payload: `updating_user_${request.user_id}`});
       dispatch({ type: "CREATE_PROCESS", payload: {
         name: `updated_user_${request.user_id}`
@@ -537,7 +542,12 @@ export const deleteUser = (token, user_id) => dispatch => {
       return axios.post('/trade-app/core/getusers', { token });
     })
     .then(response => {
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users });
+      let users = response.data.getusers.users.map(user => {
+        user.id = +user.id;
+        user.role_id = +user.role_id;
+        return user;
+      });
+      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
     })
     .catch(error => {
       console.log('error from deleteUser: ', error);
@@ -560,7 +570,12 @@ export const addUser = (token, userToAdd) => dispatch => {
       return axios.post('/trade-app/core/getusers', { token });
     })
     .then(response => {
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: response.data.getusers.users });
+      let users = response.data.getusers.users.map(user => {
+        user.id = +user.id;
+        user.role_id = +user.role_id;
+        return user;
+      });
+      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
     })
     .catch(error => {
       console.log('error from updateUser: ', error);
