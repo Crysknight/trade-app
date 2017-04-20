@@ -23,6 +23,7 @@ export default class TimeForm extends Component {
 						onFocus={this.props.handleFocus}
 						id="date_start"
 						type={this.props.type === 'datetime-local' ? 'datetime-local' : 'date'}
+						max="2666-06-06T06:06:06"
 						required />
 					<label>{this.props.to}</label>
 					<input
@@ -30,6 +31,7 @@ export default class TimeForm extends Component {
 						onFocus={this.props.handleFocus}
 						id="date_end"
 						type={this.props.type === 'datetime-local' ? 'datetime-local' : 'date'}
+						max="2666-06-06T06:06:06"
 						required />
 					{!this.props.withoutSubmit &&	<input type="submit" value={this.props.submitText}/>}
 				</form>

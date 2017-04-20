@@ -40,7 +40,7 @@ export default class User extends Component {
 			checkbox = <div className="star" />;
 		}
 		return (
-			<tr className={this.props.user.role_id === 1 ? 'admin-row' : ''}>
+			<tr className={this.props.user.role_id === 1 ? 'admin-row' : false}>
 				<td>{this.props.index + 1}</td>
 				<td><Input inputId={`user_name_${user.id}`} inputType="text" inputValue={user.fio}/></td>
 				<td><Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.user_name}/></td>
@@ -51,12 +51,18 @@ export default class User extends Component {
 				<td>
 					{checkbox}
 				</td>
-				<td><button
-					id={`user_button_${user.id}`}
-					disabled={this.props.updating}
-					onClick={this.updateUser}
-					className={this.props.updated ? 'success' : ''}>{this.props.updated ? 'Обновлено' : 'Обновить'}</button></td>
-				<td><button className="delete-instrument" id={`delete_user_${user.id}`} onClick={this.deleteUser}></button></td>
+				<td>
+					<button
+						id={`user_button_${user.id}`}
+						disabled={this.props.updating}
+						onClick={this.updateUser}
+						className={this.props.updated ? 'success' : ''}>{this.props.updated ? 'Обновлено' : 'Обновить'}</button>
+				</td>
+				<td>{this.props.user.role_id !== 1 && (
+					<button className="delete-instrument" 
+						id={`delete_user_${user.id}`} 
+						onClick={this.deleteUser}></button>)}
+				</td>
 			</tr>
 		);
 	}

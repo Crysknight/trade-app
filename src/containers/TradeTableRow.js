@@ -27,6 +27,7 @@ class TradeTableRow extends Component {
     this.handleInterest = this.handleInterest.bind(this);
   }
   setQuantity(value) {
+    console.log(value);
   	this.setState({
   	  quantity: value
   	});
@@ -199,7 +200,7 @@ class TradeTableRow extends Component {
       }
     }
 
-    if (this.state.quantity === 0) {
+    if (this.state.quantity === 0 || this.state.quantity === '') {
       disabled = true;
     }
     let ordersForThisInstrument = this.props.orders.filter((order) => {

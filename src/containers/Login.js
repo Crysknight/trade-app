@@ -61,6 +61,11 @@ class Login extends Component {
         }
       }
     }
+    if (this.props.processes['login_from_other_location']) {
+      if (this.props.processes['login_from_other_location'].status) {
+        resultBlock = <div className="errorBlock">Ошибка сервера</div>;
+      }
+    }
     return (
       <div>
       	<form id="auth" onSubmit={this.submitUser}>
@@ -88,7 +93,8 @@ class Login extends Component {
 
 function mapStateToProps(state) {
   return {
-  	user: state.user
+  	user: state.user,
+    processes: state.processes
   };
 }
 

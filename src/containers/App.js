@@ -107,11 +107,11 @@ class App extends Component {
             <tbody>
               <tr className="table-prerow">
                 <Timer endTime={this.props.session.date_end}/>
-                <td colSpan="5"></td>
-                <td className="cancel-all-orders">
+                <td colSpan="3"></td>
+                <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
                   <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
                 </td>
-                <td colSpan="3"></td>
+                <td colSpan="2"></td>
               </tr>
               <tr className="table-header">
                 <td>Инструмент</td>
@@ -133,10 +133,10 @@ class App extends Component {
             <tbody>
               <tr className="table-prerow">
                 <Timer endTime={this.props.session.date_end}/>
-                <td colSpan="4">
+                <td colSpan="3">
                   Продлить на:
-                  <button onClick={() => this.updateSession(1)}>1 мин.</button>
-                  <button onClick={() => this.updateSession(5)}>5 мин.</button>
+                  <button style={{marginRight: '8px', marginLeft: '8px'}} onClick={() => this.updateSession(1)}>1 мин.</button>
+                  <button style={{marginRight: '8px'}} onClick={() => this.updateSession(5)}>5 мин.</button>
                   <button className="end-session" onClick={() => this.updateSession('end')}>Завершить</button>
                 </td>
               </tr>

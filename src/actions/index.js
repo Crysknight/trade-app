@@ -294,8 +294,19 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       }
     })
     .catch(error => {
-      console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+      if (error.response.status === 401) {
+        dispatch({ type: "CREATE_PROCESS", payload: {
+          name: 'login_from_other_location'
+        }});
+        setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: 'login_from_other_location'}), 4000);
+        cookie.remove('eMail', { path: "/" });
+        cookie.remove('roleName', { path: "/" });
+        cookie.remove('token', { path: "/" });
+        cookie.remove('id', { path: "/" });
+        dispatch({ type: 'LOG_OUT' });
+        browserHistory.push('/trade-app/login');
+      }
       dispatch({ type: "INTERVAL_TURN_OFF" });
     });
 };

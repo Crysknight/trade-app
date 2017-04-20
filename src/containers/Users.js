@@ -76,17 +76,7 @@ class Users extends Component {
 							} else {
 								userToUpdate.role_id = 2;
 							}
-							// console.log(id);
-							// console.log(target.checked);
-							// for (let i = 0; i < this.props.adminUsers.length; i++) {
-							// 	if (+this.props.adminUsers[i].id === id) {
-							// 		userToUpdate.role_id = this.props.adminUsers[i].role_id === 1 ? 1 : 2;
-							// 	}
-							// }
-							// if (target.checked) {
-							// 	userToUpdate.role_id = 0;
-							// }
-							// break;
+							break;
 						}
 						case 'user_organization': {
 							userToUpdate.organization = target.value;
@@ -197,7 +187,7 @@ class Users extends Component {
 				}
 				return (
 					<User 
-						key={index}
+						key={user.id}
 						index={index}
 						updating={updating}
 						updated={updated}

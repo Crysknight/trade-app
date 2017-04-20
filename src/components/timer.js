@@ -51,7 +51,10 @@ export default class Timer extends Component {
 
 	render() {
 		return (
-			<td className="time">{this.state.time}</td>
+			<td 
+				colSpan="2" 
+				className="time"
+				style={{verticalAlign: 'middle'}}>Время до окончания торговой сессии: {this.state.time}</td>
 		);
 	}
 
