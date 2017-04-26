@@ -19,13 +19,13 @@ body {
 
 #trade_table {
 	border-collapse: collapse;
-	width: 75%;
-	margin: 70px 0;
-	text-align: left;
+	width: 970px;
+	margin: 70px auto;
+	text-align: center;
 }
 
 #trade_table.admin {
-	width: 99%;
+	width: 970px;
 }
 
 #trade_table .cancel-all {
@@ -80,6 +80,7 @@ body {
 
 #trade_table.admin input[type="number"] {
   background-color: rgba(255,255,255,0.4);
+  width: 90px;
   border: 1px solid #000;
   border-radius: 4px;
   padding: 4px;
@@ -228,10 +229,6 @@ body {
 #trade_table .size-form input:last-of-type {
 	border-radius: 0 6px 6px 0;
 } */
-
-#trade_table td[colspan="3"] {
-	width: 20%;
-}
 
 #trade_table tr:last-child {
 	border-bottom: 1px solid #000;
@@ -470,4 +467,60 @@ input[value="Войти"] {
 
 .admin-row {
 	background-color: #eef;
+}
+
+#trade_table .col-instrument-name {
+	width: 210px;
+}
+
+#trade_table .col-instrument-price {
+	width: 80px;
+}
+
+#trade_table.admin .col-instrument-price {
+	width: 110px;
+}
+
+#trade_table .table-header .col-buy {
+	border-right: none;
+	width: 80px;
+}
+
+#trade_table .table-header .col-sell {
+	border-left: none;
+	width: 80px;
+}
+
+#trade_table .table-header .col-cancel {
+	border-left: none;
+	border-right: none;
+	width: 100px;
+}
+
+#trade_table.admin .col-buy, #trade_table.admin .col-sell {
+	width: 210px;
+}
+
+#trade_table .set-interest {
+	width: 100px;
+}
+
+#trade_table .col-bought, #trade_table .col-sold {
+	width: 65px;
+}
+
+#trade_table .time {
+	text-align: left;
+}
+
+input.price {
+	width: 80px;
+}
+
+input.name {
+	width: 230px;
+}
+
+.wrapper:first-of-type {
+	width: 40%;
 }

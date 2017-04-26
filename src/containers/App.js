@@ -114,14 +114,14 @@ class App extends Component {
                 <td colSpan="2"></td>
               </tr>
               <tr className="table-header">
-                <td>Инструмент</td>
-                <td>Цена</td>
-                <td colSpan="3">Объем заявки</td>
-                <td style={{borderRight: 'none', width: '9%'}}>Покупка</td>
-                <td style={{border: 'none'}}></td>
-                <td style={{borderLeft: 'none', width: '9%'}}>Продажа</td>
-                <td>Куплено</td>
-                <td>Продано</td>
+                <td className="col-instrument-name">Инструмент</td>
+                <td className="col-instrument-price">Цена</td>
+                <td className="col-volume" colSpan="3">Объем заявки</td>
+                <td className="col-buy">Покупка</td>
+                <td className="col-cancel"></td>
+                <td className="col-sell">Продажа</td>
+                <td className="col-bought">Куплено</td>
+                <td className="col-sold">Продано</td>
               </tr>
               {this.createTradeTable()}
             </tbody>
@@ -141,10 +141,10 @@ class App extends Component {
                 </td>
               </tr>
               <tr className="table-header">
-                <td>Инструмент</td>
-                <td>Цена</td>
-                <td style={{borderRight: '1px solid #000', width: '30%'}}>Покупка</td>
-                <td style={{borderLeft: 'none', width: '30%'}}>Продажа</td>
+                <td className="col-instrument-name">Инструмент</td>
+                <td className="col-instrument-price">Цена</td>
+                <td className="col-buy">Покупка</td>
+                <td className="col-sell">Продажа</td>
                 <td className="set-interest">Установить интерес</td>
               </tr>
               {this.createTradeTable()}
