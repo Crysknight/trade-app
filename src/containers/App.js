@@ -103,53 +103,53 @@ class App extends Component {
     if (this.props.user.roleName === 'isuser') {
       let disabled = !this.props.orders.length;
       App = (
-          <table id="trade_table">
-            <tbody>
-              <tr className="table-prerow">
-                <Timer endTime={this.props.session.date_end}/>
-                <td colSpan="3"></td>
-                <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
-                  <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
-                </td>
-                <td colSpan="2"></td>
-              </tr>
-              <tr className="table-header">
-                <td className="col-instrument-name">Инструмент</td>
-                <td className="col-instrument-price">Цена</td>
-                <td className="col-volume" colSpan="3">Объем заявки</td>
-                <td className="col-buy">Покупка</td>
-                <td className="col-cancel"></td>
-                <td className="col-sell">Продажа</td>
-                <td className="col-bought">Куплено</td>
-                <td className="col-sold">Продано</td>
-              </tr>
-              {this.createTradeTable()}
-            </tbody>
-          </table>
+            <table id="trade_table">
+              <tbody>
+                <tr className="table-prerow">
+                  <Timer endTime={this.props.session.date_end}/>
+                  <td colSpan="3"></td>
+                  <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
+                    <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
+                  </td>
+                  <td colSpan="2"></td>
+                </tr>
+                <tr className="table-header">
+                  <td className="col-instrument-name">Инструмент</td>
+                  <td className="col-instrument-price">Цена</td>
+                  <td className="col-volume" colSpan="3">Объем заявки</td>
+                  <td className="col-buy">Покупка</td>
+                  <td className="col-cancel"></td>
+                  <td className="col-sell">Продажа</td>
+                  <td className="col-bought">Куплено</td>
+                  <td className="col-sold">Продано</td>
+                </tr>
+                {this.createTradeTable()}
+              </tbody>
+            </table>
       );
     } else if (this.props.user.roleName === 'isadmin') {
       App = (
-          <table id="trade_table" className="admin">
-            <tbody>
-              <tr className="table-prerow">
-                <Timer endTime={this.props.session.date_end}/>
-                <td colSpan="3">
-                  Продлить на:
-                  <button style={{marginRight: '8px', marginLeft: '8px'}} onClick={() => this.updateSession(1)}>1 мин.</button>
-                  <button style={{marginRight: '8px'}} onClick={() => this.updateSession(5)}>5 мин.</button>
-                  <button className="end-session" onClick={() => this.updateSession('end')}>Завершить</button>
-                </td>
-              </tr>
-              <tr className="table-header">
-                <td className="col-instrument-name">Инструмент</td>
-                <td className="col-instrument-price">Цена</td>
-                <td className="col-buy">Покупка</td>
-                <td className="col-sell">Продажа</td>
-                <td className="set-interest">Установить интерес</td>
-              </tr>
-              {this.createTradeTable()}
-            </tbody>
-          </table>
+            <table id="trade_table" className="admin">
+              <tbody>
+                <tr className="table-prerow">
+                  <Timer endTime={this.props.session.date_end}/>
+                  <td colSpan="3">
+                    Продлить на:
+                    <button style={{marginRight: '8px', marginLeft: '8px'}} onClick={() => this.updateSession(1)}>1 мин.</button>
+                    <button style={{marginRight: '8px'}} onClick={() => this.updateSession(5)}>5 мин.</button>
+                    <button className="end-session" onClick={() => this.updateSession('end')}>Завершить</button>
+                  </td>
+                </tr>
+                <tr className="table-header">
+                  <td className="col-instrument-name">Инструмент</td>
+                  <td className="col-instrument-price">Цена</td>
+                  <td className="col-buy">Покупка</td>
+                  <td className="col-sell">Продажа</td>
+                  <td className="set-interest">Установить интерес</td>
+                </tr>
+                {this.createTradeTable()}
+              </tbody>
+            </table>
       );
     }
     return App;
@@ -159,13 +159,15 @@ class App extends Component {
     if (this.props.session.session_id) {
       return (
         <div className="App">
-        {this.getTheApp()}
+          <div className="logo"></div>
+          {this.getTheApp()}
         </div>
       );
     } else {
       let cup = require('../../public/images/tea-cup.png');
       return (
         <div className="App">
+          <div className="logo"></div>
           <div className="no-session">
             <p>На данный момент активной сессии нет</p>
             <img alt="please-stand-by" src={cup} />

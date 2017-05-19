@@ -20,12 +20,21 @@ body {
 #trade_table {
 	border-collapse: collapse;
 	width: 970px;
-	margin: 70px auto;
+	margin: 20px auto;
 	text-align: center;
 }
 
-#trade_table.admin {
+#trade_table.admin, .logo {
 	width: 970px;
+}
+
+.logo {
+	height: 70px;
+	margin: 0 auto;
+	background-image: url('../../public/images/logo.png');
+	background-size: auto 50px;
+	background-repeat: no-repeat;
+	background-position: left bottom;
 }
 
 #trade_table .cancel-all {
@@ -342,7 +351,7 @@ input[value="Войти"] {
 
 .no-session {
 	display: block;
-  margin: 70px auto;
+  margin: 20px auto;
   width: 380px;
   padding: 30px;
   text-align: center;
