@@ -29,12 +29,12 @@ body {
 }
 
 .logo {
-	height: 70px;
+	height: 100px;
 	margin: 0 auto;
 	background-image: url('../../public/images/logo.png');
 	background-size: auto 50px;
 	background-repeat: no-repeat;
-	background-position: left bottom;
+	background-position: center bottom;
 }
 
 #trade_table .cancel-all {

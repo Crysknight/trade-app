@@ -159,7 +159,6 @@ class App extends Component {
     if (this.props.session.session_id) {
       return (
         <div className="App">
-          <div className="logo"></div>
           {this.getTheApp()}
         </div>
       );
@@ -167,7 +166,6 @@ class App extends Component {
       let cup = require('../../public/images/tea-cup.png');
       return (
         <div className="App">
-          <div className="logo"></div>
           <div className="no-session">
             <p>На данный момент активной сессии нет</p>
             <img alt="please-stand-by" src={cup} />

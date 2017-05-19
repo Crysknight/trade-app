@@ -68,6 +68,7 @@ class Login extends Component {
     }
     return (
       <div>
+        <div className="logo"></div>
       	<form id="auth" onSubmit={this.submitUser}>
       	  <input 
       	    id="auth__email" 
