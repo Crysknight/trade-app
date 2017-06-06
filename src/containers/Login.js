@@ -13,7 +13,7 @@ class Login extends Component {
   	this.submitUser = this.submitUser.bind(this);
   	this.handleInput = this.handleInput.bind(this);
   	this.state = {
-  	  eMail: undefined,
+  	  login: undefined,
   	  password: undefined
   	};
   }
@@ -29,13 +29,13 @@ class Login extends Component {
   }
   submitUser(event) {
   	event.preventDefault();
-  	if (this.state.eMail !== undefined && this.state.password !== undefined) {
-  	  this.props.checkUser({ eMail: this.state.eMail, password: this.state.password });
+  	if (this.state.login !== undefined && this.state.password !== undefined) {
+  	  this.props.checkUser({ login: this.state.login, password: this.state.password });
     }
   }
   handleInput(event) {
   	if (event.target.id === 'auth__email') {
-  	  this.setState({ eMail: event.target.value });
+  	  this.setState({ login: event.target.value });
   	} else if (event.target.id === 'auth__password') {
   	  this.setState({ password: event.target.value });
   	}
