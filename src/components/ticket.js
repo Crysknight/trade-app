@@ -8,7 +8,7 @@ export default class Ticket extends Component {
 	// }
 
 	render() {
-		if (this.props.user.roleName === 'isuser') {
+		if (this.props.user.role === 'user') {
 			return (
 				<tr>
 					<td>{this.props.index + 1}</td>
@@ -18,7 +18,7 @@ export default class Ticket extends Component {
 					<td>{this.props.ticket.volume}</td>
 				</tr>
 			);
-		} else if (this.props.user.roleName === 'isadmin') {
+		} else if (this.props.user.role === 'admin') {
 			let buyer;
 			let seller;
 			for (let i = 0; i < this.props.adminUsers.length; i++) {

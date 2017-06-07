@@ -13,8 +13,8 @@ export default class AdminMenu extends Component {
 			<div>					
 				<h2>Меню</h2>
 				<ul className="admin-menu">
-					<li><Link to="/trade-app/admin/sessions">Сессии</Link></li>
-					<li><Link to="/trade-app/admin/users">Пользователи</Link></li>
+					<li><Link to="/admin/sessions">Сессии</Link></li>
+					<li><Link to="/admin/users">Пользователи</Link></li>
 				</ul>
 			</div>
 		);

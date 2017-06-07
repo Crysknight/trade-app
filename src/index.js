@@ -29,31 +29,31 @@ const history = syncHistoryWithStore(browserHistory, store);
 function requireAuth(nextState, replace) {
   if (JSON.stringify(store.getState().user) === '{}' || store.getState().user.error) {
   	replace({
-  	  pathname: '/trade-app/login'
+  	  pathname: '/login'
   	});
   } 
 }
 
 function checkAdmin(nextState, replace) {
-  if (store.getState().user.roleName !== 'isadmin') {
+  if (store.getState().user.role !== 'admin') {
     replace({
-      pathname: '/trade-app/'
+      pathname: '/'
     });
   }
 }
 
 function AuthInit() {
   if (JSON.stringify(store.getState().user) === '{}') {
-    let eMail = cookie.load('eMail');
-    let roleName = cookie.load('roleName');
+    let login = cookie.load('login');
+    let role = cookie.load('role');
     let token = cookie.load('token');
     let id = cookie.load('id');
-    if (eMail && roleName && token) {
+    if (login && role && token) {
       store.dispatch({type: 'CHECK_USER_SUCCESS', payload: {
-        eMail,
-        roleName,
+        login,
+        role,
         token,
-        id: +id
+        id
       }});
     }
   }
@@ -62,7 +62,7 @@ function AuthInit() {
 ReactDOM.render(
 	<Provider store={store}>
 	  <Router history={history}>
-	    <Route path="/trade-app/" onEnter={AuthInit} component={MasterPage}>
+	    <Route path="/" onEnter={AuthInit} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="login" component={Login} />
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>

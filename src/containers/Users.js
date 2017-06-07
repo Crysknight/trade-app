@@ -47,34 +47,33 @@ class Users extends Component {
 	handleUsersChange(e) {
 		e.preventDefault();
 		let id = this.submitId;
-		let idLength = (id + '').length;
 		let userToUpdate = {
-			user_id: id
+			id
 		};
 		for (let key in e.target) {
 			if (!isNaN(key)) {
 				let target = e.target[key];
-				if (+target.id.slice(-idLength) === id) {
-					switch (target.id.slice(0, -(idLength + 1))) {
+				if (target.id.slice(-24) === id) {
+					switch (target.id.slice(0, -25)) {
 						case 'user_name': {
-							userToUpdate.fio = target.value;
+							userToUpdate.name = target.value;
 							break;
 						}
 						case 'user_email': {
-							userToUpdate.user_name = target.value;
+							userToUpdate.login = target.value;
 							break;
 						}
 						case 'user_password': {
 							if (target.value) {
-								userToUpdate.user_pass = target.value;
+								userToUpdate.pass = target.value;
 							}
 							break;
 						}
 						case 'user_blocked': {
 							if (target.checked) {
-								userToUpdate.role_id = 0;
+								userToUpdate.role = 'banned';
 							} else {
-								userToUpdate.role_id = 2;
+								userToUpdate.role = 'user';
 							}
 							break;
 						}
@@ -91,8 +90,8 @@ class Users extends Component {
 							break;
 						}
 						default: {
-							if (!userToUpdate.role_id && userToUpdate.role_id !== 0) {
-								userToUpdate.role_id = 1;
+							if (!userToUpdate.role && userToUpdate.role !== 'banned') {
+								userToUpdate.role = 'admin';
 							}
 						}
 					}
@@ -100,9 +99,9 @@ class Users extends Component {
 			}
 		}
 		if (
-			userToUpdate.user_id &&
-			userToUpdate.fio &&
-			userToUpdate.user_name
+			userToUpdate.id &&
+			userToUpdate.name &&
+			userToUpdate.login
 		) {
 			this.props.updateUser(this.props.user.token, userToUpdate);
 		}
@@ -115,15 +114,15 @@ class Users extends Component {
 			if (!isNaN(key)) {
 				switch (e.target[key].id) {
 					case 'add_user_name': {
-						userToAdd.fio = e.target[key].value;
+						userToAdd.name = e.target[key].value;
 						break;
 					}
 					case 'add_user_email': {
-						userToAdd.user_name = e.target[key].value;
+						userToAdd.login = e.target[key].value;
 						break;
 					}
 					case 'add_user_password': {
-						userToAdd.user_pass = e.target[key].value;
+						userToAdd.pass = e.target[key].value;
 						break;
 					}
 					case 'add_user_organization': {
@@ -145,9 +144,9 @@ class Users extends Component {
 			}
 		}
 		if (
-			userToAdd.fio &&
-			userToAdd.user_name &&
-			userToAdd.user_pass
+			userToAdd.name &&
+			userToAdd.login &&
+			userToAdd.pass
 		) {
 			this.props.addUser(this.props.user.token, userToAdd);
 		}

@@ -21,7 +21,7 @@ class Sessions extends Component {
 	}
 
 	render() {
-		let to = '/trade-app/admin/addsession';
+		let to = '/admin/addsession';
 		let className = '';
 		if (this.props.session.session_id !== 0 || this.props.session.planned_session) {
 			to = '';
@@ -40,7 +40,7 @@ class Sessions extends Component {
 			<div className="sessions">
 				<h2>Сессии</h2>
 				<p>
-					<Link to="/trade-app/last-session">Последняя сессия</Link>
+					<Link to="/last-session">Последняя сессия</Link>
 				</p>
 				<p>
 					<Link className={`button-link${className}`} to={to}>Добавить новую</Link>

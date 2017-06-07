@@ -21,29 +21,29 @@ export default class User extends Component {
 
 	deleteUser(e) {
 		e.preventDefault();
-		let id = +e.target.id.slice(12);
+		let id = e.target.id.slice(12);
 		this.props.deleteUser(id);
 	}
 
 	updateUser(e) {
-		let id = +e.target.id.slice(12);
+		let id = e.target.id.slice(12);
 		this.props.updateUser(id);
 	}
 
 	render() {
 		let user = this.props.user;
-		let userBlocked = this.props.user.role_id === 0 ? true : false;
+		let userBlocked = this.props.user.role === 'banned' ? true : false;
 		let checkbox;
-		if (this.props.user.role_id === 2 || this.props.user.role_id === 0) {
+		if (this.props.user.role === 'user' || this.props.user.role === 'banned') {
 			checkbox = <Checkbox checkboxId={`user_blocked_${user.id}`} checkboxChecked={userBlocked} />;
-		} else if (this.props.user.role_id === 1) {
+		} else if (this.props.user.role === 'admin') {
 			checkbox = <div className="star" />;
 		}
 		return (
-			<tr className={this.props.user.role_id === 1 ? 'admin-row' : false}>
+			<tr className={this.props.user.role === 'admin' ? 'admin-row' : false}>
 				<td>{this.props.index + 1}</td>
-				<td><Input inputId={`user_name_${user.id}`} inputType="text" inputValue={user.fio}/></td>
-				<td><Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.user_name}/></td>
+				<td><Input inputId={`user_name_${user.id}`} inputType="text" inputValue={user.name}/></td>
+				<td><Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.login}/></td>
 				<td><Input inputId={`user_password_${user.id}`} inputType="password" /></td>
 				<td><Input inputId={`user_organization_${user.id}`} inputType="text" inputValue={user.organization} /></td>
 				<td><Input inputId={`user_phone_${user.id}`} inputType="text" inputValue={user.phone} /></td>
@@ -58,7 +58,7 @@ export default class User extends Component {
 						onClick={this.updateUser}
 						className={this.props.updated ? 'success' : ''}>{this.props.updated ? 'Обновлено' : 'Обновить'}</button>
 				</td>
-				<td>{this.props.user.role_id !== 1 && (
+				<td>{this.props.user.role !== 1 && (
 					<button className="delete-instrument" 
 						id={`delete_user_${user.id}`} 
 						onClick={this.deleteUser}></button>)}

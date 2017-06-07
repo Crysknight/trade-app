@@ -17,7 +17,7 @@ class App extends Component {
     this.getTheApp = this.getTheApp.bind(this);
   }
   componentWillMount() {
-    if (this.props.user.roleName === 'isadmin') {
+    if (this.props.user.role === 'admin') {
       this.props.getUsers(this.props.user.token);
     }
     this.props.init(this.props.user);
@@ -29,11 +29,11 @@ class App extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.interval !== nextProps.interval && nextProps.interval) {
-      if (this.props.user.roleName === 'isuser') {
+      if (this.props.user.role === 'user') {
         this.interval = setInterval(() => {
           this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments);
         }, 1000);
-      } else if (this.props.user.roleName === 'isadmin') {
+      } else if (this.props.user.role === 'admin') {
         this.interval = setInterval(() => {
           this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments, this.props.adminUsers, this.props.orders);
         }, 1000);
@@ -100,7 +100,7 @@ class App extends Component {
 
   getTheApp() {
     let App;
-    if (this.props.user.roleName === 'isuser') {
+    if (this.props.user.role === 'user') {
       let disabled = !this.props.orders.length;
       App = (
             <table id="trade_table">
@@ -127,7 +127,7 @@ class App extends Component {
               </tbody>
             </table>
       );
-    } else if (this.props.user.roleName === 'isadmin') {
+    } else if (this.props.user.role === 'admin') {
       App = (
             <table id="trade_table" className="admin">
               <tbody>

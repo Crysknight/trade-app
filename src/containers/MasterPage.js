@@ -29,9 +29,9 @@ class MasterPage extends Component {
 		) {
   	  Menu = (
   	  	<div id="trade_app_header">
-  	  		<Link className="common-menu-link" to="/trade-app/">Рынок</Link>
-  	  		<Link className="common-menu-link" to="/trade-app/last-session">Предыдущая сессия</Link>
-  	  		<Link className="common-menu-link" to="/trade-app/tickets">Тикеты</Link>
+  	  		<Link className="common-menu-link" to="/">Рынок</Link>
+  	  		<Link className="common-menu-link" to="/last-session">Предыдущая сессия</Link>
+  	  		<Link className="common-menu-link" to="/tickets">Тикеты</Link>
           <div className="common-menu-link" onClick={this.logOut}>Выйти</div>
   	  	</div>
   	  );

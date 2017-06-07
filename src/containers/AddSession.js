@@ -32,7 +32,7 @@ class AddSession extends Component {
 	}
 
 	componentWillMount() {
-		this.props.uploadAdminInstruments(this.props.user);
+		this.props.getAdminInstruments(this.props.user);
 	}
 
 	handleTimeForm(e) {
@@ -52,7 +52,7 @@ class AddSession extends Component {
 			}
 		}
 		if (e.target.id === 'date_start') {
-			this.setState({ date_start: e.target.value.replace(/T/, ' ') });
+			this.setState({ date_start: e.target.value.replace(/T/, ' ') + ':00' });
 		} else if (e.target.id === 'date_end') {
 			this.setState({ date_end: e.target.value.replace(/T/, ' ') + ':00' });
 		}
@@ -60,9 +60,10 @@ class AddSession extends Component {
 
 	handleAddInstrumentForm(e) {
 		e.preventDefault();
-		let instrument_name = e.target[0].value;
-		let instrument_price = e.target[1].value;
-		this.props.addInstrument(this.props.user, instrument_name, instrument_price);
+		let name = e.target[0].value;
+		let isin = e.target[1].value;
+		let price = e.target[2].value;
+		this.props.addInstrument(this.props.user, name, isin, price);
 	}
 
 	handleCheckbox(e) {
@@ -73,37 +74,45 @@ class AddSession extends Component {
 		e.preventDefault();
 		let instrumentIndex;
 		let instrumentName;
+		let instrumentIsin;
 		let instrumentPrice;
 		for (let key in e.target) {
 			if (!isNaN(key)) {
 				if (e.target[key].classList.length !== 0) {
-					if (+e.target[key].classList[0].slice(11) === this.submitId) {
+					if (e.target[key].classList[0].slice(11) === this.submitId) {
 						if (e.target[key].classList[1] === 'name') {
 							instrumentName = e.target[key].value;
-							instrumentIndex = +e.target[key].classList[2].slice(6);
-						} else if (e.target[key].classList[1] === 'price') {
+							instrumentIndex = e.target[key].classList[2].slice(6);
+						} else if (e.target[key].classList[1] === 'isin') {
+							instrumentIsin = e.target[key].value;
+						}	else if (e.target[key].classList[1] === 'price') {
 							instrumentPrice = +e.target[key].value;
 						}
 					}
 				}
 			}
 		}
+		console.log(instrumentIndex, instrumentName, instrumentIsin, instrumentPrice);
 		if (
 			instrumentName && 
 			instrumentPrice && 
-			(instrumentName !== this.props.adminInstruments[instrumentIndex - 1].name ||
-			instrumentPrice !== this.props.adminInstruments[instrumentIndex - 1].price)
+			(
+				instrumentName !== this.props.adminInstruments[instrumentIndex - 1].name ||
+				instrumentPrice !== this.props.adminInstruments[instrumentIndex - 1].price ||
+				instrumentIsin !== this.props.adminInstruments[instrumentIndex - 1].isin
+			)
 		) {
-			this.props.updateInstrument(this.props.user.token, instrumentIndex, this.submitId, instrumentName, instrumentPrice);
+			console.log('updating instrument');
+			this.props.updateInstrument(this.props.user.token, instrumentIndex, this.submitId, instrumentName, instrumentIsin, instrumentPrice);
 		}
 	}
 
 	storeSubmitId(e) {
-		this.submitId = +e.target.id.slice(18);
+		this.submitId = e.target.id.slice(18);
 	}
 
 	deleteInstrument(e) {
-		let instrumentId = +e.target.id.slice(24);
+		let instrumentId = e.target.id.slice(24);
 		let instrumentName;
 		for (let i = 0; i < this.props.adminInstruments.length; i++) {
 			if (this.props.adminInstruments[i].id === instrumentId) {
@@ -120,6 +129,7 @@ class AddSession extends Component {
 			puButtonText: 'Да',
 			puFadeTime: 60000
 		});
+		e.stopPropagation();
 	}
 
 	registerSession() {
@@ -183,6 +193,7 @@ class AddSession extends Component {
 				<tr key={instrument.id}>			
 					<td>{instrument.index}</td>
 					<td><Input inputClassName={`instrument_${instrument.id} name index_${instrument.index}`} inputType="text" inputValue={instrument.name} /></td>
+					<td><Input inputClassName={`instrument_${instrument.id} isin index_${instrument.index}`} inputType="text" inputValue={instrument.isin} /></td>
 					<td><Input inputClassName={`instrument_${instrument.id} price index_${instrument.index}`} inputType="number" inputStep="0.0001" inputValue={instrument.price.toFixed(4)} /></td>
 					<td><CheckBox checkboxId={`instrument_${instrument.id}`} checkboxOnChange={this.handleCheckbox} checkboxChecked={instrument.chosen} /></td>
 					<td><button
@@ -247,7 +258,7 @@ class AddSession extends Component {
 		return (
 			<div className="add-session">
 				{PopUp}
-				<div className="wrapper">
+				<div className="wrapper left">
 					<h2>Добавить сессию</h2>
 					<div id="__session_form">
 						<TimeForm 
@@ -270,6 +281,7 @@ class AddSession extends Component {
 								<tr className="table-header">
 									<td>№</td>
 									<td>Инструмент</td>
+									<td>ISIN</td>
 									<td>Цена</td>
 									<td>Участвует в сессии</td>
 									<td></td>
@@ -299,7 +311,7 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
-		uploadAdminInstruments: actions.uploadAdminInstruments,
+		getAdminInstruments: actions.getAdminInstruments,
 		addInstrument: actions.addInstrument,
 		instrumentCheckbox: actions.instrumentCheckbox,
 		addSession: actions.addSession,

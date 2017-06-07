@@ -36,7 +36,7 @@ class Tickets extends Component {
 
 	componentWillMount() {
 		this.getTodaysTickets();
-		if (this.props.user.roleName === 'isadmin') {
+		if (this.props.user.role === 'admin') {
 			this.props.getUsers(this.props.user.token);
 		}
 	}
@@ -93,7 +93,7 @@ class Tickets extends Component {
 
 	getTickets() {
 		let Tickets = this.props.tickets.map((ticket, index) => {
-			if (this.props.user.roleName === 'isuser') {
+			if (this.props.user.role === 'user') {
 				return (
 					<Ticket
 						user={this.props.user}
@@ -101,7 +101,7 @@ class Tickets extends Component {
 						index={index}
 						ticket={ticket} />
 				);
-			} else if (this.props.user.roleName === 'isadmin') {
+			} else if (this.props.user.role === 'admin') {
 				return (
 					<Ticket
 						user={this.props.user}
@@ -166,7 +166,7 @@ class Tickets extends Component {
 					</p>
 					<table id="last_session_table">
 						<tbody>
-							{this.props.user.roleName === 'isuser' && (
+							{this.props.user.role === 'user' && (
 								<tr className="table-header">
 									<td>№</td>
 									<td>Сторона сделки</td>
@@ -174,7 +174,7 @@ class Tickets extends Component {
 									<td>Цена</td>
 									<td>Объем</td>
 								</tr>)}
-							{this.props.user.roleName === 'isadmin' && (
+							{this.props.user.role === 'admin' && (
 									<tr className="table-header">
 										<td>№</td>
 										<td>Покупатель</td>

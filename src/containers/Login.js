@@ -14,30 +14,30 @@ class Login extends Component {
   	this.handleInput = this.handleInput.bind(this);
   	this.state = {
   	  login: undefined,
-  	  password: undefined
+  	  pass: undefined
   	};
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.user.roleName === 'isadmin') {
-      document.location = '/trade-app/admin/';
+    if (nextProps.user.role === 'admin') {
+      document.location = '/admin/';
     } else if (
       JSON.stringify(nextProps.user) !== '{}' && 
       !nextProps.user.error
     ) {
-      browserHistory.push('/trade-app/');
+      browserHistory.push('/');
     }
   }
   submitUser(event) {
   	event.preventDefault();
-  	if (this.state.login !== undefined && this.state.password !== undefined) {
-  	  this.props.checkUser({ login: this.state.login, password: this.state.password });
+  	if (this.state.login !== undefined && this.state.pass !== undefined) {
+  	  this.props.checkUser({ login: this.state.login, pass: this.state.pass });
     }
   }
   handleInput(event) {
   	if (event.target.id === 'auth__email') {
   	  this.setState({ login: event.target.value });
   	} else if (event.target.id === 'auth__password') {
-  	  this.setState({ password: event.target.value });
+  	  this.setState({ pass: event.target.value });
   	}
     if (this.props.user.error) {
       this.props.tryLoginAgain();

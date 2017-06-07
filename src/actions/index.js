@@ -64,15 +64,15 @@ export const turnOffInterval = () => {
 
 export const init = (user, routing) => dispatch => {
   let sessionId;
-  axios.post('/trade-app/core/checkupdate', { token: user.token })
+  axios.post('/api/check-update', { token: user.token })
     .then(response => {
 
       /* Включаем функцию ежесекундного запроса на сервер */
       dispatch({ type: "INTERVAL_TURN_ON" });
 
       /* Проверяем наличие активной сессии */
-      let reqSession = response.data.checksession;
-      if (+reqSession.session_id) {
+      let reqSession = response.data.session;
+      if (reqSession.id) {
         dispatch({ type: "SESSION_TRUE", payload: reqSession })
       } else {
         return;
@@ -82,72 +82,65 @@ export const init = (user, routing) => dispatch => {
       /* Перенаправляем с панели добавления сессии, если есть активная сессия */
 
       if (routing) {
-        if (routing.locationBeforeTransitions.pathname === '/trade-app/admin/addsession') {
-          browserHistory.push('/trade-app/admin');
+        if (routing.locationBeforeTransitions.pathname === '/admin/addsession') {
+          browserHistory.push('/admin');
         }
       }
 
       /* Получаем инструменты */
 
-      let reqInstruments = response.data.getinstruments.instruments;
-      for (let i = 0; i < reqInstruments.length; i++) {
-        reqInstruments[i].id = +reqInstruments[i].id;
-        reqInstruments[i].name = reqInstruments[i].name;
-        reqInstruments[i].price = +reqInstruments[i].price;
-        reqInstruments[i].interest = +reqInstruments[i].interest;
-        reqInstruments[i].status = +reqInstruments[i].status;
-      }
+      let reqInstruments = response.data.session.instruments;
       dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
 
       /* Сделки... */
 
-      let deals = response.data.checkdeals.deals;
-      for (let i = 0; i < deals.length; i++) {
-        let id = +deals[i].id;
-        let type;
-        let instrument = +deals[i].instrument_id;
-        let volume;
-        if (+deals[i].seller === user.id) {
-          type = 'sale';
-          volume = +deals[i].saled;
-        } else if (+deals[i].buyer === user.id) {
-          type = 'buy';
-          volume = +deals[i].buyed;
-        }
-        if (id && type && instrument && volume) {
-          dispatch({ type: "NEW_DEAL", payload: {
-            id,
-            type,
-            instrument,
-            volume
-          }});
-        }
-      }
-      return axios.post('/trade-app/core/checkorders', { session_id: sessionId, token: user.token });
+      // let deals = response.data.checkdeals.deals;
+      // for (let i = 0; i < deals.length; i++) {
+      //   let id = +deals[i].id;
+      //   let type;
+      //   let instrument = +deals[i].instrument_id;
+      //   let volume;
+      //   if (+deals[i].seller === user.id) {
+      //     type = 'sale';
+      //     volume = +deals[i].saled;
+      //   } else if (+deals[i].buyer === user.id) {
+      //     type = 'buy';
+      //     volume = +deals[i].buyed;
+      //   }
+      //   if (id && type && instrument && volume) {
+      //     dispatch({ type: "NEW_DEAL", payload: {
+      //       id,
+      //       type,
+      //       instrument,
+      //       volume
+      //     }});
+      //   }
+      // }
+      // return axios.post('/trade-app/core/checkorders', { session_id: sessionId, token: user.token });
     })
-    .then(response => {
-      if (!response) {
-        return;
-      }
-      let orders = response.data.result;
-      if (orders.length !== 0) {
-        for (let i = 0; i < orders.length; i++) {
-          dispatch({ type: "ADD_ORDER", payload: {
-            id: +orders[i].id,
-            instrument: +orders[i].instrument_id,
-            token: user.token,
-            type: orders[i].type,
-            quantity: +orders[i].quantity,
-            session_id: sessionId
-          }});
-        }
-      }
-    })
+    // .then(response => {
+    //   if (!response) {
+    //     return;
+    //   }
+    //   let orders = response.data.result;
+    //   if (orders.length !== 0) {
+    //     for (let i = 0; i < orders.length; i++) {
+    //       dispatch({ type: "ADD_ORDER", payload: {
+    //         id: +orders[i].id,
+    //         instrument: +orders[i].instrument_id,
+    //         token: user.token,
+    //         type: orders[i].type,
+    //         quantity: +orders[i].quantity,
+    //         session_id: sessionId
+    //       }});
+    //     }
+    //   }
+    // })
     .catch(error => {
       console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: 'error' });
     });
-    if (user.roleName === 'isadmin') {
+    if (user.role === 'admin') {
       axios.post('/trade-app/core/hasplannedsession', { token: user.token })
         .then(response => {
           if (response.data.hasplannedsession) {
@@ -234,7 +227,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
       /* Или подгружаем заказы для админа */
 
-      if (user.roleName === 'isuser') {
+      if (user.role === 'user') {
         let newDeals = response.data.checkdeals.deals;
         if (newDeals.length !== 0) {
           for (let i = 0; i < newDeals.length; i++) {
@@ -268,7 +261,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
             }
           }
         }
-      } else if (user.roleName === 'isadmin') {
+      } else if (user.role === 'admin') {
         axios.post('/trade-app/core/getallorders', { token: user.token, session_id: session.session_id })
           .then(response => {
             let orders = response.data.orders.orders;
@@ -276,7 +269,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
               order.id = +order.id;
               order.quantity = +order.quantity;
               order.user_id = +order.user_id;
-              order.instrument = +order.instrument_id; // Сюда добавить реальный инструмент
+              order.instrument = +order.instrument_id;
               for (let i = 0; i < adminUsers.length; i++) {
                 if (adminUsers[i].id === order.user_id) {
                   order.user = adminUsers[i];
@@ -300,12 +293,12 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
           name: 'login_from_other_location'
         }});
         setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: 'login_from_other_location'}), 4000);
-        cookie.remove('eMail', { path: "/" });
-        cookie.remove('roleName', { path: "/" });
+        cookie.remove('login', { path: "/" });
+        cookie.remove('role', { path: "/" });
         cookie.remove('token', { path: "/" });
         cookie.remove('id', { path: "/" });
         dispatch({ type: 'LOG_OUT' });
-        browserHistory.push('/trade-app/login');
+        browserHistory.push('/login');
       }
       dispatch({ type: "INTERVAL_TURN_OFF" });
     });
@@ -362,12 +355,12 @@ export const addOrder = order => dispatch => {
 
 export const logOut = token => dispatch => {
   setTimeout(() => {
-    cookie.remove('eMail', { path: "/" });
-    cookie.remove('roleName', { path: "/" });
+    cookie.remove('login', { path: "/" });
+    cookie.remove('role', { path: "/" });
     cookie.remove('token', { path: "/" });
     cookie.remove('id', { path: "/" });
     dispatch({ type: 'LOG_OUT' });
-    browserHistory.push('/trade-app/login');
+    browserHistory.push('/login');
   }, 350);
   // axios.post('/trade-app/core/logout', token)
   //   .then(response => {
@@ -390,17 +383,17 @@ export const logOut = token => dispatch => {
 };
 
 export const checkUser = user => dispatch => {
-  axios.post('/trade-app/core/login', user)
+  axios.post('/api/login', user)
     .then(response => {
-      cookie.save('eMail', user.eMail, { path: '/', maxAge: 1800 });
-      cookie.save('roleName', response.data.role_name, { path: '/', maxAge: 1800 });
+      cookie.save('login', response.data.login, { path: '/', maxAge: 1800 });
+      cookie.save('role', response.data.role, { path: '/', maxAge: 1800 });
       cookie.save('token', response.data.token, { path: '/', maxAge: 1800 });
-      cookie.save('id', +response.data.id, { path: '/', maxAge: 1800 });
+      cookie.save('id', response.data.id, { path: '/', maxAge: 1800 });
       dispatch({ type: 'CHECK_USER_SUCCESS', payload: {
-        eMail: user.eMail,
-        roleName: response.data.role_name,
+        login: response.data.login,
+        role: response.data.role,
         token: response.data.token,
-        id: +response.data.id
+        id: response.data.id
       }});
     })
     .catch(error => {
@@ -410,30 +403,30 @@ export const checkUser = user => dispatch => {
     });
 };
 
-export const uploadAdminInstruments = user => dispatch => {
-  axios.post('/trade-app/core/getinstruments', { token: user.token, session_id: 0 })
+export const getAdminInstruments = user => dispatch => {
+  axios.post('/api/get-instruments', { token: user.token })
     .then(response => {
-      let instruments = response.data.rows;
+      let instruments = response.data;
       for (let i = 0; i < instruments.length; i++) {
-        instruments[i].id = +instruments[i].id;
-        instruments[i].name = instruments[i].name;
-        instruments[i].price = +instruments[i].price;
         instruments[i].chosen = true;
       }
-      dispatch({ type: "UPLOAD_ADMIN_INSTRUMENTS", payload: instruments });
+      dispatch({ type: "GOT_ADMIN_INSTRUMENTS", payload: instruments });
     })
     .catch(error => {
       console.log(error);
     });
 };
 
-export const addInstrument = (user, instrument_name, instrument_price) => dispatch => {
-  axios.post('/trade-app/core/addinstrument', { token: user.token, instrument_name: instrument_name, instrument_price })
+export const addInstrument = (user, name, isin, price) => dispatch => {
+  axios.post('/api/add-instrument', { token: user.token, name, isin, price })
     .then(response => {
+      console.log(response.data);
       dispatch({ type: "ADD_INSTRUMENT", payload: {
-        id: +response.data.id,
-        name: instrument_name,
-        price: +instrument_price,
+        id: response.data.id,
+        name: response.data.name,
+        isin: response.data.isin,
+        price: response.data.price,
+        status: true,
         interest: 0,
         chosen: true
       }});
@@ -443,65 +436,60 @@ export const addInstrument = (user, instrument_name, instrument_price) => dispat
     });
 };
 
-export const updateInstrument = (token, instrument_index, instrument_id, instrument_name, instrument_price) => dispatch => {
+export const updateInstrument = (token, index, id, name, isin, price) => dispatch => {
   dispatch({ type: "CREATE_PROCESS", payload: {
-    name: `updating_instrument_${instrument_id}`
+    name: `updating_instrument_${id}`
   }});
-  axios.post('/trade-app/core/updateinstrumentstatus', { token, instrument_id, instrument_status: 0 })
+  axios.post('/api/disable-instrument', { token, id, status: 0 })
     .then(response => {
-      return axios.post('/trade-app/core/addinstrument', { token, instrument_name, instrument_price });
+      return axios.post('/api/add-instrument', { token, name, isin, price });
     })
     .then(response => {
       dispatch({ type: "UPDATE_ADMIN_INSTRUMENT", payload: {
-        index: instrument_index,
-        id: +response.data.id,
-        name: instrument_name,
-        price: instrument_price
+        index,
+        id: response.data.id,
+        name,
+        price
       }});
-      dispatch({ type: "DELETE_PROCESS", payload: `updating_instrument_${instrument_id}`});
+      dispatch({ type: "DELETE_PROCESS", payload: `updating_instrument_${id}`});
       dispatch({ type: "CREATE_PROCESS", payload: {
-        name: `successfully_updated_index_${instrument_index}`
+        name: `successfully_updated_index_${index}`
       }});
-      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${instrument_index}`}), 1000);
+      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `successfully_updated_index_${index}`}), 1000);
     })
     .catch(error => {
       console.log(error);
     });
 };
 
-export const deleteInstrument = (token, instrument_id) => dispatch => {
-  axios.post('/trade-app/core/updateinstrumentstatus', { token, instrument_id, instrument_state: 0 })
+export const deleteInstrument = (token, id) => dispatch => {
+  axios.post('/api/disable-instrument', { token, id, status: 0 })
     .then(response => {
-      dispatch({ type: "DELETE_ADMIN_INSTRUMENT", payload: instrument_id });
+      dispatch({ type: "DELETE_ADMIN_INSTRUMENT", payload: id });
     })
     .catch(error => {
       console.log(error);
     });
 };
 
-export const addSession = (token, date_start, date_end, instrument_ids) => dispatch => {
+export const addSession = (token, start, end, instruments) => dispatch => {
   dispatch({ type: "CREATE_PROCESS", payload: {
     name: 'registering_session'
   }});
-  axios.post('/trade-app/core/sessionadd', { token, date_start, date_end, instrument_ids })
+  axios.post('/api/create-session', { token, start, end, instruments })
     .then(response => {
       dispatch({ type: "DELETE_PROCESS", payload: 'registering_session' });
-      browserHistory.push('/trade-app/');
+      browserHistory.push('/');
     })
     .catch(error => {
       console.log(error);
     });
 };
 
-export const getUsers = (token) => dispatch => {
-  axios.post('/trade-app/core/getusers', { token })
+export const getUsers = token => dispatch => {
+  axios.post('/api/get-users', { token })
     .then(response => {
-      let users = response.data.getusers.users.map(user => {
-        user.id = +user.id;
-        user.role_id = +user.role_id;
-        return user;
-      });
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
+      dispatch({ type: "GOT_ADMIN_USERS", payload: response.data });
     })
     .catch(error => {
       console.log('error from getUsers: ', error);
@@ -511,54 +499,39 @@ export const getUsers = (token) => dispatch => {
 export const updateUser = (token, userToUpdate) => dispatch => {
   let request = {
     token,
-    user_id: userToUpdate.user_id,
-    user_name: userToUpdate.user_name,
-    role_id: userToUpdate.role_id,
-    fio: userToUpdate.fio,
-    phone: userToUpdate.phone,
-    organization: userToUpdate.organization,
-    comment: userToUpdate.comment
+    status: true,
+    ...userToUpdate
   };
-  if (userToUpdate.user_pass) {
-    request.user_pass = userToUpdate.user_pass;
+  if (!userToUpdate.pass) {
+    delete request.pass;
   }
   dispatch({ type: "CREATE_PROCESS", payload: {
-    name: `updating_user_${request.user_id}`
+    name: `updating_user_${request.id}`
   }});
-  axios.post('/trade-app/core/updateuser', request)
+  axios.post('/api/update-user', request)
     .then(response => {
-      return axios.post('/trade-app/core/getusers', { token });
+      return axios.post('/api/get-users', { token });
     })
-    .then(response => {      
-      let users = response.data.getusers.users.map(user => {
-        user.id = +user.id;
-        user.role_id = +user.role_id;
-        return user;
-      });
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
-      dispatch({ type: "DELETE_PROCESS", payload: `updating_user_${request.user_id}`});
+    .then(response => {
+      dispatch({ type: "GOT_ADMIN_USERS", payload: response.data });
+      dispatch({ type: "DELETE_PROCESS", payload: `updating_user_${request.id}`});
       dispatch({ type: "CREATE_PROCESS", payload: {
-        name: `updated_user_${request.user_id}`
+        name: `updated_user_${request.id}`
       }});
-      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `updated_user_${request.user_id}`}), 1000);
+      setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `updated_user_${request.id}`}), 1000);
     })
     .catch(error => {
       console.log('error from updateUser: ', error);
     });
 };
 
-export const deleteUser = (token, user_id) => dispatch => {
-  axios.post('/trade-app/core/deleteuser', { token, user_id })
+export const deleteUser = (token, id) => dispatch => {
+  axios.post('/api/disable-user', { token, id })
     .then(response => {
-      return axios.post('/trade-app/core/getusers', { token });
+      return axios.post('/api/get-users', { token });
     })
     .then(response => {
-      let users = response.data.getusers.users.map(user => {
-        user.id = +user.id;
-        user.role_id = +user.role_id;
-        return user;
-      });
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
+      dispatch({ type: "GOT_ADMIN_USERS", payload: response.data });
     })
     .catch(error => {
       console.log('error from deleteUser: ', error);
@@ -568,25 +541,15 @@ export const deleteUser = (token, user_id) => dispatch => {
 export const addUser = (token, userToAdd) => dispatch => {
   let request = {
     token,
-    user_name: userToAdd.user_name,
-    role_id: 2,
-    fio: userToAdd.fio,
-    user_pass: userToAdd.user_pass,
-    phone: userToAdd.phone,
-    organization: userToAdd.organization,
-    comment: userToAdd.comment
+    role: 'user',
+    ...userToAdd
   };
-  axios.post('/trade-app/core/adduser', request)
+  axios.post('/api/register', request)
     .then(response => {
-      return axios.post('/trade-app/core/getusers', { token });
+      return axios.post('/api/get-users', { token });
     })
     .then(response => {
-      let users = response.data.getusers.users.map(user => {
-        user.id = +user.id;
-        user.role_id = +user.role_id;
-        return user;
-      });
-      dispatch({ type: "UPLOAD_ADMIN_USERS", payload: users });
+      dispatch({ type: "GOT_ADMIN_USERS", payload: response.data });
     })
     .catch(error => {
       console.log('error from updateUser: ', error);
@@ -633,7 +596,7 @@ export const getDealsByDate = (user, date_start, date_end) => dispatch => {
     .then(response => {
       let tickets = response.data.deals;
       tickets = tickets.map(ticket => {
-        if (user.roleName === 'isuser') {
+        if (user.role === 'user') {
           let processedTicket = {};
           processedTicket.id = +ticket.id;
           processedTicket.instrument_name = ticket.instrument_id.name;
@@ -648,7 +611,7 @@ export const getDealsByDate = (user, date_start, date_end) => dispatch => {
             return false;
           }
           return processedTicket;
-        } else if (user.roleName === 'isadmin') {
+        } else if (user.role === 'admin') {
           let processedTicket = {};
           processedTicket.id = +ticket.id;
           processedTicket.instrument_name = ticket.instrument_id.name;

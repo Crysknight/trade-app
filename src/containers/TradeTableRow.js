@@ -116,10 +116,10 @@ class TradeTableRow extends Component {
   	return this.props.orders.map((order) => {
   	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
   	    return (
-  	      <Order className={this.props.user.roleName === 'isadmin' ? 'admin-order' : ''}
+  	      <Order className={this.props.user.role === 'admin' ? 'admin-order' : ''}
             key={order.id}
             size={order.quantity}
-            user={this.props.user.roleName === 'isadmin' ? order.user : null} />
+            user={this.props.user.role === 'admin' ? order.user : null} />
   	    );
   	  } else {
   	  	return false;
@@ -130,10 +130,10 @@ class TradeTableRow extends Component {
   	return this.props.orders.map((order) => {
   	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
   	    return (
-  	      <Order className={this.props.user.roleName === 'isadmin' ? 'admin-order' : ''}
+  	      <Order className={this.props.user.role === 'admin' ? 'admin-order' : ''}
             key={order.id}
             size={order.quantity}
-            user={this.props.user.roleName === 'isadmin' ? order.user : null} />
+            user={this.props.user.role === 'admin' ? order.user : null} />
   	    );
   	  } else {
   	  	return false;
@@ -207,7 +207,7 @@ class TradeTableRow extends Component {
       return order.instrument === this.props.instrument.id;
     });
     let cancelDisabled = !ordersForThisInstrument.length;
-    if (this.props.user.roleName === 'isadmin') {
+    if (this.props.user.role === 'admin') {
       let error = '';
       if (this.props.errors[`same_price_${this.props.instrument.id}`]) {
         if (this.props.errors[`same_price_${this.props.instrument.id}`].status) {
@@ -236,7 +236,7 @@ class TradeTableRow extends Component {
           </td>
         </tr>
       );
-    } else if (this.props.user.roleName === 'isuser') {
+    } else if (this.props.user.role === 'user') {
       Row = (
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">{this.props.instrument.name}</td>

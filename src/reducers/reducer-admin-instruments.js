@@ -1,6 +1,6 @@
 export default function(state = [], action) {
 	switch (action.type) {
-		case "UPLOAD_ADMIN_INSTRUMENTS": {
+		case "GOT_ADMIN_INSTRUMENTS": {
 			return action.payload.map((instrument, index) => {
 				return {
 					index: index + 1,
@@ -38,7 +38,7 @@ export default function(state = [], action) {
 		case "INSTRUMENT_CHECKBOX": {
 			let newState = [ ...state ];
 			for (let i = 0; i < newState.length; i++) {
-				if (newState[i].id === action.payload) {
+				if (newState[i]._id === action.payload) {
 					newState[i].chosen = !newState[i].chosen;
 				}
 			}

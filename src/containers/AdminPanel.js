@@ -26,11 +26,11 @@ class AdminPanel extends Component {
 
 	render() {
 		let pathname = this.props.routing.locationBeforeTransitions.pathname;
-		let topMenu = (pathname !== '/trade-app/admin' && pathname !== '/trade-app/admin/') ? (
+		let topMenu = (pathname !== '/admin' && pathname !== '/trade-app/admin/') ? (
 			<div class="top-menu">
 				<ul>
-					<li><Link to="/trade-app/admin/sessions">Сессии</Link></li>
-					<li><Link to="/trade-app/admin/users">Пользователи</Link></li>
+					<li><Link to="/admin/sessions">Сессии</Link></li>
+					<li><Link to="/admin/users">Пользователи</Link></li>
 				</ul>
 			</div>
 		) : null;
