@@ -38,7 +38,7 @@ export default function(state = [], action) {
 		case "INSTRUMENT_CHECKBOX": {
 			let newState = [ ...state ];
 			for (let i = 0; i < newState.length; i++) {
-				if (newState[i]._id === action.payload) {
+				if (newState[i].id === action.payload) {
 					newState[i].chosen = !newState[i].chosen;
 				}
 			}

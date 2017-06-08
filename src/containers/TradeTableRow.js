@@ -41,10 +41,11 @@ class TradeTableRow extends Component {
   	event.preventDefault();
   	this.props.addOrder({
       token: this.props.user.token,
-      type: this.state.orderType,
+      orderType: this.state.orderType,
       quantity: +this.state.quantity,
-  	  instrument_id: this.props.instrument.id,
-      session_id: +this.props.session.session_id
+  	  instrument: this.props.instrument.id,
+      user: this.props.user.id,
+      session: this.props.session.id
   	});
     this.setState({ quantity: 0 });
   }
@@ -114,7 +115,7 @@ class TradeTableRow extends Component {
       );
     }
   	return this.props.orders.map((order) => {
-  	  if (order.type === 'buy' && order.instrument === this.props.instrument.id) {
+  	  if (order.orderType === 'buy' && order.instrument === this.props.instrument.id) {
   	    return (
   	      <Order className={this.props.user.role === 'admin' ? 'admin-order' : ''}
             key={order.id}
@@ -128,7 +129,7 @@ class TradeTableRow extends Component {
   }
   getOffers() {
   	return this.props.orders.map((order) => {
-  	  if (order.type === 'sale' && order.instrument === this.props.instrument.id) {
+  	  if (order.orderType === 'sell' && order.instrument === this.props.instrument.id) {
   	    return (
   	      <Order className={this.props.user.role === 'admin' ? 'admin-order' : ''}
             key={order.id}
@@ -156,7 +157,7 @@ class TradeTableRow extends Component {
     let deals = this.props.deals;
     let amount = 0;
     for (let i = 0; i < deals.length; i++) {
-      if (deals[i].type === 'sale' && deals[i].instrument === this.props.instrument.id) {
+      if (deals[i].type === 'sell' && deals[i].instrument === this.props.instrument.id) {
         amount += deals[i].volume;
       }
     }

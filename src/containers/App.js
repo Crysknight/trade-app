@@ -55,7 +55,7 @@ class App extends Component {
   updateSession(type) {
     switch (type) {
       case 1: {
-        let newDateEnd = new Date(this.props.session.date_end);
+        let newDateEnd = new Date(this.props.session.end);
         newDateEnd.setMinutes(newDateEnd.getMinutes() + 1);
         newDateEnd = `${newDateEnd.getFullYear()}-` +
           `${newDateEnd.getMonth() + 1 > 9 ? newDateEnd.getMonth() + 1 : '0' + (newDateEnd.getMonth() + 1)}-` +
@@ -64,11 +64,11 @@ class App extends Component {
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
         console.log(newDateEnd);
-        this.props.updateSession(this.props.user, +this.props.session.session_id, newDateEnd);
+        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
         break;
       }
       case 5: {
-        let newDateEnd = new Date(this.props.session.date_end);
+        let newDateEnd = new Date(this.props.session.end);
         newDateEnd.setMinutes(newDateEnd.getMinutes() + 5);
         newDateEnd = `${newDateEnd.getFullYear()}-` +
           `${newDateEnd.getMonth() + 1 > 9 ? newDateEnd.getMonth() + 1 : '0' + (newDateEnd.getMonth() + 1)}-` +
@@ -77,7 +77,7 @@ class App extends Component {
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
         console.log(newDateEnd);
-        this.props.updateSession(this.props.user, +this.props.session.session_id, newDateEnd);
+        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
         break;
       }
       case 'end': {
@@ -89,7 +89,7 @@ class App extends Component {
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
         console.log(newDateEnd);
-        this.props.updateSession(this.props.user, +this.props.session.session_id, newDateEnd);
+        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
         break;
       }
       default: {
@@ -106,7 +106,7 @@ class App extends Component {
             <table id="trade_table">
               <tbody>
                 <tr className="table-prerow">
-                  <Timer endTime={this.props.session.date_end}/>
+                  <Timer endTime={this.props.session.end}/>
                   <td colSpan="3"></td>
                   <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
                     <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
@@ -132,7 +132,7 @@ class App extends Component {
             <table id="trade_table" className="admin">
               <tbody>
                 <tr className="table-prerow">
-                  <Timer endTime={this.props.session.date_end}/>
+                  <Timer endTime={this.props.session.end}/>
                   <td colSpan="3">
                     Продлить на:
                     <button style={{marginRight: '8px', marginLeft: '8px'}} onClick={() => this.updateSession(1)}>1 мин.</button>
@@ -156,7 +156,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.props.session.session_id) {
+    if (this.props.session.id) {
       return (
         <div className="App">
           {this.getTheApp()}

@@ -12,7 +12,7 @@ export default class Ticket extends Component {
 			return (
 				<tr>
 					<td>{this.props.index + 1}</td>
-					<td className={this.props.ticket.side === 'Покупка' ? 'buy' : 'sale'}>{this.props.ticket.side}</td>
+					<td className={this.props.ticket.side === 'Покупка' ? 'buy' : 'sell'}>{this.props.ticket.side}</td>
 					<td>{this.props.ticket.instrument_name}</td>
 					<td>{this.props.ticket.instrument_price}</td>
 					<td>{this.props.ticket.volume}</td>

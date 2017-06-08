@@ -101,7 +101,7 @@ export const init = (user, routing) => dispatch => {
       //   let instrument = +deals[i].instrument_id;
       //   let volume;
       //   if (+deals[i].seller === user.id) {
-      //     type = 'sale';
+      //     type = 'sell';
       //     volume = +deals[i].saled;
       //   } else if (+deals[i].buyer === user.id) {
       //     type = 'buy';
@@ -166,31 +166,24 @@ export const cancelOrders = (token, orders) => dispatch => {
 };
 
 export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOrders) => dispatch => {
-  axios.post('/trade-app/core/checkupdate', { token: user.token })
+  axios.post('/api/check-update', { token: user.token })
     .then(response => {
 
       /* Проверяем наличие активной сессии */
 
-      let reqSession = response.data.checksession;
-      if (+reqSession.session_id && reqSession.date_end !== session.date_end) {
+      let reqSession = response.data.session;
+      if (reqSession.id && reqSession.end !== session.end) {
         dispatch({ type: "SESSION_TRUE", payload: reqSession })
-      } else if (!+reqSession.session_id && +reqSession.session_id !== session.session_id) {
+      } else if (!reqSession.id && reqSession.id !== session.id) {
         dispatch({ type: "END_SESSION", payload: reqSession })
         return;
-      } else if (!+reqSession.session_id) {
+      } else if (!reqSession.id) {
         return;
       }
 
       /* Получаем инструменты и реагируем на их обновление */
 
-      let reqInstruments = response.data.getinstruments.instruments.map(instrument => {
-        instrument.id = +instrument.id;
-        instrument.name = instrument.name;
-        instrument.interest = +instrument.interest;
-        instrument.price = +instrument.price;
-        instrument.status = +instrument.status;
-        return instrument;
-      });
+      let reqInstruments = response.data.session.instruments;
       if (instruments.length === 0) {
         dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
         return;
@@ -210,7 +203,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
         }
         if (instruments[i].price !== reqInstruments[i].price) {
           priceChanged = true;
-          changedInstrument = +reqInstruments[i].id;
+          changedInstrument = reqInstruments[i].id;
           dispatch({ type: "CREATE_PROCESS", payload: {
             name: `price_changed_${reqInstruments[i].id}`
           }});
@@ -227,64 +220,64 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       /* Получаем все сделки пользователя и сравниваем с имеющимися, добавляя новые */
       /* Или подгружаем заказы для админа */
 
-      if (user.role === 'user') {
-        let newDeals = response.data.checkdeals.deals;
-        if (newDeals.length !== 0) {
-          for (let i = 0; i < newDeals.length; i++) {
-            if (!deals[i]) {
-              let id = +newDeals[i].id;
-              let type;
-              let instrument = +newDeals[i].instrument_id;
-              let volume;
-              let orderId;
-              let orderRemain;
-              if (+newDeals[i].seller === user.id) {
-                type = 'sale';
-                volume = +newDeals[i].saled;
-                orderId = +newDeals[i].seller_order_id;
-                orderRemain = +newDeals[i].seller_remainder;
-              } else if (+newDeals[i].buyer === user.id) {
-                type = 'buy';
-                volume = +newDeals[i].buyed;
-                orderId = +newDeals[i].buyer_order_id;
-                orderRemain = +newDeals[i].buyer_remainder;
-              }
-              if (id && type && instrument && volume) {
-                dispatch({ type: "NEW_DEAL", payload: {
-                  id,
-                  type,
-                  instrument,
-                  volume
-                }});
-                dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
-              }
-            }
-          }
-        }
-      } else if (user.role === 'admin') {
-        axios.post('/trade-app/core/getallorders', { token: user.token, session_id: session.session_id })
-          .then(response => {
-            let orders = response.data.orders.orders;
-            orders = orders.map(order => {
-              order.id = +order.id;
-              order.quantity = +order.quantity;
-              order.user_id = +order.user_id;
-              order.instrument = +order.instrument_id;
-              for (let i = 0; i < adminUsers.length; i++) {
-                if (adminUsers[i].id === order.user_id) {
-                  order.user = adminUsers[i];
-                }
-              }
-              return order;
-            });
-            if (orders && JSON.stringify(orders) !== JSON.stringify(oldOrders)) {
-              dispatch({ type: "UPLOAD_ORDERS", payload: orders });
-            }
-          })
-          .catch(error => {
-            console.log('error from getallorders: ', error);
-          });
-      }
+      // if (user.role === 'user') {
+      //   let newDeals = response.data.checkdeals.deals;
+      //   if (newDeals.length !== 0) {
+      //     for (let i = 0; i < newDeals.length; i++) {
+      //       if (!deals[i]) {
+      //         let id = +newDeals[i].id;
+      //         let type;
+      //         let instrument = +newDeals[i].instrument_id;
+      //         let volume;
+      //         let orderId;
+      //         let orderRemain;
+      //         if (+newDeals[i].seller === user.id) {
+      //           type = 'sell';
+      //           volume = +newDeals[i].saled;
+      //           orderId = +newDeals[i].seller_order_id;
+      //           orderRemain = +newDeals[i].seller_remainder;
+      //         } else if (+newDeals[i].buyer === user.id) {
+      //           type = 'buy';
+      //           volume = +newDeals[i].buyed;
+      //           orderId = +newDeals[i].buyer_order_id;
+      //           orderRemain = +newDeals[i].buyer_remainder;
+      //         }
+      //         if (id && type && instrument && volume) {
+      //           dispatch({ type: "NEW_DEAL", payload: {
+      //             id,
+      //             type,
+      //             instrument,
+      //             volume
+      //           }});
+      //           dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
+      //         }
+      //       }
+      //     }
+      //   }
+      // } else if (user.role === 'admin') {
+      //   axios.post('/trade-app/core/getallorders', { token: user.token, session_id: session.session_id })
+      //     .then(response => {
+      //       let orders = response.data.orders.orders;
+      //       orders = orders.map(order => {
+      //         order.id = +order.id;
+      //         order.quantity = +order.quantity;
+      //         order.user_id = +order.user_id;
+      //         order.instrument = +order.instrument_id;
+      //         for (let i = 0; i < adminUsers.length; i++) {
+      //           if (adminUsers[i].id === order.user_id) {
+      //             order.user = adminUsers[i];
+      //           }
+      //         }
+      //         return order;
+      //       });
+      //       if (orders && JSON.stringify(orders) !== JSON.stringify(oldOrders)) {
+      //         dispatch({ type: "UPLOAD_ORDERS", payload: orders });
+      //       }
+      //     })
+      //     .catch(error => {
+      //       console.log('error from getallorders: ', error);
+      //     });
+      // }
     })
     .catch(error => {
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
@@ -305,45 +298,26 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
 };
 
 export const addOrder = order => dispatch => {
-  dispatch({ type: "ADDING_ORDER", payload: order.instrument_id });
+  dispatch({ type: "ADDING_ORDER", payload: order.instrument });
   dispatch({ type: "CREATE_PROCESS", payload: {
-    name: `adding_order_${order.instrument_id}`
+    name: `adding_order_${order.instrument}`
   }});
-  axios.post('/trade-app/core/addorder', order)
+  axios.post('/api/add-order', order)
     .then(response => {
-      dispatch({ type: "ADD_ORDER", payload: { id: +response.data.id, instrument: order.instrument_id, ...order }});
-      dispatch({ type: "DELETE_PROCESS", payload: `adding_order_${order.instrument_id}` });
-      let deals = response.data.checkorder.deals;
+      dispatch({ type: "ADD_ORDER", payload: { id: response.data.order.id, ...order }});
+      dispatch({ type: "DELETE_PROCESS", payload: `adding_order_${order.instrument}` });
+      let deals = response.data.deals;
+      let resOrder = response.data.order;
       if (deals.length !== 0) {
         for (let i = 0; i < deals.length; i++) {
-          let id = +deals[i].id;
-          let instrument = deals[i].instrument_id;
-          let type;
-          let volume;
-          let orderId;
-          let orderRemain;
-          if (order.type === 'buy') {
-            orderId = +deals[i].buyer_order_id;
-            type = "buy";
-            volume = +deals[i].buyed;
-            orderRemain = +deals[i].buyer_remainder;
-          } else if (order.type === 'sale') {
-            orderId = +deals[i].seller_order_id;
-            type = "sale";
-            volume = +deals[i].buyed;
-            orderRemain = +deals[i].seller_remainder;
-          } else {
-            dispatch({ type: 'ORDER_FAILURE', payload: 'order type invalid' });
-            throw new Error('order type invalid');
-          }
           dispatch({ type: "NEW_DEAL", payload: {
-            id,
-            instrument,
-            type,
-            volume
+            id: deals[i].id,
+            instrument: deals[i].instrument,
+            type: order.orderType,
+            volume: deals[i].volume
           }});
-          dispatch({ type: "UPDATE_ORDER", payload: { orderRemain, id: orderId }});
         }
+        dispatch({ type: "UPDATE_ORDER", payload: { orderRemain: resOrder.remain, id: resOrder.id }});
       }
     })
     .catch(error => {
