@@ -77,7 +77,7 @@ export const init = (user, routing) => dispatch => {
       } else {
         return;
       }
-      sessionId = reqSession.session_id;
+      sessionId = reqSession.id;
 
       /* Перенаправляем с панели добавления сессии, если есть активная сессия */
 
@@ -98,7 +98,7 @@ export const init = (user, routing) => dispatch => {
       for (let i = 0; i < deals.length; i++) {
         let id = deals[i].id;
         let type;
-        let instrument = +deals[i].instrument_id;
+        let instrument = deals[i].instrument;
         let volume = deals[i].volume;
         if (deals[i].seller.user === user.id) {
           type = 'sell';
@@ -312,7 +312,7 @@ export const addOrder = order => dispatch => {
           volume: deals[i].volume
         }});
       }
-      dispatch({ type: "UPDATE_ORDER", payload: { orderRemain: resOrder.remain, id: resOrder.id }});
+      dispatch({ type: "UPDATE_ORDER", payload: { orderRemain: resOrder.quantity, id: resOrder.id }});
     }
   }
 
