@@ -94,48 +94,46 @@ export const init = (user, routing) => dispatch => {
 
       /* Сделки... */
 
-      // let deals = response.data.checkdeals.deals;
-      // for (let i = 0; i < deals.length; i++) {
-      //   let id = +deals[i].id;
-      //   let type;
-      //   let instrument = +deals[i].instrument_id;
-      //   let volume;
-      //   if (+deals[i].seller === user.id) {
-      //     type = 'sell';
-      //     volume = +deals[i].saled;
-      //   } else if (+deals[i].buyer === user.id) {
-      //     type = 'buy';
-      //     volume = +deals[i].buyed;
-      //   }
-      //   if (id && type && instrument && volume) {
-      //     dispatch({ type: "NEW_DEAL", payload: {
-      //       id,
-      //       type,
-      //       instrument,
-      //       volume
-      //     }});
-      //   }
-      // }
-      // return axios.post('/trade-app/core/checkorders', { session_id: sessionId, token: user.token });
+      let deals = response.data.deals;
+      for (let i = 0; i < deals.length; i++) {
+        let id = deals[i].id;
+        let type;
+        let instrument = +deals[i].instrument_id;
+        let volume = deals[i].volume;
+        if (deals[i].seller.user === user.id) {
+          type = 'sell';
+        } else if (deals[i].buyer.user === user.id) {
+          type = 'buy';
+        }
+        if (id && type && instrument && volume) {
+          dispatch({ type: "NEW_DEAL", payload: {
+            id,
+            type,
+            instrument,
+            volume
+          }});
+        }
+      }
+      return axios.post('/api/get-orders', { token: user.token });
     })
-    // .then(response => {
-    //   if (!response) {
-    //     return;
-    //   }
-    //   let orders = response.data.result;
-    //   if (orders.length !== 0) {
-    //     for (let i = 0; i < orders.length; i++) {
-    //       dispatch({ type: "ADD_ORDER", payload: {
-    //         id: +orders[i].id,
-    //         instrument: +orders[i].instrument_id,
-    //         token: user.token,
-    //         type: orders[i].type,
-    //         quantity: +orders[i].quantity,
-    //         session_id: sessionId
-    //       }});
-    //     }
-    //   }
-    // })
+    .then(response => {
+      if (!response) {
+        return;
+      }
+      let orders = response.data;
+      if (orders.length !== 0) {
+        for (let i = 0; i < orders.length; i++) {
+          dispatch({ type: "ADD_ORDER", payload: {
+            id: orders[i].id,
+            instrument: orders[i].instrument,
+            token: user.token,
+            orderType: orders[i].orderType,
+            quantity: orders[i].quantity,
+            session: sessionId
+          }});
+        }
+      }
+    })
     .catch(error => {
       console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: 'error' });
@@ -154,7 +152,7 @@ export const init = (user, routing) => dispatch => {
 }
 
 export const cancelOrders = (token, orders) => dispatch => {
-  axios.post('/trade-app/core/deleteordersarray', { token, ids: orders })
+  axios.post('/api/delete-orders', { token, orders })
     .then(response => {
       dispatch({ type: "CANCEL_ORDERS", payload: orders });
     })
@@ -192,14 +190,15 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       let changedInstrument;
       let interestChanged;
       for (let i = 0; i < reqInstruments.length; i++) {
-        if (instruments[i].interest !== reqInstruments[i].interest) {
+        if (instruments[i].interested !== reqInstruments[i].interested) {
           interestChanged = true;
-          if (reqInstruments[i].interest > 1) {
-            dispatch({ type: "CREATE_PROCESS", payload: {
-              name: `instrument_new_deal_${reqInstruments[i].id}`
-            }});
-            setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `instrument_new_deal_${reqInstruments[i].id}`}), 3000);
-          }
+        }
+        if (instruments[i].dealt !== reqInstruments[i].dealt) {
+          interestChanged = true;
+          dispatch({ type: "CREATE_PROCESS", payload: {
+            name: `instrument_new_deal_${reqInstruments[i].id}`
+          }});
+          setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `instrument_new_deal_${reqInstruments[i].id}`}), 3000);
         }
         if (instruments[i].price !== reqInstruments[i].price) {
           priceChanged = true;
@@ -298,32 +297,45 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
 };
 
 export const addOrder = order => dispatch => {
+
+  let handleResponse = response => {
+    dispatch({ type: "ADD_ORDER", payload: { id: response.data.order.id, ...order }});
+    dispatch({ type: "DELETE_PROCESS", payload: `adding_order_${order.instrument}` });
+    let deals = response.data.deals;
+    let resOrder = response.data.order;
+    if (deals.length !== 0) {
+      for (let i = 0; i < deals.length; i++) {
+        dispatch({ type: "NEW_DEAL", payload: {
+          id: deals[i].id,
+          instrument: deals[i].instrument,
+          type: order.orderType,
+          volume: deals[i].volume
+        }});
+      }
+      dispatch({ type: "UPDATE_ORDER", payload: { orderRemain: resOrder.remain, id: resOrder.id }});
+    }
+  }
+
   dispatch({ type: "ADDING_ORDER", payload: order.instrument });
   dispatch({ type: "CREATE_PROCESS", payload: {
     name: `adding_order_${order.instrument}`
   }});
   axios.post('/api/add-order', order)
-    .then(response => {
-      dispatch({ type: "ADD_ORDER", payload: { id: response.data.order.id, ...order }});
-      dispatch({ type: "DELETE_PROCESS", payload: `adding_order_${order.instrument}` });
-      let deals = response.data.deals;
-      let resOrder = response.data.order;
-      if (deals.length !== 0) {
-        for (let i = 0; i < deals.length; i++) {
-          dispatch({ type: "NEW_DEAL", payload: {
-            id: deals[i].id,
-            instrument: deals[i].instrument,
-            type: order.orderType,
-            volume: deals[i].volume
-          }});
-        }
-        dispatch({ type: "UPDATE_ORDER", payload: { orderRemain: resOrder.remain, id: resOrder.id }});
-      }
-    })
+    .then(handleResponse)
     .catch(error => {
-      console.log('order failure', error.response.status);
-      dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
-      dispatch({ type: "INTERVAL_TURN_OFF" });
+      if (error.response.status === 509) {
+        axios.post('/api/add-order', order)
+          .then(handleResponse)
+          .catch(error => {
+            console.log('order failure', error.response.status);
+            dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+            dispatch({ type: "INTERVAL_TURN_OFF" });  
+          })
+      } else {
+        console.log('order failure', error.response.status);
+        dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
+        dispatch({ type: "INTERVAL_TURN_OFF" });  
+      }
     });
 };
 

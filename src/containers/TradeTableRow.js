@@ -27,7 +27,6 @@ class TradeTableRow extends Component {
     this.handleInterest = this.handleInterest.bind(this);
   }
   setQuantity(value) {
-    console.log(value);
   	this.setState({
   	  quantity: value
   	});
@@ -39,14 +38,27 @@ class TradeTableRow extends Component {
   }
   registerOrder(event) {
   	event.preventDefault();
-  	this.props.addOrder({
-      token: this.props.user.token,
-      orderType: this.state.orderType,
-      quantity: +this.state.quantity,
-  	  instrument: this.props.instrument.id,
-      user: this.props.user.id,
-      session: this.props.session.id
-  	});
+    if (window.multiple) {
+      for (let i = 0; i < window.multiple; i++ ) {
+        this.props.addOrder({
+          token: this.props.user.token,
+          orderType: this.state.orderType,
+          quantity: +this.state.quantity,
+          instrument: this.props.instrument.id,
+          user: this.props.user.id,
+          session: this.props.session.id
+        });
+      }
+    } else {
+      this.props.addOrder({
+        token: this.props.user.token,
+        orderType: this.state.orderType,
+        quantity: +this.state.quantity,
+        instrument: this.props.instrument.id,
+        user: this.props.user.id,
+        session: this.props.session.id
+      });
+    }
     this.setState({ quantity: 0 });
   }
   handlePriceChange(e) {
@@ -175,11 +187,11 @@ class TradeTableRow extends Component {
     let highlightedGreen = '';
     let highlightedRed = '';
 
-    if (this.props.instrument.interest > 0) {
+    if (this.props.instrument.interested) {
       highlightedGreen = 'highlighted-green ';
     }
 
-    if (this.props.instrument.interest > 1) {
+    if (this.props.instrument.dealt) {
       highlightedRed = ' highlighted-red';
     }
 
@@ -229,10 +241,10 @@ class TradeTableRow extends Component {
           <td style={{borderRight: '1px solid #000'}}>{this.getOffers()}</td>
           <td className="set-interest">
             <button 
-              className={this.props.instrument.interest > 0 ? 'interest-button interest interested' : 'interest-button interest'}
+              className={this.props.instrument.interested ? 'interest-button interest interested' : 'interest-button interest'}
               onClick={() => this.handleInterest('interest')} />
             <button
-              className={this.props.instrument.interest > 1 ? 'interest-button deal dealed' : 'interest-button deal'}
+              className={this.props.instrument.dealt ? 'interest-button deal dealed' : 'interest-button deal'}
               onClick={() => this.handleInterest('deal')} />
           </td>
         </tr>

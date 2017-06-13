@@ -23,7 +23,7 @@ class Sessions extends Component {
 	render() {
 		let to = '/admin/addsession';
 		let className = '';
-		if (this.props.session.session_id !== 0 || this.props.session.planned_session) {
+		if (this.props.session.id !== 0 || this.props.session.planned_session) {
 			to = '';
 			className = ' disabled';
 		}

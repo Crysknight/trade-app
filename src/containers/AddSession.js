@@ -92,7 +92,6 @@ class AddSession extends Component {
 				}
 			}
 		}
-		console.log(instrumentIndex, instrumentName, instrumentIsin, instrumentPrice);
 		if (
 			instrumentName && 
 			instrumentPrice && 
@@ -102,7 +101,6 @@ class AddSession extends Component {
 				instrumentIsin !== this.props.adminInstruments[instrumentIndex - 1].isin
 			)
 		) {
-			console.log('updating instrument');
 			this.props.updateInstrument(this.props.user.token, instrumentIndex, this.submitId, instrumentName, instrumentIsin, instrumentPrice);
 		}
 	}
