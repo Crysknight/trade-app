@@ -156,7 +156,8 @@ class App extends Component {
   }
 
   render() {
-    if (this.props.session.id) {
+    console.log(this.props.session);
+    if (this.props.session.status > 1) {
       return (
         <div className="App">
           {this.getTheApp()}

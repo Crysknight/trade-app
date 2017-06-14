@@ -72,8 +72,16 @@ export const init = (user, routing) => dispatch => {
 
       /* Проверяем наличие активной сессии */
       let reqSession = response.data.session;
-      if (reqSession.id) {
-        dispatch({ type: "SESSION_TRUE", payload: reqSession })
+      if (reqSession.id && reqSession.status > 1) {
+        dispatch({ type: "SESSION_TRUE", payload: reqSession });
+      } else if (reqSession.id && reqSession.status === 1) {
+        dispatch({ type: "SESSION_TRUE", payload: reqSession });
+        if (routing) {
+          if (routing.locationBeforeTransitions.pathname === '/admin/addsession') {
+            browserHistory.push('/admin');
+          }
+        }
+        return;
       } else {
         return;
       }
@@ -139,15 +147,15 @@ export const init = (user, routing) => dispatch => {
       dispatch({ type: 'ORDER_FAILURE', payload: 'error' });
     });
     if (user.role === 'admin') {
-      axios.post('/trade-app/core/hasplannedsession', { token: user.token })
-        .then(response => {
-          if (response.data.hasplannedsession) {
-            dispatch({ type: "PLANNED_SESSION_TRUE" });
-          }
-        })
-        .catch(error => {
-          console.log('error from hasplannedsession: ', error);
-        });
+      // axios.post('/trade-app/core/hasplannedsession', { token: user.token })
+      //   .then(response => {
+      //     if (response.data.hasplannedsession) {
+      //       dispatch({ type: "PLANNED_SESSION_TRUE" });
+      //     }
+      //   })
+      //   .catch(error => {
+      //     console.log('error from hasplannedsession: ', error);
+      //   });
     }
 }
 
@@ -182,7 +190,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       /* Получаем инструменты и реагируем на их обновление */
 
       let reqInstruments = response.data.session.instruments;
-      if (instruments.length === 0) {
+      if (instruments.length === 0 && reqInstruments.length !== 0) {
         dispatch({ type: "UPLOAD_INSTRUMENTS", payload: reqInstruments });
         return;
       }
@@ -507,6 +515,11 @@ export const updateUser = (token, userToUpdate) => dispatch => {
       setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: `updated_user_${request.id}`}), 1000);
     })
     .catch(error => {
+      if (error.response.status === 400 && error.response.data === 'Duplicate user login') {
+        dispatch({ type: "CREATE_ERROR", payload: { name: `duplicate_user_login_${request.id}` } });
+        setTimeout(() => dispatch({ type: "DELETE_ERROR", payload: `duplicate_user_login_${request.id}` }), 3000);
+        dispatch({ type: "DELETE_PROCESS", payload: `updating_user_${request.id}`});
+      }
       console.log('error from updateUser: ', error);
     });
 };
@@ -641,7 +654,7 @@ export const liveUpdateInstrument = (user, instrument, message) => dispatch => {
 };
 
 export const cancelPlannedSession = user => dispatch => {
-  axios.post('/trade-app/core/deleteplannedsession', { token: user.token })
+  axios.post('/api/cancel-session', { token: user.token })
     .then(response => {
       dispatch({ type: "PLANNED_SESSION_FALSE" });
     })

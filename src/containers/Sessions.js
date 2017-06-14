@@ -23,12 +23,12 @@ class Sessions extends Component {
 	render() {
 		let to = '/admin/addsession';
 		let className = '';
-		if (this.props.session.id !== 0 || this.props.session.planned_session) {
+		if (this.props.session.id !== 0) {
 			to = '';
 			className = ' disabled';
 		}
 		let PlannedSessionBlock;
-		if (this.props.session.planned_session) {
+		if (this.props.session.status === 1) {
 			PlannedSessionBlock = (
 				<div style={{marginTop: '40px'}}>
 					<p>У Вас есть запланированная сессия</p>

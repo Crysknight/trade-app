@@ -47,9 +47,15 @@ class Users extends Component {
 	handleUsersChange(e) {
 		e.preventDefault();
 		let id = this.submitId;
+		let oldUser;
 		let userToUpdate = {
 			id
 		};
+		for (let i = 0; i < this.props.adminUsers.length; i++) {
+			if (id === this.props.adminUsers[i].id) {
+				oldUser = this.props.adminUsers[i];
+			}
+		}
 		for (let key in e.target) {
 			if (!isNaN(key)) {
 				let target = e.target[key];
@@ -101,7 +107,15 @@ class Users extends Component {
 		if (
 			userToUpdate.id &&
 			userToUpdate.name &&
-			userToUpdate.login
+			userToUpdate.login && (
+				userToUpdate.name !== oldUser.name ||
+				userToUpdate.login !== oldUser.login ||
+				userToUpdate.pass ||
+				userToUpdate.organization !== oldUser.organization ||
+				userToUpdate.phone !== oldUser.phone ||
+				userToUpdate.comment !== oldUser.comment ||
+				userToUpdate.role !== oldUser.role
+			)
 		) {
 			this.props.updateUser(this.props.user.token, userToUpdate);
 		}
@@ -172,8 +186,14 @@ class Users extends Component {
 		let Users;
 		if (this.props.adminUsers.length !== 0) {
 			Users = this.props.adminUsers.map((user, index) => {
-				let updating = false,
+				let updateError = false,
+						updating = false,
 						updated = false;
+				if (this.props.errors[`duplicate_user_login_${user.id}`]) {
+					if (this.props.errors[`duplicate_user_login_${user.id}`].status) {
+						updateError = true;
+					}
+				}
 				if (this.props.processes[`updating_user_${user.id}`]) {
 					if (this.props.processes[`updating_user_${user.id}`].status) {
 						updating = true;
@@ -188,6 +208,7 @@ class Users extends Component {
 					<User 
 						key={user.id}
 						index={index}
+						updateError={updateError}
 						updating={updating}
 						updated={updated}
 						user={user}
@@ -206,7 +227,7 @@ class Users extends Component {
 							<tr className="table-header">
 								<td>№</td>
 								<td>Имя</td>
-								<td>E-Mail</td>
+								<td>E-Mail (логин)</td>
 								<td>Изменить пароль</td>
 								<td>Организация</td>
 								<td>Телефон</td>
@@ -223,7 +244,7 @@ class Users extends Component {
 					<div>
 						<label>ФИО:</label>
 						<Input inputId="add_user_name" inputType="text" required={true} />
-						<label>E-Mail:</label>
+						<label>E-Mail (логин):</label>
 						<Input inputId="add_user_email" inputType="email" required={true} />
 						<label>Пароль:</label>
 						<Input inputId="add_user_password" inputType="password" required={true} />
@@ -249,6 +270,7 @@ function mapStateToProps(state) {
 		user: state.user,
 		adminUsers: state.adminUsers,
 		processes: state.processes,
+		errors: state.errors,
 		popUp: state.popUp
 	};
 }

@@ -43,7 +43,9 @@ export default class User extends Component {
 			<tr className={this.props.user.role === 'admin' ? 'admin-row' : false}>
 				<td>{this.props.index + 1}</td>
 				<td><Input inputId={`user_name_${user.id}`} inputType="text" inputValue={user.name}/></td>
-				<td><Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.login}/></td>
+				<td className={this.props.updateError ? 'error' : ''}>
+					<Input inputId={`user_email_${user.id}`} inputType="email" inputValue={user.login}/>
+				</td>
 				<td><Input inputId={`user_password_${user.id}`} inputType="password" /></td>
 				<td><Input inputId={`user_organization_${user.id}`} inputType="text" inputValue={user.organization} /></td>
 				<td><Input inputId={`user_phone_${user.id}`} inputType="text" inputValue={user.phone} /></td>

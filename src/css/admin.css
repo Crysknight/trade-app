@@ -122,6 +122,27 @@ button:focus, input:focus {
 	width: 100px;
 }
 
+.instruments.users td.error {
+	position: relative;
+}
+
+.instruments.users td.error input {
+	background-color: #e78;
+	color: #fff;
+}
+
+.instruments.users td.error:after {
+	content: 'Дубль логина';
+	display: inline-block;
+	width: 200px;
+	height: 36px;
+	position: absolute;
+	left: 6px;
+	top: 34px;
+	color: #e78;
+	font-size: 12px;
+}
+
 .instruments.users input[type="checkbox"] {
 	width: 16px;
 }
