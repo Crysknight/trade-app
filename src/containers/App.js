@@ -35,7 +35,14 @@ class App extends Component {
         }, 1000);
       } else if (this.props.user.role === 'admin') {
         this.interval = setInterval(() => {
-          this.props.checkUpdate(this.props.user, this.props.deals, this.props.session, this.props.instruments, this.props.adminUsers, this.props.orders);
+          this.props.checkUpdate(
+            this.props.user, 
+            this.props.deals, 
+            this.props.session,
+            this.props.instruments,
+            this.props.adminUsers, 
+            this.props.orders
+          );
         }, 1000);
       }
     } else if (this.props.interval !== nextProps.interval && !nextProps.interval) {
@@ -63,8 +70,7 @@ class App extends Component {
           `${newDateEnd.getHours() > 9 ? newDateEnd.getHours() : '0' + newDateEnd.getHours()}:` +
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
-        console.log(newDateEnd);
-        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
+        this.props.updateSession(this.props.user.token, this.props.session.id, newDateEnd);
         break;
       }
       case 5: {
@@ -76,8 +82,7 @@ class App extends Component {
           `${newDateEnd.getHours() > 9 ? newDateEnd.getHours() : '0' + newDateEnd.getHours()}:` +
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
-        console.log(newDateEnd);
-        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
+        this.props.updateSession(this.props.user.token, this.props.session.id, newDateEnd);
         break;
       }
       case 'end': {
@@ -88,8 +93,7 @@ class App extends Component {
           `${newDateEnd.getHours() > 9 ? newDateEnd.getHours() : '0' + newDateEnd.getHours()}:` +
           `${newDateEnd.getMinutes() > 9 ? newDateEnd.getMinutes() : '0' + newDateEnd.getMinutes()}:` +
           `${newDateEnd.getSeconds() > 9 ? newDateEnd.getSeconds() : '0' + newDateEnd.getSeconds()}`;
-        console.log(newDateEnd);
-        this.props.updateSession(this.props.user, this.props.session.id, newDateEnd);
+        this.props.updateSession(this.props.user.token, this.props.session.id, newDateEnd);
         break;
       }
       default: {
@@ -128,6 +132,12 @@ class App extends Component {
             </table>
       );
     } else if (this.props.user.role === 'admin') {
+      let disableButtons = false;
+      if (this.props.processes['update_session_time']) {
+        if (this.props.processes['update_session_time'].status) {
+          disableButtons = true;
+        }
+      }
       App = (
             <table id="trade_table" className="admin">
               <tbody>
@@ -135,9 +145,18 @@ class App extends Component {
                   <Timer endTime={this.props.session.end}/>
                   <td colSpan="3">
                     Продлить на:
-                    <button style={{marginRight: '8px', marginLeft: '8px'}} onClick={() => this.updateSession(1)}>1 мин.</button>
-                    <button style={{marginRight: '8px'}} onClick={() => this.updateSession(5)}>5 мин.</button>
-                    <button className="end-session" onClick={() => this.updateSession('end')}>Завершить</button>
+                    <button 
+                      disabled={disableButtons}
+                      style={{marginRight: '8px', marginLeft: '8px'}} 
+                      onClick={() => this.updateSession(1)}>1 мин.</button>
+                    <button 
+                      disabled={disableButtons}
+                      style={{marginRight: '8px'}} 
+                      onClick={() => this.updateSession(5)}>5 мин.</button>
+                    <button 
+                      disabled={disableButtons}
+                      className="end-session" 
+                      onClick={() => this.updateSession('end')}>Завершить</button>
                   </td>
                 </tr>
                 <tr className="table-header">
@@ -156,7 +175,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.props.session);
     if (this.props.session.status > 1) {
       return (
         <div className="App">
@@ -180,6 +198,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
+    processes: state.processes,
     instruments: state.instruments,
     user: state.user,
     session: state.session,

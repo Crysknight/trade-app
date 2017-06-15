@@ -47,7 +47,7 @@ body {
     cursor: pointer;
 }
 
-#trade_table .cancel-all:disabled {
+#trade_table .cancel-all:disabled, #trade_table .table-prerow .end-session:disabled {
 	cursor: default;
 	background-color: #fdd;
 	border: 2px solid #fdd;
@@ -70,7 +70,7 @@ body {
 	cursor: pointer;
 }
 
-#trade_table button.cancel-row:disabled {
+#trade_table button.cancel-row:disabled, #trade_table .table-prerow button:disabled {
 	background-color: #ddf;
 	border: 2px solid #ddf;
 	cursor: default;
@@ -108,6 +108,10 @@ body {
 #trade_table button.admin-submit.error, .cancel-planned-session, .end-session {
 	background-color: #e78;
 	border: 2px solid #e78;
+}
+
+#trade_table .end-session {
+	margin-left: 18px;
 }
 
 .tickets #last_session_table tr:nth-child(2n + 1) {

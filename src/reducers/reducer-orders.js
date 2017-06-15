@@ -36,7 +36,7 @@ export default function(state = [], action) {
       let payload = action.payload;
       let newState = state.map((order) => {
         if (order.id === payload.id) {
-          order.quantity = payload.orderRemain;
+          order.quantity -= payload.volume;
         }
         return order;
       });

@@ -73,13 +73,7 @@ class TradeTableRow extends Component {
   }
   submitPriceChange(e) {
     if (this.state.priceChange && this.state.priceChange !== this.props.instrument.price) {
-      let instrument = {
-        instrument_id: this.props.instrument.id,
-        instrument_name: this.props.instrument.name,
-        instrument_price: this.state.priceChange,
-        interest: this.props.instrument.interest
-      };
-      this.props.liveUpdateInstrument(this.props.user, instrument, 'updating price');
+      this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating price', this.state.priceChange);
     } else {
       this.props.createError({
         name: `same_price_${this.props.instrument.id}`
@@ -88,24 +82,12 @@ class TradeTableRow extends Component {
   }
   handleInterest(type) {
     if (type === 'interest') {
-      if (this.props.instrument.interest === 0) {
-        let instrument = {
-          instrument_id: this.props.instrument.id,
-          instrument_name: this.props.instrument.name,
-          instrument_price: this.props.instrument.price,
-          interest: 1
-        };
-        this.props.liveUpdateInstrument(this.props.user, instrument);
+      if (!this.props.instrument.interested) {
+        this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating interest');
       }
     } else if (type === 'deal') {
-      if (this.props.instrument.interest < 2) {
-        let instrument = {
-          instrument_id: this.props.instrument.id,
-          instrument_name: this.props.instrument.name,
-          instrument_price: this.props.instrument.price,
-          interest: 2
-        };
-        this.props.liveUpdateInstrument(this.props.user, instrument);
+      if (!this.props.instrument.dealt) {
+        this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating volatility');
       }
     }
   }
@@ -229,7 +211,10 @@ class TradeTableRow extends Component {
       }
       Row = (
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
-          <td className="bordered">{this.props.instrument.name}</td>
+          <td className="bordered">
+              {this.props.instrument.name}<br />
+              <p style={{'color':'#aaa', 'font-size':'12px', 'margin-top':'4px'}}>({this.props.instrument.isin})</p>
+          </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>
             <Input inputType="number"
               inputStep={0.0001}
@@ -252,7 +237,10 @@ class TradeTableRow extends Component {
     } else if (this.props.user.role === 'user') {
       Row = (
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
-          <td className="bordered">{this.props.instrument.name}</td>
+          <td className="bordered">
+            {this.props.instrument.name}<br />
+            <p style={{'color':'#aaa', 'font-size':'12px'}}>({this.props.instrument.isin})</p>
+          </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
           <td colSpan="3">
             <form className="size-form" onSubmit={this.registerOrder}>
