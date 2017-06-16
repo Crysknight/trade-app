@@ -18,6 +18,7 @@ import AddSession from './containers/AddSession';
 import Users from './containers/Users';
 import LastSession from './containers/LastSession';
 import Tickets from './containers/tickets';
+import SessionPage from './containers/SessionPage';
 
 import AdminMenu from './components/admin-menu';
 import './css/index.css';
@@ -67,7 +68,9 @@ ReactDOM.render(
 	      <Route path="login" component={Login} />
         <Route path="admin" onEnter={checkAdmin} component={AdminPanel}>
           <IndexRoute component={AdminMenu} />
-          <Route path="sessions" component={Sessions} />
+          <Route path="sessions" component={Sessions}>
+            <Route path=":page" component={SessionPage} />
+          </Route>
           <Route path="addsession" component={AddSession} />
           <Route path="users" component={Users} />
         </Route>

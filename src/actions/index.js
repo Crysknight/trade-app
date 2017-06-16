@@ -169,9 +169,13 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
 
       let reqSession = response.data.session;
       if ((reqSession.id && reqSession.status !== session.status) || reqSession.end !== session.end) {
-        dispatch({ type: "SESSION_TRUE", payload: reqSession })
+        dispatch({ type: "SESSION_TRUE", payload: reqSession });
+        if (reqSession.end !== session.end) {
+          dispatch({ type: "CREATE_PROCESS", payload: { name: 'updated_session_time' } });
+          setTimeout(() => dispatch({ type: "DELETE_PROCESS", payload: 'updated_session_time' }), 4000);
+        }
       } else if (!reqSession.id && reqSession.id !== session.id) {
-        dispatch({ type: "END_SESSION", payload: reqSession })
+        dispatch({ type: "END_SESSION", payload: reqSession });
         return;
       } else if (!reqSession.id) {
         return;
@@ -645,4 +649,30 @@ export const updateSession = (token, id, date) => dispatch => {
     .catch(error => {
       console.log('error from updateSession: ', error);
     });
+};
+
+export const getSessionsCount = (token) => dispatch => {
+  axios.post('/api/get-sessions-count', { token })
+    .then(response => {
+      dispatch({ type: "GOT_SESSIONS_COUNT", payload: response.data });
+    })
+    .catch(error => {
+      console.log('error from getSessions', error);
+    })
+};
+
+export const getSessions = (token, page, sessionsCount, pagesCount, sessionsPerPage) => dispatch => {
+  axios.post('/api/get-sessions', { 
+    token,
+    page,
+    sessionsCount,
+    pagesCount,
+    sessionsPerPage
+  })
+    .then(response => {
+      dispatch({ type: "GOT_SESSIONS", payload: response.data });
+    })
+    .catch(error => {
+      console.log('error from getSessions', error);
+    })
 };

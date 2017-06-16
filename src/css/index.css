@@ -4,6 +4,12 @@
 	to {background-color: #e78;}
 }
 
+@keyframes timeUpdated {
+	from {color: #8f9;}
+	50% {color: #000;}
+	to {color: #000;}
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -68,6 +74,10 @@ body {
 	color: #fff;
 	border-radius: 4px;
 	cursor: pointer;
+}
+
+#trade_table td.updated {
+	animation: timeUpdated 0.6s infinite steps(1, end);
 }
 
 #trade_table button.cancel-row:disabled, #trade_table .table-prerow button:disabled {

@@ -104,13 +104,19 @@ class App extends Component {
 
   getTheApp() {
     let App;
+    let timeUpdated = false;
+    if (this.props.processes['updated_session_time']) {
+      if (this.props.processes['updated_session_time'].status) {
+        timeUpdated = true;
+      }
+    }
     if (this.props.user.role === 'user') {
       let disabled = !this.props.orders.length;
       App = (
             <table id="trade_table">
               <tbody>
                 <tr className="table-prerow">
-                  <Timer endTime={this.props.session.end}/>
+                  <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
                   <td colSpan="3"></td>
                   <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
                     <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
@@ -142,7 +148,7 @@ class App extends Component {
             <table id="trade_table" className="admin">
               <tbody>
                 <tr className="table-prerow">
-                  <Timer endTime={this.props.session.end}/>
+                  <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
                   <td colSpan="3">
                     Продлить на:
                     <button 
@@ -187,6 +193,10 @@ class App extends Component {
         <div className="App">
           <div className="no-session">
             <p>На данный момент активной сессии нет</p>
+            {
+              this.props.session.status === 1 && 
+              <p className="begin-session">Начало следующей сессии: {this.props.session.start}</p>
+            } 
             <img alt="please-stand-by" src={cup} />
           </div>
         </div>

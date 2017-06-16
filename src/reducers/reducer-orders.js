@@ -32,6 +32,9 @@ export default function(state = [], action) {
     case 'LOG_OUT': {
       return [];
     }
+    case 'END_SESSION': {
+      return [];
+    }
     case 'UPDATE_ORDER': {
       let payload = action.payload;
       let newState = state.map((order) => {

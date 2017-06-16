@@ -16,6 +16,10 @@ class Sessions extends Component {
 		this.cancelPlannedSession = this.cancelPlannedSession.bind(this);
 	}
 
+	componentWillMount() {
+		this.props.getSessionsCount(this.props.user.token);
+	}
+
 	cancelPlannedSession() {
 		this.props.cancelPlannedSession(this.props.user);
 	}
@@ -46,6 +50,9 @@ class Sessions extends Component {
 					<Link className={`button-link${className}`} to={to}>Добавить новую</Link>
 				</p>
 				{PlannedSessionBlock}
+				<div style={{marginTop: '40px'}}>
+					{this.props.children}
+				</div>
 			</div>
 		);
 	}
@@ -61,7 +68,8 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
-		cancelPlannedSession: actions.cancelPlannedSession
+		cancelPlannedSession: actions.cancelPlannedSession,
+		getSessionsCount: actions.getSessionsCount
 	}, dispatch);
 }
 

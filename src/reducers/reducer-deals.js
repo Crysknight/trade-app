@@ -14,6 +14,9 @@ export default function(state = [], action) {
 		case "LOG_OUT": {
 			return [];
 		}
+		case "END_SESSION": {
+			return [];
+		}
 		default: {
 			return state;
 		}
