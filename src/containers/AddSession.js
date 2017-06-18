@@ -67,7 +67,7 @@ class AddSession extends Component {
 	}
 
 	handleCheckbox(e) {
-		this.props.instrumentCheckbox(+e.target.id.slice(11));
+		this.props.instrumentCheckbox(e.target.id.slice(11));
 	}
 
 	handleInstrumentForm(e) {
@@ -82,7 +82,7 @@ class AddSession extends Component {
 					if (e.target[key].classList[0].slice(11) === this.submitId) {
 						if (e.target[key].classList[1] === 'name') {
 							instrumentName = e.target[key].value;
-							instrumentIndex = e.target[key].classList[2].slice(6);
+							instrumentIndex = +e.target[key].classList[2].slice(6);
 						} else if (e.target[key].classList[1] === 'isin') {
 							instrumentIsin = e.target[key].value;
 						}	else if (e.target[key].classList[1] === 'price') {

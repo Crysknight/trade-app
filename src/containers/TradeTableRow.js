@@ -80,11 +80,15 @@ class TradeTableRow extends Component {
       });
     }
   }
-  handleInterest(type) {
+  handleInterest(type, e) {
+    let updateValue;
+    if (e && e.target.className.indexOf('interested') === -1) {
+      updateValue = true;
+    } else {
+      updateValue = false;
+    }
     if (type === 'interest') {
-      if (!this.props.instrument.interested) {
-        this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating interest');
-      }
+      this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating interest', updateValue);
     } else if (type === 'deal') {
       if (!this.props.instrument.dealt) {
         this.props.liveUpdateInstrument(this.props.user.token, this.props.instrument.id, 'updating volatility');
@@ -213,7 +217,7 @@ class TradeTableRow extends Component {
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">
               {this.props.instrument.name}<br />
-              <p style={{'color':'#aaa', 'font-size':'12px', 'margin-top':'4px'}}>({this.props.instrument.isin})</p>
+              <p style={{'color':'#aaa', 'font-size':'12px', 'margin':'4px 0'}}>({this.props.instrument.isin})</p>
           </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>
             <Input inputType="number"
@@ -227,7 +231,7 @@ class TradeTableRow extends Component {
           <td className="set-interest">
             <button 
               className={this.props.instrument.interested ? 'interest-button interest interested' : 'interest-button interest'}
-              onClick={() => this.handleInterest('interest')} />
+              onClick={(e) => this.handleInterest('interest', e)} />
             <button
               className={this.props.instrument.dealt ? 'interest-button deal dealed' : 'interest-button deal'}
               onClick={() => this.handleInterest('deal')} />
@@ -239,7 +243,7 @@ class TradeTableRow extends Component {
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">
             {this.props.instrument.name}<br />
-            <p style={{'color':'#aaa', 'font-size':'12px'}}>({this.props.instrument.isin})</p>
+            <p style={{'color':'#aaa', 'font-size':'12px', 'margin': '4px 0'}}>({this.props.instrument.isin})</p>
           </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
           <td colSpan="3">

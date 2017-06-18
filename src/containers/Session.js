@@ -7,17 +7,17 @@ import * as actions from '../actions';
 
 import Instrument from '../components/instrument';
 
-//import '../css/last-session.css';
+class Session extends Component {
 
-class LastSession extends Component {
-
-	// constructor(props) {
-		// super(props);
-
-	// }
+	constructor(props) {
+		super(props);
+		this.state = {
+			session: this.props.params.id.slice(3)
+		};
+	}
 
 	componentWillMount() {
-		this.props.loadLastSession(this.props.user.token);
+		this.props.getSession(this.props.user.token, this.state.session);
 	}
 
 	render() {
@@ -52,15 +52,15 @@ class LastSession extends Component {
 
 function mapStateToProps(state) {
 	return {
-		lastSession: state.lastSession,
-		user: state.user
+		user: state.user,
+		lastSession: state.lastSession
 	};
 }
 
 function matchDispatchToProps(dispatch) {
 	return bindActionCreators({
-		loadLastSession: actions.loadLastSession
+		getSession: actions.getSession
 	}, dispatch);
 }
 
-export default connect(mapStateToProps, matchDispatchToProps)(LastSession);
+export default connect(mapStateToProps, matchDispatchToProps)(Session);

@@ -50,6 +50,9 @@ class Sessions extends Component {
 					<Link className={`button-link${className}`} to={to}>Добавить новую</Link>
 				</p>
 				{PlannedSessionBlock}
+				{this.props.routing.locationBeforeTransitions.pathname.indexOf('page') === -1 && (<Link className="button-link" to={`/admin/sessions/page_${this.props.sessions.pagesCount}`}>
+					Показать прошлые сессии
+				</Link>)}
 				<div style={{marginTop: '40px'}}>
 					{this.props.children}
 				</div>
@@ -62,7 +65,9 @@ class Sessions extends Component {
 function mapStateToProps(state) {
 	return {
 		user: state.user,
-		session: state.session
+		routing: state.routing,
+		session: state.session,
+		sessions: state.sessions
 	};
 }
 

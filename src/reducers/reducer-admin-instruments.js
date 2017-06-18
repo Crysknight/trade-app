@@ -22,6 +22,18 @@ export default function(state = [], action) {
 					...action.payload
 				}
 			];
+			newState = newState.sort((a, b) => {
+				if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+				if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+				if (a.name.toLowerCase() === b.name.toLowerCase()) {
+					if (a.name > b.name) return 1;
+					if (a.name < b.name) return -1;
+				}
+			});
+			newState = newState.map((instrument, index) => {
+				instrument.index = index + 1;
+				return instrument;
+			});
 			return newState;
 		}
 		case "UPDATE_ADMIN_INSTRUMENT": {
@@ -34,6 +46,20 @@ export default function(state = [], action) {
 					newState[i].price = payload.price;
 				}
 			}
+			newState = newState.sort((a, b) => {
+				if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+				if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+				if (a.name.toLowerCase() === b.name.toLowerCase()) {
+					if (a.name > b.name) return 1;
+					if (a.name < b.name) return -1;
+				}
+			});
+			newState = newState.map((instrument, index) => {
+				instrument.index = index + 1;
+				console.log(index + 1);
+				return instrument;
+			});
+			return newState;
 		}
 		case "INSTRUMENT_CHECKBOX": {
 			let newState = [ ...state ];

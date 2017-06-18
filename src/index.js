@@ -19,6 +19,7 @@ import Users from './containers/Users';
 import LastSession from './containers/LastSession';
 import Tickets from './containers/tickets';
 import SessionPage from './containers/SessionPage';
+import Session from './containers/Session';
 
 import AdminMenu from './components/admin-menu';
 import './css/index.css';
@@ -62,7 +63,13 @@ function AuthInit() {
 
 ReactDOM.render(
 	<Provider store={store}>
-	  <Router history={history}>
+	  <Router history={history} createElement={ (component, props) =>
+      {
+        const { location } = props
+        const key = `${location.pathname}${location.search}`
+        props = { ...props, key }
+        return React.createElement(component, props)
+      } }>
 	    <Route path="/" onEnter={AuthInit} component={MasterPage}>
 	      <IndexRoute component={App} onEnter={requireAuth} />
 	      <Route path="login" component={Login} />
@@ -71,6 +78,7 @@ ReactDOM.render(
           <Route path="sessions" component={Sessions}>
             <Route path=":page" component={SessionPage} />
           </Route>
+          <Route path="session/:id" component={Session} />
           <Route path="addsession" component={AddSession} />
           <Route path="users" component={Users} />
         </Route>

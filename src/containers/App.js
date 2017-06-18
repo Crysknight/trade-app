@@ -102,6 +102,32 @@ class App extends Component {
     }
   }
 
+  getMarketExcerpt() {
+    let interestedInstruments = this.props.instruments.filter(instrument => instrument.interested).map(instrument => {
+      return (
+        <div className="instrument interested">
+          {instrument.name}<b> {instrument.price}&nbsp;&nbsp;&nbsp;&bull;</b>
+        </div>
+      );
+    });
+    let dealtInstruments = this.props.instruments.filter(instrument => instrument.dealt).map(instrument => {
+      return (
+        <div className="instrument dealt">
+          {instrument.name}<b> {instrument.price}&nbsp;&nbsp;&nbsp;&bull;</b>
+        </div>
+      );
+    });
+    let interestedInstrumentsTrack = null;
+    let dealtInstrumentsTrack = null;
+    if (interestedInstruments.length) {
+      interestedInstrumentsTrack = <div className="interested-instruments-track">{interestedInstruments}</div>;
+    }
+    if (dealtInstruments.length) {
+      dealtInstrumentsTrack = <div className="dealt-instruments-track">{dealtInstruments}</div>;
+    }
+    return <div className="market-excerpt">{interestedInstrumentsTrack}{dealtInstrumentsTrack}</div>;
+  }
+
   getTheApp() {
     let App;
     let timeUpdated = false;
@@ -113,29 +139,32 @@ class App extends Component {
     if (this.props.user.role === 'user') {
       let disabled = !this.props.orders.length;
       App = (
-            <table id="trade_table">
-              <tbody>
-                <tr className="table-prerow">
-                  <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
-                  <td colSpan="3"></td>
-                  <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
-                    <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
-                  </td>
-                  <td colSpan="2"></td>
-                </tr>
-                <tr className="table-header">
-                  <td className="col-instrument-name">Инструмент</td>
-                  <td className="col-instrument-price">Цена</td>
-                  <td className="col-volume" colSpan="3">Объем заявки</td>
-                  <td className="col-buy">Покупка</td>
-                  <td className="col-cancel"></td>
-                  <td className="col-sell">Продажа</td>
-                  <td className="col-bought">Куплено</td>
-                  <td className="col-sold">Продано</td>
-                </tr>
-                {this.createTradeTable()}
-              </tbody>
-            </table>
+            <div style={{'padding-bottom':'80px'}}>
+              <table id="trade_table">
+                <tbody>
+                  <tr className="table-prerow">
+                    <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
+                    <td colSpan="3"></td>
+                    <td colSpan="3" style={{textAlign: 'center'}} className="cancel-all-orders">
+                      <CancelAll disabled={disabled} cancelAll={this.cancelAll}/>
+                    </td>
+                    <td colSpan="2"></td>
+                  </tr>
+                  <tr className="table-header">
+                    <td className="col-instrument-name">Инструмент</td>
+                    <td className="col-instrument-price">Цена</td>
+                    <td className="col-volume" colSpan="3">Объем заявки</td>
+                    <td className="col-buy">Покупка</td>
+                    <td className="col-cancel"></td>
+                    <td className="col-sell">Продажа</td>
+                    <td className="col-bought">Куплено</td>
+                    <td className="col-sold">Продано</td>
+                  </tr>
+                  {this.createTradeTable()}
+                </tbody>
+              </table>
+              {this.getMarketExcerpt()}
+            </div>
       );
     } else if (this.props.user.role === 'admin') {
       let disableButtons = false;
@@ -145,36 +174,39 @@ class App extends Component {
         }
       }
       App = (
-            <table id="trade_table" className="admin">
-              <tbody>
-                <tr className="table-prerow">
-                  <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
-                  <td colSpan="3">
-                    Продлить на:
-                    <button 
-                      disabled={disableButtons}
-                      style={{marginRight: '8px', marginLeft: '8px'}} 
-                      onClick={() => this.updateSession(1)}>1 мин.</button>
-                    <button 
-                      disabled={disableButtons}
-                      style={{marginRight: '8px'}} 
-                      onClick={() => this.updateSession(5)}>5 мин.</button>
-                    <button 
-                      disabled={disableButtons}
-                      className="end-session" 
-                      onClick={() => this.updateSession('end')}>Завершить</button>
-                  </td>
-                </tr>
-                <tr className="table-header">
-                  <td className="col-instrument-name">Инструмент</td>
-                  <td className="col-instrument-price">Цена</td>
-                  <td className="col-buy">Покупка</td>
-                  <td className="col-sell">Продажа</td>
-                  <td className="set-interest">Установить интерес</td>
-                </tr>
-                {this.createTradeTable()}
-              </tbody>
-            </table>
+            <div style={{'padding-bottom':'80px'}}>
+              <table id="trade_table" className="admin">
+                <tbody>
+                  <tr className="table-prerow">
+                    <Timer endTime={this.props.session.end} timeUpdated={timeUpdated}/>
+                    <td colSpan="3">
+                      Продлить на:
+                      <button 
+                        disabled={disableButtons}
+                        style={{marginRight: '8px', marginLeft: '8px'}} 
+                        onClick={() => this.updateSession(1)}>1 мин.</button>
+                      <button 
+                        disabled={disableButtons}
+                        style={{marginRight: '8px'}} 
+                        onClick={() => this.updateSession(5)}>5 мин.</button>
+                      <button 
+                        disabled={disableButtons}
+                        className="end-session" 
+                        onClick={() => this.updateSession('end')}>Завершить</button>
+                    </td>
+                  </tr>
+                  <tr className="table-header">
+                    <td className="col-instrument-name">Инструмент</td>
+                    <td className="col-instrument-price">Цена</td>
+                    <td className="col-buy">Покупка</td>
+                    <td className="col-sell">Продажа</td>
+                    <td className="set-interest">Установить интерес</td>
+                  </tr>
+                  {this.createTradeTable()}
+                </tbody>
+              </table>
+              {this.getMarketExcerpt()}
+            </div>
       );
     }
     return App;

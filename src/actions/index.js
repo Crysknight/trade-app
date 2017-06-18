@@ -18,10 +18,10 @@ export const tryLoginAgain = () => {
   };
 };
 
-export const instrumentCheckbox = (instrument_id) => {
+export const instrumentCheckbox = (id) => {
   return {
     type: "INSTRUMENT_CHECKBOX",
-    payload: instrument_id
+    payload: id
   };
 };
 
@@ -168,7 +168,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       /* Проверяем наличие активной сессии */
 
       let reqSession = response.data.session;
-      if ((reqSession.id && reqSession.status !== session.status) || reqSession.end !== session.end) {
+      if (reqSession.id && (reqSession.status !== session.status || reqSession.end !== session.end)) {
         dispatch({ type: "SESSION_TRUE", payload: reqSession });
         if (reqSession.end !== session.end) {
           dispatch({ type: "CREATE_PROCESS", payload: { name: 'updated_session_time' } });
@@ -271,6 +271,7 @@ export const checkUpdate = (user, deals, session, instruments, adminUsers, oldOr
       }
     })
     .catch(error => {
+      console.log(error);
       dispatch({ type: 'ORDER_FAILURE', payload: error.response.status });
       if (error.response.status === 401) {
         dispatch({ type: "CREATE_PROCESS", payload: {
@@ -541,69 +542,32 @@ export const addUser = (token, userToAdd) => dispatch => {
 }
 
 export const loadLastSession = (token) => dispatch => {
-  axios.post('/trade-app/core/getlastsession', { token })
+  axios.post('/api/get-last-session', { token })
     .then(response => {
-      let reqSession = response.data.lastsession.session;
-      let session = {};
-      let interestedInstruments = reqSession.interested_instruments.map(instrument => +instrument.id);
-      let dealedInstruments = reqSession.dealed_instruments.map(instrument => +instrument.id);
-      session.id = +reqSession.id;
-      session.start = reqSession.start;
-      session.end = reqSession.end;
-      session.instruments = reqSession.instrument_ids.map(instrument => {
-        instrument.id = +instrument.id;
-        instrument.name = instrument.name;
-        instrument.price = +instrument.price;
-        instrument.interest = 0;
-        instrument.status = +instrument.status;
-        for (let i = 0; i < interestedInstruments.length; i++) {
-          if (instrument.id === interestedInstruments[i]) {
-            instrument.interest = 1;
-          }
-        }
-        for (let i = 0; i < dealedInstruments.length; i++) {
-          if (instrument.id === dealedInstruments[i]) {
-            instrument.interest = 2;
-          }
-        }
-        return instrument;
-      });
-      dispatch({ type: "LOAD_LAST_SESSION", payload: session });
+      dispatch({ type: "GOT_SESSION", payload: response.data });
     })
     .catch(error => {
-      console.log('error in loadLastSession: ', error);
-    });
+      console.log('error from loadLastSession', error);
+    })
 };
 
-export const getDealsByDate = (user, date_start, date_end) => dispatch => {
-  axios.post('/trade-app/core/getdealsbydate', { token: user.token, date_start, date_end })
+export const getDealsByDate = (user, start, end) => dispatch => {
+  console.log(start, end);
+  axios.post('/api/get-deals', { token: user.token, start, end })
     .then(response => {
-      let tickets = response.data.deals;
+      let tickets = response.data;
       tickets = tickets.map(ticket => {
         if (user.role === 'user') {
-          let processedTicket = {};
-          processedTicket.id = +ticket.id;
-          processedTicket.instrument_name = ticket.instrument_id.name;
-          processedTicket.instrument_price = +ticket.instrument_id.price;
-          if (user.id === +ticket.seller) {
-            processedTicket.side = 'Продажа';
-            processedTicket.volume = +ticket.saled;
-          } else if (user.id === +ticket.buyer) {
-            processedTicket.side = 'Покупка';
-            processedTicket.volume = +ticket.buyed;
+          if (user.id === ticket.seller.user) {
+            ticket.side = 'Продажа';
+          } else if (user.id === ticket.buyer.user) {
+            ticket.side = 'Покупка';
           } else {
             return false;
           }
-          return processedTicket;
-        } else if (user.role === 'admin') {
-          let processedTicket = {};
-          processedTicket.id = +ticket.id;
-          processedTicket.instrument_name = ticket.instrument_id.name;
-          processedTicket.instrument_price = +ticket.instrument_id.price;
-          processedTicket.buyer = +ticket.buyer;
-          processedTicket.seller = +ticket.seller;
-          processedTicket.volume = +ticket.buyed;
-          return processedTicket;
+          return ticket;
+        } else if (user.role === 'admin') {      
+          return ticket;
         }
       });
       tickets = tickets.filter(ticket => ticket);
@@ -670,9 +634,22 @@ export const getSessions = (token, page, sessionsCount, pagesCount, sessionsPerP
     sessionsPerPage
   })
     .then(response => {
-      dispatch({ type: "GOT_SESSIONS", payload: response.data });
+      dispatch({ type: "GOT_SESSIONS", payload: { sessions: response.data, page } });
     })
     .catch(error => {
       console.log('error from getSessions', error);
+    })
+};
+
+export const getSession = (token, id) => dispatch => {
+  axios.post('/api/get-session', {
+    token,
+    id
+  })
+    .then(response => {
+      dispatch({ type: "GOT_SESSION", payload: response.data });
+    })
+    .catch(error => {
+      console.log('error from getSession', error);
     })
 };

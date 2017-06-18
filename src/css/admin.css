@@ -36,7 +36,6 @@ ul li {
 
 ul li a {
 	text-decoration: none;
-	color: #78e;
 }
 
 .top-menu ul li {
@@ -44,8 +43,8 @@ ul li a {
 }
 
 button, input[type="submit"], .sessions  a.button-link {
-	background-color: #78e;
-	border: 2px solid #78e;
+	background: #aac;
+	border: none;
 	color: #fff;
 	border-radius: 4px;
 	cursor: pointer;
@@ -53,9 +52,15 @@ button, input[type="submit"], .sessions  a.button-link {
 	padding: 6px 10px;
 }
 
+.sessions a.button-link {
+	width: 230px;
+	text-align: center;
+	display: inline-block;
+}
+
 .sessions  a.button-link.disabled {
 	background-color: #ddf;
-	border: 2px solid #ddf;
+	border: none;
 	cursor: default;
 }
 
@@ -64,7 +69,7 @@ button:focus, input:focus {
 }
 
 #__session_form input[type="time"] {
-    background-color: #78e;
+	  background: linear-gradient(to bottom, #abf, #baf);
     border: none;
     padding: 5px 5px 6px 8px;
     border-radius: 4px;
@@ -104,10 +109,10 @@ button:focus, input:focus {
 }
 
 #__add_instrument, #__add_user {
-	background-color: #78e;
+	background: linear-gradient(to bottom, #abf, #baf);
 	margin-top: 10px;
 	color: #fff;
-	border: 2px solid #78e;
+	border: none;
 	border-radius: 4px;
 }
 
@@ -127,7 +132,7 @@ button:focus, input:focus {
 }
 
 .instruments.users td.error input {
-	background-color: #e78;
+	background: linear-gradient(to bottom, #fab, #fba);
 	color: #fff;
 }
 
@@ -139,7 +144,7 @@ button:focus, input:focus {
 	position: absolute;
 	left: 6px;
 	top: 34px;
-	color: #e78;
+	background: linear-gradient(to bottom, #fab, #fba);
 	font-size: 12px;
 }
 
@@ -172,6 +177,10 @@ button:focus, input:focus {
 	border-bottom: 1px solid #eee;
 }
 
+.admin-panel table tr:last-child td {
+	border-bottom: none;
+}
+
 .admin-panel table .table-header {
 	background-color: #eee;
 }
@@ -191,13 +200,13 @@ button:focus, input:focus {
 }
 
 .instruments button.success, .instruments button.success:disabled {
-	background-color: #6f8;
-	border: 2px solid #6f8;
+  background: linear-gradient(to bottom, #afb, #bfa);
+	border: none;
 }
 
 .instruments button:disabled {
 	background-color: #ddf;
-	border: 2px solid #ddf;
+	border: none;
 	cursor: default;
 }
 
@@ -224,22 +233,22 @@ button:focus, input:focus {
 
 button.register-session {
 	margin-top: 20px;
-  background-color: #e78;
+  background: linear-gradient(to bottom, #fab, #fba);
   font-weight: bold;
-  border: 2px solid #e78;
+  border: none;
 }
 
 button.register-session:disabled {
 	cursor: default;
 	background-color: #fdd;
-	border: 2px solid #fdd;
+	border: none;
 }
 
 button.delete-instrument {
 	width: 31px;
 	height: 31px;
-	background-color: #e78;
-	border: 2px solid #e78;
+  background: linear-gradient(to bottom, #fab, #fba);
+	border: none;
 	background-image: url('../../public/images/cross.png');
 	-webkit-background-size: 18px;
 	background-size: 18px;
@@ -267,4 +276,32 @@ button.delete-instrument {
 .adduser input[type="submit"] {
 	width: auto;
 	padding: 6px 10px;
+}
+
+.session-link {
+	display: block;
+	margin: 10px 0;
+	width: 350px;
+}
+
+.pagination-link {
+	display: inline-block;
+	padding: 5px;
+}
+
+.pagination-link.last .pagination-link.first {
+	color: #788;
+}
+
+.pagination-link.first {
+	margin-right: 12px;
+}
+
+.pagination-link.last {
+	margin-left: 12px;
+}
+
+.pagination-link.active {
+	color: #000;
+	text-decoration: underline;
 }

@@ -1,6 +1,6 @@
 export default function(state = [], action) {
 	switch (action.type) {
-		case "LOAD_LAST_SESSION": {
+		case "GOT_SESSION": {
 			return action.payload;
 		}
 		default: {
