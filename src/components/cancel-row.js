@@ -7,7 +7,7 @@ export default class CancelRow extends Component {
         disabled={this.props.disabled} 
         className="cancel-row" 
         onClick={() => this.props.cancelRow(this.props.instrument)}>
-      Отменить заявки</button>
+      Отменить</button>
     );
   }
 }

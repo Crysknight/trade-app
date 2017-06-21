@@ -1,5 +1,5 @@
 .admin-panel {
-	background-color: #f9f9ff;
+	background-color: #f6f6fa;
 	font-family: sans-serif;
 	padding: 0 20px;
 	min-height: 100%;
@@ -8,12 +8,10 @@
 
 h1 {
 	text-transform: uppercase;
-	color: #fff;
-	text-shadow: 2px 2px 1px #666, -1px -1px 0 #dde;
+	color: #444;
 	text-align: center;
 	margin: 0;
 	padding: 30px 0 20px 0;
-	color: #eef;
 }
 
 #__wrapper {
@@ -43,7 +41,7 @@ ul li a {
 }
 
 button, input[type="submit"], .sessions  a.button-link {
-	background: #aac;
+	background: #88aae1;
 	border: none;
 	color: #fff;
 	border-radius: 4px;
@@ -59,7 +57,7 @@ button, input[type="submit"], .sessions  a.button-link {
 }
 
 .sessions  a.button-link.disabled {
-	background-color: #ddf;
+	background-color: #d9dee8;
 	border: none;
 	cursor: default;
 }
@@ -109,7 +107,7 @@ button:focus, input:focus {
 }
 
 #__add_instrument, #__add_user {
-	background: linear-gradient(to bottom, #abf, #baf);
+	background: #88aae1;
 	margin-top: 10px;
 	color: #fff;
 	border: none;
@@ -233,21 +231,21 @@ button:focus, input:focus {
 
 button.register-session {
 	margin-top: 20px;
-  background: linear-gradient(to bottom, #fab, #fba);
+  background: #ee8484;
   font-weight: bold;
   border: none;
 }
 
 button.register-session:disabled {
 	cursor: default;
-	background-color: #fdd;
+	background-color: #ecb7b7;
 	border: none;
 }
 
 button.delete-instrument {
-	width: 31px;
-	height: 31px;
-  background: linear-gradient(to bottom, #fab, #fba);
+	width: 27px;
+	height: 27px;
+  background: #ee8484;
 	border: none;
 	background-image: url('../../public/images/cross.png');
 	-webkit-background-size: 18px;

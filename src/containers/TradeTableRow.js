@@ -217,14 +217,15 @@ class TradeTableRow extends Component {
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">
               {this.props.instrument.name}<br />
-              <p style={{'color':'#aaa', 'font-size':'12px', 'margin':'4px 0'}}>({this.props.instrument.isin})</p>
+              <p style={{'color':'#aaa', 'font-size':'12px', 'margin':'0 0'}}>({this.props.instrument.isin})</p>
           </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>
             <Input inputType="number"
               inputStep={0.0001}
               inputValue={this.props.instrument.price.toFixed(4)}
               onChange={this.handlePriceChange} />
-            <button className={`admin-submit ${error}`} onClick={this.submitPriceChange}>{error !== '' ? 'Та же цена' : 'Обновить'}</button>
+            <button className={`admin-submit ${error}`} onClick={this.submitPriceChange}></button>
+            {error && <p>Та же цена</p>}
           </td>
           <td style={{borderLeft: '1px solid #000', borderRight: '1px solid #000'}}>{this.getBids()}</td>
           <td style={{borderRight: '1px solid #000'}}>{this.getOffers()}</td>
@@ -243,7 +244,7 @@ class TradeTableRow extends Component {
         <tr className={`${highlightedGreen}${highlightedYellow}`}>
           <td className="bordered">
             {this.props.instrument.name}<br />
-            <p style={{'color':'#aaa', 'font-size':'12px', 'margin': '4px 0'}}>({this.props.instrument.isin})</p>
+            <p style={{'color':'#aaa', 'font-size':'12px', 'margin': '0 0'}}>({this.props.instrument.isin})</p>
           </td>
           <td className={`bordered${highlightedRed}${animatedRed}`}>{this.props.instrument.price.toFixed(4)}</td>
           <td colSpan="3">

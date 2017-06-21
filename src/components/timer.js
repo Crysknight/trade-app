@@ -32,7 +32,7 @@ export default class Timer extends Component {
 		this.interval = setInterval(() => {
 			let currentTime = new Date();
 			let timeLeft = this.endTime - currentTime;
-			let hours = Math.round(timeLeft / 3600000);
+			let hours = Math.floor(timeLeft / 3600000);
 			let minutes = Math.floor((timeLeft / 60000) % 60);
 			let seconds = Math.floor((timeLeft / 1000) % 60);
 			if (seconds < 0 || minutes < 0) {
