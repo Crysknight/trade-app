@@ -592,10 +592,10 @@ input.name {
 }
 
 .market-excerpt .interested-instruments-track, .market-excerpt .dealt-instruments-track {
-	white-space: nowrap;
 	overflow-x: auto;
-	height: 36px;
+	height: 24px;
 	padding-top: 6px;
+	display: block;
 }
 
 .market-excerpt .interested-instruments-track {

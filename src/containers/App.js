@@ -106,24 +106,24 @@ class App extends Component {
     let interestedInstruments = this.props.instruments.filter(instrument => instrument.interested).map(instrument => {
       return (
         <div className="instrument interested">
-          {instrument.name}<b> {instrument.price}&nbsp;&nbsp;&nbsp;&bull;</b>
+          {instrument.name}<b> {instrument.price.toFixed(4)}&nbsp;&nbsp;&nbsp;&bull;</b>
         </div>
       );
     });
     let dealtInstruments = this.props.instruments.filter(instrument => instrument.dealt).map(instrument => {
       return (
         <div className="instrument dealt">
-          {instrument.name}<b> {instrument.price}&nbsp;&nbsp;&nbsp;&bull;</b>
+          {instrument.name}<b> {instrument.price.toFixed(4)}&nbsp;&nbsp;&nbsp;&bull;</b>
         </div>
       );
     });
     let interestedInstrumentsTrack = null;
     let dealtInstrumentsTrack = null;
     if (interestedInstruments.length) {
-      interestedInstrumentsTrack = <div className="interested-instruments-track">{interestedInstruments}</div>;
+      interestedInstrumentsTrack = <marquee className="interested-instruments-track">{interestedInstruments}</marquee>;
     }
     if (dealtInstruments.length) {
-      dealtInstrumentsTrack = <div className="dealt-instruments-track">{dealtInstruments}</div>;
+      dealtInstrumentsTrack = <marquee className="dealt-instruments-track">{dealtInstruments}</marquee>;
     }
     return <div className="market-excerpt">{interestedInstrumentsTrack}{dealtInstrumentsTrack}</div>;
   }

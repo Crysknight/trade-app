@@ -17,7 +17,7 @@ import Sessions from './containers/Sessions';
 import AddSession from './containers/AddSession';
 import Users from './containers/Users';
 import LastSession from './containers/LastSession';
-import Tickets from './containers/tickets';
+import Tickets from './containers/Tickets';
 import SessionPage from './containers/SessionPage';
 import Session from './containers/Session';
 

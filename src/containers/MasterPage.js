@@ -25,7 +25,8 @@ class MasterPage extends Component {
 		if (
 			JSON.stringify(this.props.user) !== '{}' && 
 			!this.props.user.error &&
-			!~this.props.routing.locationBeforeTransitions.pathname.indexOf('admin')
+			!~this.props.routing.locationBeforeTransitions.pathname.indexOf('admin') &&
+			!~this.props.routing.locationBeforeTransitions.pathname.indexOf('login')
 		) {
   	  Menu = (
   	  	<div id="trade_app_header">

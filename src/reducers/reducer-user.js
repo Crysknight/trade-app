@@ -1,6 +1,7 @@
 export default function(state = {}, action) {
   switch (action.type) {
   	case 'CHECK_USER_SUCCESS': {
+      window.jivoUser = action.payload;
   	  return {
   	  	...action.payload,
   	  	error: false

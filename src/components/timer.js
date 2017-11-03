@@ -31,7 +31,7 @@ export default class Timer extends Component {
 		this.endTime = new Date(endTime);
 		this.interval = setInterval(() => {
 			let currentTime = new Date();
-			let timeLeft = this.endTime - currentTime;
+			let timeLeft = +this.endTime - +currentTime;
 			let hours = Math.floor(timeLeft / 3600000);
 			let minutes = Math.floor((timeLeft / 60000) % 60);
 			let seconds = Math.floor((timeLeft / 1000) % 60);
@@ -53,7 +53,7 @@ export default class Timer extends Component {
 		return (
 			<td className={this.props.timeUpdated ? 'time updated' : 'time'}
 				colSpan="2"
-				style={{verticalAlign: 'middle'}}>Время до окончания торговой сессии: {this.state.time}</td>
+				style={{verticalAlign: 'middle'}}>Время до окончания <br />торговой сессии: {this.state.time}</td>
 		);
 	}
 
